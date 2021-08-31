@@ -1,0 +1,74 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+Route::get('/test-read-file', [\App\Http\Controllers\NASController::class, 'readFile']);
+
+Route::get('/test', [\App\Http\Controllers\UserAPIController::class, 'index']);
+
+Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+
+Route::post('/admin/login', [\App\Http\Controllers\AuthController::class, 'adminLogin']);
+/*
+|
+|--------------------------------------------------------------------------
+|   Group router api auth
+|--------------------------------------------------------------------------
+|
+*/
+Route::middleware('auth:api')->group(function () {
+    Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+    Route::get('/test-connect-nas', [\App\Http\Controllers\UserAPIController::class, 'connectNAS']);
+
+    /**
+     * Route for Users
+     */
+    Route::post('/create-director', [\App\Http\Controllers\UserAPIController::class, 'createDir']);
+    Route::post('/create-jobs', [\App\Http\Controllers\UserAPIController::class, 'createJobs']);
+    Route::post('/upload-multi-file', [\App\Http\Controllers\UserAPIController::class, 'uploadMultiFile']);
+    Route::get('/list-directories', [\App\Http\Controllers\UserAPIController::class, 'listDirectories']);
+    Route::get('/list-my-jobs', [\App\Http\Controllers\UserAPIController::class, 'listMyJobs']);
+    Route::get('/delete-file', [\App\Http\Controllers\UserAPIController::class, 'deleteFile']);
+    Route::get('/delete-multi-file', [\App\Http\Controllers\UserAPIController::class, 'deleteMultipleFile']);
+    Route::post('/change-password', [\App\Http\Controllers\UserAPIController::class, 'changePassword']);
+
+    /**
+     * Group route for admin panel
+     */
+    Route::group(['prefix' => 'admin'], function () {
+        Route::group(['prefix' => 'users'], function () {
+            Route::get('/list', [\App\Http\Controllers\AdminAPIController::class, 'listUser']);
+            Route::get('/detail', [\App\Http\Controllers\AdminAPIController::class, 'userDetail']);
+            Route::get('/list-image', [\App\Http\Controllers\AdminAPIController::class, 'listImage']);
+            Route::get('/delete-file', [\App\Http\Controllers\AdminAPIController::class, 'deleteFile']);
+            Route::get('/delete-multiple-file', [\App\Http\Controllers\AdminAPIController::class, 'deleteMultipleFile']);
+            Route::post('/update-profile', [\App\Http\Controllers\AdminAPIController::class, 'updateProfile']);
+            Route::post('/create-user', [\App\Http\Controllers\AdminAPIController::class, 'createUser']);
+            Route::get('/delete-user', [\App\Http\Controllers\AdminAPIController::class, 'deleteUser']);
+        });
+    });
+
+    /**
+     * Group route for Editor
+     */
+    Route::group(['prefix' => 'editor'], function () {
+
+    });
+
+    /**
+     * Group route for QC
+     */
+    Route::group(['prefix' => 'qc'], function () {
+
+    });
+});
