@@ -15,6 +15,8 @@ class Director extends Model
         'user_id',
         'nas_dir',
         'vps_dir',
+        'level',
+        'parent_id',
     ];
 
     /**

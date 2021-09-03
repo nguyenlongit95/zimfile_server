@@ -6,12 +6,11 @@ interface JobRepositoryInterface
 {
     /**
      * @param $file
-     * @param $directory
      * @param $directoryId
      * @param $type
      * @return mixed
      */
-    public function uploadJobs($file, $directory, $directoryId, $type);
+    public function uploadJobs($file, $directoryId, $type);
 
     /**
      * @param array $param

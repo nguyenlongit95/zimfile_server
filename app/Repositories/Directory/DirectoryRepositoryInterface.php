@@ -8,7 +8,8 @@ interface DirectoryRepositoryInterface
 {
     /**
      * @param $userId
+     * @param $parentId
      * @return mixed
      */
-    public function listDirectories($userId);
+    public function listDirectories($userId, $parentId);
 }

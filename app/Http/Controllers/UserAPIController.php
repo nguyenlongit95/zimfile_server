@@ -10,6 +10,7 @@ use App\Repositories\User\UserRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
@@ -96,12 +97,18 @@ class UserAPIController extends Controller
         if (!isset($param['director'])) {
             return app()->make(ResponseHelper::class)->error();
         }
-        $dir = self::BASE_PATH . $param['director'];
+        $dir = self::BASE_PATH . '/' . Auth::user()->name;
+        if ($param['level'] > 1 && $param['parent_id'] > 0) {
+            $parentDir = $this->directoryRepository->find($param['parent_id']);
+            $dir = $dir . $parentDir->nas_dir . $param['director'];
+        } else {
+            $dir = self::BASE_PATH . '/' . Auth::user()->name . '/' . $param['director'];
+        }
         try {
             // Create dir on NAS storage
             Storage::disk('ftp')->makeDirectory($dir);
             // Create database directory
-            $param['nas_dir'] = $dir;
+            $param['nas_dir'] = $param['director'];
             $param['vps_dir'] = '-';
             $param['user_id'] = Auth::user()->id;
             $createDir = $this->directoryRepository->create($param);
@@ -138,7 +145,7 @@ class UserAPIController extends Controller
             case 1:
                 // passed
                 $file = $request->file('file');
-                $upFile = $this->jobRepository->uploadJobs($file, $param['directory'], $param['directory_id'], $param['type']);
+                $upFile = $this->jobRepository->uploadJobs($file, $param['directory_id'], $param['type']);
                 if ($upFile == false) {
                     return app()->make(ResponseHelper::class)->error();
                 }
@@ -182,7 +189,7 @@ class UserAPIController extends Controller
         $param = $request->all();
         $arrFileUploadSuccess = array();
         foreach ($files as $file) {
-            $upFile = $this->jobRepository->uploadJobs($file, $param['directory'], $param['directory_id'], $param['type']);
+            $upFile = $this->jobRepository->uploadJobs($file,  $param['directory_id'], $param['type']);
             $fileUploadStt = null;
             if ($upFile == false) {
                 $fileUploadStt = [
@@ -215,8 +222,11 @@ class UserAPIController extends Controller
         if (!Auth::check()) {
             return app()->make(ResponseHelper::class)->unAuthenticated();
         }
+        $param = $request->all();
 
-        return app()->make(ResponseHelper::class)->success($this->directoryRepository->listDirectories(Auth::user()->id));
+        return app()->make(ResponseHelper::class)->success(
+            $this->directoryRepository->listDirectories(Auth::user()->getAuthIdentifier(), $param['parent_id'])
+        );
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Repositories\JobRepository;
 
 use App\Models\Jobs;
+use App\Repositories\Directory\DirectoryRepositoryInterface;
 use App\Repositories\Eloquent\EloquentRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Storage;
 
 class JobEloquentRepository extends EloquentRepository implements JobRepositoryInterface
 {
+    const BASE_PATH = '/disk1/DATA';
+
     /**
      * @return mixed
      */
@@ -23,15 +26,26 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      * Function create an jobs and save file to store
      *
      * @param $file
-     * @param $directory
      * @param $directoryId
      * @param $type
      * @return bool
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function uploadJobs($file, $directory, $directoryId, $type)
+    public function uploadJobs($file, $directoryId, $type)
     {
+        // get dir path
+        $directory = app()->make(DirectoryRepositoryInterface::class)->find($directoryId);
+        $pathFile = null;
+        if (!$directory) {
+            return null;
+        }
+        $pathFile = $directory->nas_dir;
+        if ($directory->parent_id > 0) {
+            $parentDir = app()->make(DirectoryRepositoryInterface::class)->find($directory->parent_id);
+            $pathFile = $parentDir->nas_dir . $pathFile;
+        }
         try {
-            $path = $directory . '/' . $file->getClientOriginalName();
+            $path = self::BASE_PATH . '/' . Auth::user()->name . $pathFile . '/' . $file->getClientOriginalName();
             // Upload file to storage
             $putNASStorage = Storage::disk('ftp')->put($path, $file->get());
             if (!$putNASStorage) {

@@ -20,11 +20,23 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
      * Sql function list all directories
      *
      * @param integer $userId
+     * @param $parentId
      * @return mixed
      */
-    public function listDirectories($userId)
+    public function listDirectories($userId, $parentId)
     {
-        return $this->_model->where('user_id', $userId)->orderBy('id', 'DESC')
-            ->paginate(config('const.paginate'));
+        $dir = null;
+        // List base dir
+        if ($parentId == 0) {
+            $dir = Director::where('user_id', $userId)->where('parent_id', 0)
+                ->orderBy('id', 'DESC')->paginate(config('const.paginate'));
+        }
+        // List subs dir
+        if ($parentId > 0) {
+            $dir = Director::where('parent_id', $parentId)->orderBy('id', 'DESC')
+                ->paginate(config('const.paginate'));
+        }
+        // response dir
+        return $dir;
     }
 }
