@@ -12,4 +12,10 @@ interface DirectoryRepositoryInterface
      * @return mixed
      */
     public function listDirectories($userId, $parentId);
+
+    /**
+     * @param $dirId
+     * @return mixed
+     */
+    public function dirJob($dirId);
 }

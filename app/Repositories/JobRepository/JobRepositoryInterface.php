@@ -17,4 +17,25 @@ interface JobRepositoryInterface
      * @return mixed
      */
     public function userListJobs($param);
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function getJobsForEditor($param);
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function checkJobsBeforeAssign($param);
+
+    /**
+     * @param $request
+     * @param $path
+     * @param $dir
+     * @param $job
+     * @return mixed
+     */
+    public function uploadFileProduct($request, $path, $dir, $job);
 }

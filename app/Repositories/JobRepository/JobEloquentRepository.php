@@ -2,11 +2,15 @@
 
 namespace App\Repositories\JobRepository;
 
+use App\Models\Files;
 use App\Models\Jobs;
 use App\Repositories\Directory\DirectoryRepositoryInterface;
 use App\Repositories\Eloquent\EloquentRepository;
+use App\Repositories\Files\FilesEloquentRepository;
+use App\Repositories\Files\FilesRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -87,5 +91,90 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
 
         return $jobs->where('user_id', Auth::user()->getAuthIdentifier())
             ->orderBy('id', 'DESC')->paginate(config('const.paginate'));
+    }
+
+    /**
+     * Function get jobs for editor
+     *
+     * @param array $param
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function getJobsForEditor($param)
+    {
+        $jobs = Jobs::on();
+        if (isset($param['status'])) {
+            $jobs = $jobs->where('status', $param['status']);
+        }
+        if (isset($param['type'])) {
+            $jobs = $jobs->where('type', $param['type']);
+        }
+
+        return $jobs->where('editor_assign', Auth::user()->getAuthIdentifier())
+            ->orWhere('editor_assign', null)
+            ->orderBy('id', 'DESC')->paginate(config('const.paginate'));
+    }
+
+    /**
+     * Function check the work before handing it over to the person in charge
+     *
+     * @param array $param
+     * @return mixed
+     */
+    public function checkJobsBeforeAssign($param)
+    {
+        $job = Jobs::find($param['job_id']);
+        if (!$job) {
+            return false;
+        }
+        if ($job->editor_assign == Auth::user()->getAuthIdentifier() || !is_null($job->editor_assign)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Function upload file and save to nas file
+     *
+     * @param $request
+     * @param $path
+     * @param $dir
+     * @param $job
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function uploadFileProduct($request, $path, $dir, $job)
+    {
+        $file = $request->file('file');
+        if (app()->make(FilesRepositoryInterface::class)->validateFile($file) != 1) {
+            return false;
+        }
+        try {
+            $fileName = $file->getClientOriginalName();
+            // save file product to nas storage
+            Storage::disk('ftp')->put($path . '/' . $fileName, $file->get());
+            // Insert data file to table Files
+            $file = new Files();
+            $file->director_id = $dir->id;
+            $file->image = $fileName;
+            $file->time_upload = Carbon::now();
+            $file->status = 1;
+            $file->thumbnail = '-';
+            $file->name = Auth::user()->name;
+            if ($file->save()) {
+                // upgrade table jobs
+                $param = [
+                    'file_id' => $file->id,
+                    'status' => 3,
+                    'time_confirm' => Carbon::now(),
+                ];
+                return app()->make(JobRepositoryInterface::class)->update($param, $job->id);
+            }
+            // Failed save to database
+            return null;
+        } catch (\Exception $exception) {
+            Log::error($exception);
+            return null;
+        }
     }
 }

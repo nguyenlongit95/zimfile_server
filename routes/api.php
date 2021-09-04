@@ -62,7 +62,10 @@ Route::middleware('auth:api')->group(function () {
      * Group route for Editor
      */
     Route::group(['prefix' => 'editor'], function () {
-
+        Route::get('list-jobs', [\App\Http\Controllers\EditorAPIController::class, 'listJobs']);
+        Route::get('get-job', [\App\Http\Controllers\EditorAPIController::class, 'getJob']);
+        Route::get('download-file-job', [\App\Http\Controllers\EditorAPIController::class, 'downloadJob']);
+        Route::post('confirm-job', [\App\Http\Controllers\EditorAPIController::class, 'confirmJob']);
     });
 
     /**

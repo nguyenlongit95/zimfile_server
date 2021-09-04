@@ -9,4 +9,6 @@ return [
             'block' => 0,
         ],
     ],
+    'base_path' => '/disk1/DATA/',
+    'max_size' => 52428800,
 ];

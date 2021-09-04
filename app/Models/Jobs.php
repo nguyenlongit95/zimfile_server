@@ -21,5 +21,6 @@ class Jobs extends Model
         'time_confirm',
         'time_done',
         'type',         // 1: Photo editing	2: Day to dusk	3: Virtual Staging	4:Additional Retouching
+        'editor_assign',
     ];
 }
