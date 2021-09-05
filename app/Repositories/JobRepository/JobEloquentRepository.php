@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use phpDocumentor\Reflection\Types\Array_;
 
 class JobEloquentRepository extends EloquentRepository implements JobRepositoryInterface
 {
@@ -110,6 +111,26 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         return $jobs->where('editor_assign', Auth::user()->getAuthIdentifier())
             ->orWhere('editor_assign', null)
             ->orderBy('id', 'DESC')->paginate(config('const.paginate'));
+    }
+
+    /**
+     * Function list jobs for QC
+     *  QC can only see jobs with status of 2 assigned, 3 confirm
+     * @param array $param
+     * @return mixed
+     */
+    public function getJobsForQC($param)
+    {
+        $jobs = Jobs::on();
+        if (isset($param['status'])) {
+            $jobs = $jobs->where('status', $param['status']);
+        }
+        if (isset($param['type'])) {
+            $jobs = $jobs->where('type', $param['type']);
+        }
+
+        return $jobs->whereIn('status', [2, 3])
+            ->orderBy('id', 'DESC')->with(['files'])->paginate(config('const.paginate'));
     }
 
     /**

@@ -28,6 +28,12 @@ interface JobRepositoryInterface
      * @param $param
      * @return mixed
      */
+    public function getJobsForQC($param);
+
+    /**
+     * @param $param
+     * @return mixed
+     */
     public function checkJobsBeforeAssign($param);
 
     /**
