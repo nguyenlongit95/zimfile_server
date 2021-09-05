@@ -75,6 +75,10 @@ class EditorAPIController extends Controller
         if ($this->jobRepository->checkJobsBeforeAssign($param) == false) {
             return app()->make(ResponseHelper::class)->validation('This job has been assigned.');
         }
+        // Check for old job confirm
+        if ($this->jobRepository->checkJobOld($param) == false) {
+            return app()->make(ResponseHelper::class)->validation('You still have unfinished business, finish it then get more work.');
+        }
         // Update jobs data
         $param['editor_assign'] = Auth::user()->getAuthIdentifier();
         $param['status'] = 2;

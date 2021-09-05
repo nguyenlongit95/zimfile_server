@@ -6,11 +6,9 @@ use App\Models\Files;
 use App\Models\Jobs;
 use App\Repositories\Directory\DirectoryRepositoryInterface;
 use App\Repositories\Eloquent\EloquentRepository;
-use App\Repositories\Files\FilesEloquentRepository;
 use App\Repositories\Files\FilesRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -176,5 +174,21 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             Log::error($exception);
             return null;
         }
+    }
+
+    /**
+     * Function check for old jobs
+     *
+     * @param array $param
+     * @return mixed
+     */
+    public function checkJobOld($param)
+    {
+        $jobs = Jobs::where('editor_assign', Auth::user()->getAuthIdentifier())
+            ->where('status', 2)->count();
+        if ($jobs > 0) {
+            return false;
+        }
+        return true;
     }
 }

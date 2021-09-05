@@ -38,4 +38,10 @@ interface JobRepositoryInterface
      * @return mixed
      */
     public function uploadFileProduct($request, $path, $dir, $job);
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function checkJobOld($param);
 }
