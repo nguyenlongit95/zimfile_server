@@ -16,11 +16,21 @@ class Jobs extends Model
         'director_id',
         'file_id',
         'file_jobs',
-        'status',       // 0: reject, 1 chưa assign, 2 đã asign, 3 confirm, 4 done
+        'status',       // 0: reject, 1 not assign, 2 assigned, 3 confirm, 4 done
         'time_upload',
         'time_confirm',
         'time_done',
         'type',         // 1: Photo editing	2: Day to dusk	3: Virtual Staging	4:Additional Retouching
         'editor_assign',
     ];
+
+    /**
+     * Function collection to table files
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function files()
+    {
+        return $this->hasOne('\App\Models\Files', 'id', 'file_id');
+    }
 }

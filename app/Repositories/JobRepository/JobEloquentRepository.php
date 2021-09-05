@@ -90,7 +90,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         }
 
         return $jobs->where('user_id', Auth::user()->getAuthIdentifier())
-            ->orderBy('id', 'DESC')->paginate(config('const.paginate'));
+            ->orderBy('id', 'DESC')->with(['files'])->paginate(config('const.paginate'));
     }
 
     /**
