@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c6adc47b72f045c230d1174d7cd1ce1e",
+    "content-hash": "947362e68a0fdd4fd2dabc5f18218995",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -789,6 +789,10 @@
                 "rest",
                 "web service"
             ],
+            "support": {
+                "issues": "https://github.com/guzzle/guzzle/issues",
+                "source": "https://github.com/guzzle/guzzle/tree/7.3.0"
+            },
             "funding": [
                 {
                     "url": "https://github.com/GrahamCampbell",

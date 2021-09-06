@@ -127,26 +127,20 @@ class EditorAPIController extends Controller
     public function confirmJob(Request $request)
     {
         $param = $request->all();
-        if (!$request->hasFile('file')) {
-            return app()->make(ResponseHelper::class)->validation('Please upload the product file.');
-        }
         // Get for job
         $job = $this->jobRepository->find($param['job_id']);
         if (!$job) {
             return app()->make(ResponseHelper::class)->error();
         }
-        // Get director
-        $dir = $this->directoryRepository->find($job->director_id);
-        if (!$dir) {
-            return app()->make(ResponseHelper::class)->error();
-        }
-        // parse path director
-        $path = $this->directoryRepository->dirJob($dir->id);
-        $uploadFileProduct = $this->jobRepository->uploadFileProduct($request, $path, $dir, $job);
-        if (!$uploadFileProduct) {
+        // Data init update job to confirm
+        $data['status'] = 2;
+        $data['time_confirm'] = Carbon::now();
+        $data['time_upload'] = Carbon::now();
+        $confirm = $this->jobRepository->update($data, $job->id);
+        if (!$confirm) {
             return app()->make(ResponseHelper::class)->error();
         }
         // response data success
-        return app()->make(ResponseHelper::class)->success($uploadFileProduct);
+        return app()->make(ResponseHelper::class)->success($data);
     }
 }
