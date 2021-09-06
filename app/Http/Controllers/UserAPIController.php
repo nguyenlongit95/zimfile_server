@@ -279,4 +279,25 @@ class UserAPIController extends Controller
             return app()->make(ResponseHelper::class)->error();
         }
     }
+
+    /**
+     * Controller function download file for jobs
+     *
+     * @param Request $request
+     * @param $userId
+     * @param $slug
+     * @param $jobId
+     * @return |null
+     */
+    public function downloadFileProduct(Request $request, $userId, $slug, $jobId)
+    {
+        $job = $this->jobRepository->find($jobId);
+        if (!$job) {
+            return null;
+        }
+        // Response download file for jobs
+        return Storage::disk('ftp')->download(
+            $this->directoryRepository->dirJob($job->director_id) . '/' . $job->file_jobs
+        );
+    }
 }

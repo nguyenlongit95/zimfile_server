@@ -19,6 +19,8 @@ Route::get('/test', [\App\Http\Controllers\UserAPIController::class, 'index']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 
 Route::post('/admin/login', [\App\Http\Controllers\AuthController::class, 'adminLogin']);
+
+Route::get('/{user_id}/{slug}/{job_id}', [\App\Http\Controllers\UserAPIController::class, 'downloadFileProduct']);
 /*
 |
 |--------------------------------------------------------------------------
