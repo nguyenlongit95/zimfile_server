@@ -300,4 +300,16 @@ class UserAPIController extends Controller
             $this->directoryRepository->dirJob($job->director_id) . '/' . $job->file_jobs
         );
     }
+
+    /**
+     * Controller function get time server
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function timeServer(Request $request)
+    {
+        return app()->make(ResponseHelper::class)->success(Carbon::now()->format('d-m-Y h:i:m'));
+    }
 }
