@@ -310,6 +310,6 @@ class UserAPIController extends Controller
      */
     public function timeServer(Request $request)
     {
-        return app()->make(ResponseHelper::class)->success(Carbon::now()->format('d-m-Y h:i:m'));
+        return app()->make(ResponseHelper::class)->success(Carbon::now()->toDateTimeString());
     }
 }
