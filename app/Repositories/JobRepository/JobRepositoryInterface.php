@@ -34,6 +34,12 @@ interface JobRepositoryInterface
      * @param $param
      * @return mixed
      */
+    public function listJobForAdmin($param);
+
+    /**
+     * @param $param
+     * @return mixed
+     */
     public function checkJobsBeforeAssign($param);
 
     /**
@@ -50,4 +56,10 @@ interface JobRepositoryInterface
      * @return mixed
      */
     public function checkJobOld($param);
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function manualAssignJob($param);
 }

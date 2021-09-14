@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\JobsExport;
 use App\Repositories\Directory\DirectoryRepositoryInterface;
 use App\Repositories\Files\FilesRepositoryInterface;
+use App\Repositories\JobRepository\JobRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Supports\ResponseHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Excel;
 
 class AdminAPIController extends Controller
 {
@@ -19,6 +22,7 @@ class AdminAPIController extends Controller
     protected $userRepository;
     protected $filesRepository;
     protected $directoryRepository;
+    protected $jobRepository;
 
     /**
      * Define global variable base path
@@ -30,17 +34,20 @@ class AdminAPIController extends Controller
      * @param UserRepositoryInterface $userRepository
      * @param FilesRepositoryInterface $filesRepository
      * @param DirectoryRepositoryInterface $directoryRepository
+     * @param JobRepositoryInterface $jobRepository
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function __construct(
         UserRepositoryInterface $userRepository,
         FilesRepositoryInterface $filesRepository,
-        DirectoryRepositoryInterface $directoryRepository
+        DirectoryRepositoryInterface $directoryRepository,
+        JobRepositoryInterface $jobRepository
     )
     {
         $this->userRepository = $userRepository;
         $this->filesRepository = $filesRepository;
         $this->directoryRepository = $directoryRepository;
+        $this->jobRepository = $jobRepository;
         // check admin panel account
         if (Auth::check()) {
             if (Auth::user()->role !== config('const.admin')) {
@@ -222,5 +229,49 @@ class AdminAPIController extends Controller
         }
 
         return app()->make(ResponseHelper::class)->error();
+    }
+
+    /**
+     * Controller function list all jobs for admin
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function listJobs(Request $request)
+    {
+        return app()->make(ResponseHelper::class)->success(
+            $this->jobRepository->listJobForAdmin($request->all())
+        );
+    }
+
+    /**
+     * Controller function manual assign jobs of admin
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function manualAssignJob(Request $request)
+    {
+        $param = $request->all();
+        $assign = $this->jobRepository->manualAssignJob($param);
+        if ($assign == false) {
+            return app()->make(ResponseHelper::class)->error();
+        }
+
+        return app()->make(ResponseHelper::class)->success($this->jobRepository->find($param['job_id']));
+    }
+
+    /**
+     * Controller function export jobs data to csv
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportCSV(Request $request)
+    {
+        // Export excel file by month
+        return \Maatwebsite\Excel\Facades\Excel::download(new JobsExport(), 'jobs_'.Carbon::now()->format('Y-m-d').'.xlsx');
     }
 }

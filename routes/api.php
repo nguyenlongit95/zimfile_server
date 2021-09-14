@@ -60,6 +60,10 @@ Route::middleware('auth:api')->group(function () {
             Route::post('/create-user', [\App\Http\Controllers\AdminAPIController::class, 'createUser']);
             Route::get('/delete-user', [\App\Http\Controllers\AdminAPIController::class, 'deleteUser']);
         });
+        // Route jobs for admin panel
+        Route::get('list-jobs', [\App\Http\Controllers\AdminAPIController::class, 'listJobs']);
+        Route::get('manual-assign-job', [\App\Http\Controllers\AdminAPIController::class, 'manualAssignJob']);
+        Route::get('export', [\App\Http\Controllers\AdminAPIController::class, 'exportCSV']);
     });
 
     /**

@@ -9,9 +9,9 @@ use App\Repositories\Eloquent\EloquentRepository;
 use App\Repositories\Files\FilesRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use phpDocumentor\Reflection\Types\Array_;
 
 class JobEloquentRepository extends EloquentRepository implements JobRepositoryInterface
 {
@@ -211,5 +211,46 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             return false;
         }
         return true;
+    }
+
+    /**
+     * Function list all jobs for admin
+     *
+     * @param array $param
+     * @return mixed
+     */
+    public function listJobForAdmin($param)
+    {
+        $jobs = Jobs::on();
+        if (isset($param['status'])) {
+            $jobs = $jobs->where('status', $param['status']);
+        }
+        if (isset($param['type'])) {
+            $jobs = $jobs->where('type', $param['type']);
+        }
+
+        return $jobs->orderBy('id', 'DESC')->paginate(config('const.paginate'));
+    }
+
+    /**
+     * Function editor assign for jobs
+     *
+     * @param array $param
+     * @return mixed
+     */
+    public function manualAssignJob($param)
+    {
+        $job = Jobs::find($param['job_id']);
+        if (!$job) {
+            return false;
+        }
+        // Check if this job has been assigned to anyone
+        if ($job->editor_assign !== 0) {
+            return false;
+        }
+        // update editor for jobs
+        return DB::table('jobs')->where('id', $job->id)->update([
+             'editor_assign' => $param['editor_id']
+        ]);
     }
 }
