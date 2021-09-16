@@ -6,6 +6,7 @@ use App\Models\Director;
 use App\Models\User;
 use App\Repositories\Eloquent\EloquentRepository;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DirectoryEloquentRepository extends EloquentRepository implements DirectoryRepositoryInterface
 {
@@ -36,6 +37,18 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
         if ($parentId > 0) {
             $dir = Director::where('parent_id', $parentId)->orderBy('id', 'DESC')
                 ->paginate(config('const.paginate'));
+        }
+        // Find parent directors and compare data
+        if (!empty($dir)) {
+            foreach ($dir as $value) {
+                $parent = DB::table('directors')->where('id', $value->parent_id)
+                    ->select('id', 'nas_dir')->first();
+                if ($parent) {
+                    $value->parent_dir = $parent->nas_dir;
+                } else {
+                    $value->parent_dir = null;
+                }
+            }
         }
         // response dir
         return $dir;
