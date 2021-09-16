@@ -17,6 +17,7 @@ class Director extends Model
         'vps_dir',
         'level',
         'parent_id',
+        'path',
     ];
 
     /**

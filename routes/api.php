@@ -13,15 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/test-read-file', [\App\Http\Controllers\NASController::class, 'readFile']);
-
 Route::get('/test', [\App\Http\Controllers\UserAPIController::class, 'index']);
-
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
-
 Route::post('/admin/login', [\App\Http\Controllers\AuthController::class, 'adminLogin']);
-
 Route::get('/{user_id}/{slug}/{job_id}', [\App\Http\Controllers\UserAPIController::class, 'downloadFileProduct']);
-
 Route::get('/time-server', [\App\Http\Controllers\UserAPIController::class, 'timeServer']);
 /*
 |
@@ -33,7 +28,6 @@ Route::get('/time-server', [\App\Http\Controllers\UserAPIController::class, 'tim
 Route::middleware('auth:api')->group(function () {
     Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
     Route::get('/test-connect-nas', [\App\Http\Controllers\UserAPIController::class, 'connectNAS']);
-
     /**
      * Route for Users
      */
@@ -45,7 +39,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/delete-file', [\App\Http\Controllers\UserAPIController::class, 'deleteFile']);
     Route::get('/delete-multi-file', [\App\Http\Controllers\UserAPIController::class, 'deleteMultipleFile']);
     Route::post('/change-password', [\App\Http\Controllers\UserAPIController::class, 'changePassword']);
-
     /**
      * Group route for admin panel
      */
@@ -54,8 +47,6 @@ Route::middleware('auth:api')->group(function () {
             Route::get('/list', [\App\Http\Controllers\AdminAPIController::class, 'listUser']);
             Route::get('/detail', [\App\Http\Controllers\AdminAPIController::class, 'userDetail']);
             Route::get('/list-image', [\App\Http\Controllers\AdminAPIController::class, 'listImage']);
-            Route::get('/delete-file', [\App\Http\Controllers\AdminAPIController::class, 'deleteFile']);
-            Route::get('/delete-multiple-file', [\App\Http\Controllers\AdminAPIController::class, 'deleteMultipleFile']);
             Route::post('/update-profile', [\App\Http\Controllers\AdminAPIController::class, 'updateProfile']);
             Route::post('/create-user', [\App\Http\Controllers\AdminAPIController::class, 'createUser']);
             Route::get('/delete-user', [\App\Http\Controllers\AdminAPIController::class, 'deleteUser']);
@@ -65,7 +56,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('manual-assign-job', [\App\Http\Controllers\AdminAPIController::class, 'manualAssignJob']);
         Route::get('export', [\App\Http\Controllers\AdminAPIController::class, 'exportCSV']);
     });
-
     /**
      * Group route for Editor
      */
@@ -74,7 +64,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('get-job', [\App\Http\Controllers\EditorAPIController::class, 'getJob']);
         Route::post('confirm-job', [\App\Http\Controllers\EditorAPIController::class, 'confirmJob']);
     });
-
     /**
      * Group route for QC
      */
