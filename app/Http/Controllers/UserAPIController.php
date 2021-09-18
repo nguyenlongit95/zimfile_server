@@ -10,7 +10,6 @@ use App\Repositories\User\UserRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
@@ -106,6 +105,7 @@ class UserAPIController extends Controller
             // Main folder
             $dir = self::BASE_PATH . '/' . Auth::user()->name . '/' . $param['director'];
         }
+        Log::info('Dương dan: ' . $dir);
         try {
             // Create dir on NAS storage
             Storage::disk('ftp')->makeDirectory($dir);
@@ -113,6 +113,7 @@ class UserAPIController extends Controller
             $param['nas_dir'] = $param['director'];
             $param['vps_dir'] = '-';
             $param['user_id'] = Auth::user()->id;
+            Log::info('Cac tham so: ' . json_encode($dir));
             $createDir = $this->directoryRepository->create($param);
             $createDir->directory_id = $createDir->id;
             if ($createDir) {
@@ -121,7 +122,7 @@ class UserAPIController extends Controller
             // response data has directory
             return app()->make(ResponseHelper::class)->error();
         } catch (\Exception $exception) {
-            Log::error($exception);
+            Log::error($exception->getMessage());
             return app()->make(ResponseHelper::class)->error();
         }
     }
