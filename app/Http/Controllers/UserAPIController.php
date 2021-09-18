@@ -232,6 +232,13 @@ class UserAPIController extends Controller
             }
         }
         $resData['parent_director'] = $this->directoryRepository->getParentDir($param['parent_id']);
+        if (!empty($resData['parent_director'])) {
+            foreach ($resData['parent_director'] as $data) {
+                if (!is_null($data->path)) {
+                    $data->path = json_decode($data->path);
+                }
+            }
+        }
         return app()->make(ResponseHelper::class)->success(
             $resData
         );
