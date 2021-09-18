@@ -113,7 +113,7 @@ class UserAPIController extends Controller
             $param['nas_dir'] = $param['director'];
             $param['vps_dir'] = '-';
             $param['user_id'] = Auth::user()->id;
-            Log::info('Cac tham so: ' . json_encode($dir));
+            Log::info('Cac tham so: ' . json_encode($param));
             $createDir = $this->directoryRepository->create($param);
             $createDir->directory_id = $createDir->id;
             if ($createDir) {
