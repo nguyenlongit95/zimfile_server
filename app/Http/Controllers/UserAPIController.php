@@ -99,9 +99,11 @@ class UserAPIController extends Controller
         }
         $dir = self::BASE_PATH . '/' . Auth::user()->name;
         if ($param['level'] > 1 && $param['parent_id'] > 0) {
+            // Sub folder
             $parentDir = $this->directoryRepository->find($param['parent_id']);
             $dir = $dir . $parentDir->nas_dir . $param['director'];
         } else {
+            // Main folder
             $dir = self::BASE_PATH . '/' . Auth::user()->name . '/' . $param['director'];
         }
         try {
@@ -114,13 +116,11 @@ class UserAPIController extends Controller
             $createDir = $this->directoryRepository->create($param);
             $createDir->directory_id = $createDir->id;
             if ($createDir) {
-                Log::info('User: ' . Auth::user()->id . ' create directory ' . $dir . ' at ' . Carbon::now());
                 return app()->make(ResponseHelper::class)->success($createDir);
             }
-            Log::error('Insert Database dir error: ' . $dir);
             // response data has directory
             return app()->make(ResponseHelper::class)->error();
-        } catch (\Exception $exception) {dd($exception);
+        } catch (\Exception $exception) {
             Log::error($exception);
             return app()->make(ResponseHelper::class)->error();
         }
