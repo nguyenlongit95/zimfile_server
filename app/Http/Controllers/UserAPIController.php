@@ -223,9 +223,10 @@ class UserAPIController extends Controller
             return app()->make(ResponseHelper::class)->unAuthenticated();
         }
         $param = $request->all();
-
+        $resData['directors'] = $this->directoryRepository->listDirectories(Auth::user()->getAuthIdentifier(), $param['parent_id']);
+        $resData['parent_director'] = $this->directoryRepository->getParentDir($param['parent_id']);
         return app()->make(ResponseHelper::class)->success(
-            $this->directoryRepository->listDirectories(Auth::user()->getAuthIdentifier(), $param['parent_id'])
+            $resData
         );
     }
 

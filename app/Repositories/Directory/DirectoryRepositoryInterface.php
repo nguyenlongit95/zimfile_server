@@ -18,4 +18,10 @@ interface DirectoryRepositoryInterface
      * @return mixed
      */
     public function dirJob($dirId);
+
+    /**
+     * @param $parentId
+     * @return mixed
+     */
+    public function getParentDir($parentId);
 }
