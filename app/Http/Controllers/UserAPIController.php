@@ -224,6 +224,13 @@ class UserAPIController extends Controller
         }
         $param = $request->all();
         $resData['directors'] = $this->directoryRepository->listDirectories(Auth::user()->getAuthIdentifier(), $param['parent_id']);
+        if (!empty($resData['directors'])) {
+            foreach ($resData['directors'] as $data) {
+                if (!is_null($data->path)) {
+                    $data->path = json_decode($data->path);
+                }
+            }
+        }
         $resData['parent_director'] = $this->directoryRepository->getParentDir($param['parent_id']);
         return app()->make(ResponseHelper::class)->success(
             $resData
