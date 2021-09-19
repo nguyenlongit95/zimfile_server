@@ -30,13 +30,11 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
         $dir = null;
         // List base dir
         if ($parentId == 0) {
-            $dir = Director::where('user_id', $userId)->where('parent_id', 0)
-                ->orderBy('id', 'DESC')->paginate(config('const.paginate'));
+            $dir = Director::where('user_id', $userId)->where('parent_id', 0)->orderBy('id', 'DESC')->get();
         }
         // List subs dir
         if ($parentId > 0) {
-            $dir = Director::where('parent_id', $parentId)->orderBy('id', 'DESC')
-                ->paginate(config('const.paginate'));
+            $dir = Director::where('parent_id', $parentId)->orderBy('id', 'DESC')->get();
         }
         $dir->parent_dir = $this->getParentDir($parentId);
         // response dir
