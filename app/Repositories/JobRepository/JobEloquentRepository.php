@@ -77,9 +77,11 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      *
      * @param array $param
      * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function userListJobs($param)
     {
+        // Find query
         $jobs = Jobs::on();
         if (isset($param['status'])) {
             $jobs = $jobs->where('status', $param['status']);
@@ -87,9 +89,14 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         if (isset($param['type'])) {
             $jobs = $jobs->where('type', $param['type']);
         }
-
-        return $jobs->where('user_id', Auth::user()->getAuthIdentifier())
+        // Select data
+        $jobs = $jobs->where('user_id', Auth::user()->getAuthIdentifier())
             ->orderBy('id', 'DESC')->with(['files'])->paginate(config('const.paginate'));
+        if (is_null($jobs)) {
+            return null;
+        }
+        // merge data path file
+        return $this->addOnPathFile($jobs);
     }
 
     /**
@@ -252,5 +259,43 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         return DB::table('jobs')->where('id', $job->id)->update([
              'editor_assign' => $param['editor_id']
         ]);
+    }
+
+    /**
+     * Function get job in director
+     *
+     * @param object $dir
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function jobInDir($dir)
+    {
+        $jobs = Jobs::where('director_id', $dir->id)->with(['files'])
+            ->paginate(config('const.paginate'));
+        if (is_null($jobs)) {
+            return null;
+        }
+        // Response jobs data
+        return $this->addOnPathFile($jobs);
+    }
+
+    /**
+     * Function add on data path file
+     *
+     * @param $jobs
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    private function addOnPathFile($jobs)
+    {
+        foreach ($jobs as $job) {
+            $job->file_jobs = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->director_id) . '/' . $job->file_jobs;
+            if (is_null($job->files)) {
+                continue;
+            }
+            $job->files->path_download = config('const.public_ip') . $job->user_id . '/' . md5($job->user_id) . '/' . $job->id;
+        }
+        // response data
+        return $jobs;
     }
 }

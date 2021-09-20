@@ -39,6 +39,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/delete-file', [\App\Http\Controllers\UserAPIController::class, 'deleteFile']);
     Route::get('/delete-multi-file', [\App\Http\Controllers\UserAPIController::class, 'deleteMultipleFile']);
     Route::post('/change-password', [\App\Http\Controllers\UserAPIController::class, 'changePassword']);
+    Route::get('/jobs-in-dir', [\App\Http\Controllers\UserAPIController::class, 'listJobInDir']);
     /**
      * Group route for admin panel
      */

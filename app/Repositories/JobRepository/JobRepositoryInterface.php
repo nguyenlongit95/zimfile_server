@@ -62,4 +62,10 @@ interface JobRepositoryInterface
      * @return mixed
      */
     public function manualAssignJob($param);
+
+    /**
+     * @param $dir
+     * @return mixed
+     */
+    public function jobInDir($dir);
 }

@@ -93,7 +93,7 @@ class QCAPIController extends Controller
         if ($param['status'] == 4) {
             try {
                 // Get path file product
-                $path = 'http://3.12.146.14/api/' . $job->user_id . '/' . md5(Carbon::now()) . '/' . $job->id;
+                $path = config('const.public_ip') . $job->user_id . '/' . md5($job->user_id) . '/' . $job->id;
                 $user = User::find($job->user_id);
                 if ($this->jobRepository->update($param, $job->id)) {
                     // Send email to email user

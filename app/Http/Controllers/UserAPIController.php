@@ -257,8 +257,30 @@ class UserAPIController extends Controller
         if (empty($jobs)) {
             return app()->make(ResponseHelper::class)->notFound(trans('message.file_notfound'));
         }
-
+        // response data
         return app()->make(ResponseHelper::class)->success($jobs);
+    }
+
+    /**
+     * Controller function show all job in a folder
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function listJobInDir(Request $request)
+    {
+        $param = $request->all();
+        if (!isset($param['dir_id']) || is_null($param['dir_id'])) {
+            return app()->make(ResponseHelper::class)->notFound(trans('message.file_notfound'));
+        }
+        // Query find jobs
+        $dir = $this->directoryRepository->find($param['dir_id']);
+        if (is_null($dir)) {
+            return app()->make(ResponseHelper::class)->notFound(trans('message.file_notfound'));
+        }
+        // Response data in jobs
+        return app()->make(ResponseHelper::class)->success($this->jobRepository->jobInDir($dir));
     }
 
     /**
