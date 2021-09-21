@@ -15,9 +15,10 @@ class Director extends Model
         'user_id',
         'nas_dir',
         'vps_dir',
-        'level',
-        'parent_id',
-        'path',
+        'level',        // 0 has master folder, > 0 has sub folder
+        'parent_id',    // id of master
+        'path',         // Json string encode
+        'type',         // 1: Photo editing	2: Day to dusk	3: Virtual Staging	4:Additional Retouching
     ];
 
     /**
