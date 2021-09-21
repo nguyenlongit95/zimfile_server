@@ -279,8 +279,10 @@ class UserAPIController extends Controller
         if (is_null($dir)) {
             return app()->make(ResponseHelper::class)->notFound(trans('message.file_notfound'));
         }
+        $data['jobs'] = $this->jobRepository->jobInDir($dir);
+        $data['parent_director'] = $this->directoryRepository->getParentDir($dir->parent_id);
         // Response data in jobs
-        return app()->make(ResponseHelper::class)->success($this->jobRepository->jobInDir($dir));
+        return app()->make(ResponseHelper::class)->success($data);
     }
 
     /**
