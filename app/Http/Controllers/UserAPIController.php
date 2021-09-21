@@ -280,7 +280,7 @@ class UserAPIController extends Controller
             return app()->make(ResponseHelper::class)->notFound(trans('message.file_notfound'));
         }
         $data['jobs'] = $this->jobRepository->jobInDir($dir);
-        $data['parent_director'] = $this->directoryRepository->getParentDir($dir->parent_id);
+        $data['parent_director'] = $this->directoryRepository->getParentDir($param['dir_id']);
         // Response data in jobs
         return app()->make(ResponseHelper::class)->success($data);
     }
