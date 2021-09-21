@@ -49,7 +49,12 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
      */
     public function getParentDir($parentId)
     {
-        return DB::table('directors')->where('id', $parentId)->first();
+        $dir = DB::table('directors')->where('id', $parentId)->first();
+        if (!is_null($dir) && !is_null($dir->path)) {
+            $dir->path = json_decode($dir->path);
+        }
+        // response data
+        return $dir;
     }
 
     /**
