@@ -34,7 +34,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      * @return bool
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function uploadJobs($file, $directoryId, $type)
+    public function uploadJobs($file, $directoryId)
     {
         // get dir path
         $directory = app()->make(DirectoryRepositoryInterface::class)->find($directoryId);
@@ -63,7 +63,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             $param['time_upload'] = Carbon::now();
             $param['time_confirm'] = null;
             $param['time_done'] = null;
-            $param['type'] = $type;
+            $param['type'] = 0;
             Log::info('User: ' . Auth::user()->email . ' create a job in : ' . $path);
             return $this->create($param);
         } catch (\Exception $exception) {

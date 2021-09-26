@@ -145,7 +145,7 @@ class UserAPIController extends Controller
             case 1:
                 // passed
                 $file = $request->file('file');
-                $upFile = $this->jobRepository->uploadJobs($file, $param['directory_id'], $param['type']);
+                $upFile = $this->jobRepository->uploadJobs($file, $param['directory_id']);
                 if ($upFile == false) {
                     return app()->make(ResponseHelper::class)->error();
                 }
