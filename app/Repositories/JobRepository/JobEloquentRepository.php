@@ -294,6 +294,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
                 continue;
             }
             $job->files->path_download = config('const.public_ip') . $job->user_id . '/' . md5($job->user_id) . '/' . $job->id;
+            $job->files->image = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->files->director_id) . '/' . $job->files->image;
         }
         // response data
         return $jobs;
