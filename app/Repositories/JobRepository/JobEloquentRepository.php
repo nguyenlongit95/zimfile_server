@@ -45,10 +45,10 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         $pathFile = $directory->nas_dir;
         if ($directory->parent_id > 0) {
             $parentDir = app()->make(DirectoryRepositoryInterface::class)->find($directory->parent_id);
-            $pathFile = $parentDir->nas_dir . $pathFile;
+            $pathFile = $parentDir->nas_dir . '/' . $pathFile;
         }
         try {
-            $path = self::BASE_PATH . '/' . Auth::user()->name . $pathFile . '/' . $file->getClientOriginalName();
+            $path = self::BASE_PATH . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
             // Upload file to storage
             $putNASStorage = Storage::disk('ftp')->put($path, $file->get());
             if (!$putNASStorage) {
