@@ -294,7 +294,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             $job->file_jobs = $fileJobs;
             try {
                 $getFile = Storage::disk('ftp')->get($fileJobs);
-                $job->file_jobs_content = mb_convert_encoding($getFile, 'UTF-8', 'UTF-8');
+                $job->file_jobs_content = mb_convert_encoding($getFile, 'base64', 'base64');
             } catch (\Exception $exception) {
                 Log::error($exception->getMessage());
                 $job->file_jobs_content = '';
