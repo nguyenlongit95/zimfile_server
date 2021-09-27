@@ -285,11 +285,21 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      * @param $jobs
      * @return mixed
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     private function addOnPathFile($jobs)
     {
         foreach ($jobs as $job) {
-            $job->file_jobs = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->director_id) . '/' . $job->file_jobs;
+            $fileJobs = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->director_id) . '/' . $job->file_jobs;
+            $job->file_jobs = $fileJobs;
+            try {
+                $getFile = Storage::disk('ftp')->get($fileJobs);
+                $job->file_jobs_content = mb_convert_encoding($getFile, 'UTF-8', 'UTF-8');
+            } catch (\Exception $exception) {
+                Log::error($exception->getMessage());
+                $job->file_jobs_content = '';
+            }
+            // if jobs exits file
             if (is_null($job->files)) {
                 continue;
             }

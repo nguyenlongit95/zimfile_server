@@ -65,7 +65,7 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
      */
     public function dirJob($dirId)
     {
-        $path = 'http://123.24.142.132/mnt';
+        $path = '';
         $dir = Director::find($dirId);
         if (!$dir) {
             return null;
