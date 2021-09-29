@@ -52,7 +52,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             $path = self::BASE_PATH . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
             // Save to public
             $pathThumbnail = 'app/'.md5(Carbon::now()->toString()) . Auth::id() . '.png';
-            \Intervention\Image\Facades\Image::make($file)->fit(150, 150)->save($pathThumbnail);
+            \Intervention\Image\Facades\Image::make($file)->fit(450, 450)->save($pathThumbnail);
             // Upload file to storaged
             $putNASStorage = Storage::disk('ftp')->put($path, $file->get());
             if (!$putNASStorage) {
