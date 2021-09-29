@@ -298,7 +298,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         foreach ($jobs as $job) {
             $fileJobs = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->director_id) . '/' . $job->file_jobs;
             $job->file_jobs = $fileJobs;
-            $job->file_jobs_thumbnail = asset('/app/' . $job->file_jobs_thumbnail);
+            $job->file_jobs_thumbnail = env('APP_URL') . '/app' . $job->file_jobs_thumbnail;
             // if jobs exits file
             if (is_null($job->files)) {
                 continue;
