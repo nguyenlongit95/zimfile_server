@@ -51,7 +51,8 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         try {
             $path = self::BASE_PATH . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
             // Save to public
-            \Intervention\Image\Facades\Image::make($file)->fit(150, 150)->save(public_path() . $path);
+            $pathThumbnail = public_path('app/'.md5(Carbon::now()->toString()) . Auth::id() . '.png');
+            \Intervention\Image\Facades\Image::make($file)->fit(150, 150)->save($pathThumbnail);
             // Upload file to storage
             $putNASStorage = Storage::disk('ftp')->put($path, $file->get());
             if (!$putNASStorage) {
@@ -67,7 +68,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             $param['time_confirm'] = null;
             $param['time_done'] = null;
             $param['type'] = 0;
-            $param['file_jobs_thumbnail'] = $path;  // Thumbnails
+            $param['file_jobs_thumbnail'] = $pathThumbnail;  // Thumbnails
             Log::info('User: ' . Auth::user()->email . ' create a job in : ' . $path);
             return $this->create($param);
         } catch (\Exception $exception) {
