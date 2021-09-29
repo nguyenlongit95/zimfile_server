@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Image;
 
 class JobEloquentRepository extends EloquentRepository implements JobRepositoryInterface
 {
@@ -49,6 +50,8 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         }
         try {
             $path = self::BASE_PATH . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
+            // Save to public
+            \Intervention\Image\Facades\Image::make($file)->fit(150, 150)->save(public_path($path));
             // Upload file to storage
             $putNASStorage = Storage::disk('ftp')->put($path, $file->get());
             if (!$putNASStorage) {
@@ -59,11 +62,12 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             $param['director_id'] = $directoryId;
             $param['file_id'] = null;
             $param['file_jobs'] = $file->getClientOriginalName();
-            $param['status'] = 1;   // status 1 is not assign
+            $param['status'] = 1;       // status 1 is not assign
             $param['time_upload'] = Carbon::now();
             $param['time_confirm'] = null;
             $param['time_done'] = null;
             $param['type'] = 0;
+            $param['file_jobs_thumbnail'] = $path;  // Thumbnails
             Log::info('User: ' . Auth::user()->email . ' create a job in : ' . $path);
             return $this->create($param);
         } catch (\Exception $exception) {
@@ -267,6 +271,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      * @param object $dir
      * @return mixed
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function jobInDir($dir)
     {
@@ -292,13 +297,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         foreach ($jobs as $job) {
             $fileJobs = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->director_id) . '/' . $job->file_jobs;
             $job->file_jobs = $fileJobs;
-            try {
-                $getFile = Storage::disk('ftp')->get($fileJobs);
-                $job->file_jobs_content = mb_convert_encoding($getFile, 'base64', 'base64');
-            } catch (\Exception $exception) {
-                Log::error($exception->getMessage());
-                $job->file_jobs_content = '';
-            }
+            $job->file_jobs_thumbnail = asset('/app/' . $job->file_jobs_thumbnail);
             // if jobs exits file
             if (is_null($job->files)) {
                 continue;
