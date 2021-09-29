@@ -50,6 +50,9 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         }
         try {
             $path = self::BASE_PATH . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
+            if (!file_exists($path)) {
+                mkdir($path, 777, true);
+            }
             // Save to public
             \Intervention\Image\Facades\Image::make($file)->fit(150, 150)->save(public_path() . $path);
             // Upload file to storage
