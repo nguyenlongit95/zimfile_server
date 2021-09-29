@@ -51,9 +51,9 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         try {
             $path = self::BASE_PATH . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
             // Save to public
-            $pathThumbnail = public_path('app/'.md5(Carbon::now()->toString()) . Auth::id() . '.png');
+            $pathThumbnail = 'app/'.md5(Carbon::now()->toString()) . Auth::id() . '.png';
             \Intervention\Image\Facades\Image::make($file)->fit(150, 150)->save($pathThumbnail);
-            // Upload file to storage
+            // Upload file to storaged
             $putNASStorage = Storage::disk('ftp')->put($path, $file->get());
             if (!$putNASStorage) {
                 return false;
@@ -298,7 +298,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         foreach ($jobs as $job) {
             $fileJobs = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->director_id) . '/' . $job->file_jobs;
             $job->file_jobs = $fileJobs;
-            $job->file_jobs_thumbnail = env('APP_URL') . '/app' . $job->file_jobs_thumbnail;
+            $job->file_jobs_thumbnail = env('APP_URL') . '/' . $job->file_jobs_thumbnail;
             // if jobs exits file
             if (is_null($job->files)) {
                 continue;
