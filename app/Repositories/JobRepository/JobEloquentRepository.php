@@ -276,7 +276,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function jobInDir($dir)
     {
-        $jobs = Jobs::where('director_id', $dir->id)->with(['files'])
+        $jobs = Jobs::where('director_id', $dir->id)->with(['files'])->orderBy('id', 'DESC')
             ->paginate(config('const.paginate'));
         if (is_null($jobs)) {
             return null;

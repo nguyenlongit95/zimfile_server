@@ -190,7 +190,7 @@ class UserAPIController extends Controller
         $param = $request->all();
         $arrFileUploadSuccess = array();
         foreach ($files as $file) {
-            $upFile = $this->jobRepository->uploadJobs($file,  $param['directory_id'], $param['type']);
+            $upFile = $this->jobRepository->uploadJobs($file,  $param['directory_id']);
             $fileUploadStt = null;
             if ($upFile == false) {
                 $fileUploadStt = [
