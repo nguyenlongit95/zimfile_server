@@ -92,10 +92,17 @@ class QCAPIController extends Controller
         // 4 done
         if ($param['status'] == 4) {
             try {
+                $file = $this->filesRepository->find($job->file_id);dd($file);
+                app()->make(DirectoryRepositoryInterface::class)->dirJob($job->director_id) . '/' . $job->file_jobs;
+                // Create thumbnail and return data
+//                $file = Storage::disk('ftp')->get();
+
                 // Get path file product
                 $path = config('const.public_ip') . $job->user_id . '/' . md5($job->user_id) . '/' . $job->id;
                 $user = User::find($job->user_id);
                 if ($this->jobRepository->update($param, $job->id)) {
+
+
                     // Send email to email user
                     Mail::to($user->email)->send(
                         new MailNotification($path)

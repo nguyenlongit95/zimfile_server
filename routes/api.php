@@ -51,6 +51,7 @@ Route::middleware('auth:api')->group(function () {
             Route::post('/update-profile', [\App\Http\Controllers\AdminAPIController::class, 'updateProfile']);
             Route::post('/create-user', [\App\Http\Controllers\AdminAPIController::class, 'createUser']);
             Route::get('/delete-user', [\App\Http\Controllers\AdminAPIController::class, 'deleteUser']);
+            Route::get('{date}/download-file', [\App\Http\Controllers\AdminAPIController::class, 'downloadFile']);
         });
         // Route jobs for admin panel
         Route::get('list-jobs', [\App\Http\Controllers\AdminAPIController::class, 'listJobs']);

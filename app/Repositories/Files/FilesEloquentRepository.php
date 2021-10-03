@@ -14,17 +14,13 @@ use Image;
 class FilesEloquentRepository extends EloquentRepository implements FilesRepositoryInterface
 {
     /**
-     * @var int
-     */
-    private $maxFileSize = 52428800;
-    private $extFailed = 'exe';
-
-    /**
      * Define global const
      */
     const THUMBNAIL_HEIGHT = 150;
     const THUMBNAIL_WIDTH = 150;
     const THUMBNAIL_RATE = 0.75;
+    const MAX_FILE_SIZE = 524288000;
+    const EXT_FAILED = 'exe';
 
     /**
      * @return mixed
@@ -43,11 +39,11 @@ class FilesEloquentRepository extends EloquentRepository implements FilesReposit
     public function validateFile($file)
     {
         // compare has byte
-        if ($file->getSize() >= $this->maxFileSize) {
+        if ($file->getSize() >= self::MAX_FILE_SIZE) {
             return 2; // error size
         }
         // compare extend .exe
-        if ($file->getClientOriginalExtension() == $this->extFailed) {
+        if ($file->getClientOriginalExtension() == self::EXT_FAILED) {
             return 3; // error extend
         }
         // passed

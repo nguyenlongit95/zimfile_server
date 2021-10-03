@@ -133,12 +133,17 @@ class EditorAPIController extends Controller
             return app()->make(ResponseHelper::class)->error();
         }
         // Data init update job to confirm
-        $data['status'] = 2;
+        $data['status'] = 3;
         $data['time_confirm'] = Carbon::now();
         $data['time_upload'] = Carbon::now();
-        $confirm = $this->jobRepository->update($data, $job->id);
-        if (!$confirm) {
-            return app()->make(ResponseHelper::class)->error();
+        try {
+            // Update jobs to be confirm
+            $confirm = $this->jobRepository->update($data, $job->id);
+            if (!$confirm) {
+                return app()->make(ResponseHelper::class)->error();
+            }
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
         }
         // response data success
         return app()->make(ResponseHelper::class)->success($data);

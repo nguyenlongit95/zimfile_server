@@ -50,10 +50,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         }
         try {
             $path = self::BASE_PATH . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
-            // Save to public
-            $pathThumbnail = 'app/'.md5(Carbon::now()->toString()) . Auth::id() . '.png';
-            \Intervention\Image\Facades\Image::make($file)->fit(450, 450)->save($pathThumbnail);
-            // Upload file to storaged
+            // Upload file to storage
             $putNASStorage = Storage::disk('ftp')->put($path, $file->get());
             if (!$putNASStorage) {
                 return false;
@@ -63,16 +60,16 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             $param['director_id'] = $directoryId;
             $param['file_id'] = null;
             $param['file_jobs'] = $file->getClientOriginalName();
-            $param['status'] = 1;       // status 1 is not assign
+            $param['status'] = 1;                                   // status default 1 is not assign
             $param['time_upload'] = Carbon::now();
             $param['time_confirm'] = null;
             $param['time_done'] = null;
             $param['type'] = 0;
-            $param['file_jobs_thumbnail'] = $pathThumbnail;  // Thumbnails
+            $param['file_jobs_thumbnail'] = null;         // Thumbnails
             Log::info('User: ' . Auth::user()->email . ' create a job in : ' . $path);
             return $this->create($param);
         } catch (\Exception $exception) {
-            Log::error($exception);
+            Log::error($exception->getMessage());
             return false;
         }
     }
@@ -83,6 +80,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      * @param array $param
      * @return mixed
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function userListJobs($param)
     {
@@ -277,12 +275,12 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
     public function jobInDir($dir)
     {
         $jobs = Jobs::where('director_id', $dir->id)->with(['files'])->orderBy('id', 'DESC')
-            ->paginate(config('const.paginate'));
+            ->get();
         if (is_null($jobs)) {
             return null;
         }
         // Response jobs data
-        return $this->addOnPathFile($jobs);
+        return $this->addOnPathFileInDir($jobs);
     }
 
     /**
@@ -298,13 +296,36 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         foreach ($jobs as $job) {
             $fileJobs = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->director_id) . '/' . $job->file_jobs;
             $job->file_jobs = $fileJobs;
-            $job->file_jobs_thumbnail = env('APP_URL') . '/' . $job->file_jobs_thumbnail;
+            //$job->file_jobs_thumbnail = env('APP_URL') . '/' . $job->file_jobs_thumbnail;
+            $job->file_jobs_thumbnail = null;
             // if jobs exits file
             if (is_null($job->files)) {
                 continue;
             }
             $job->files->path_download = config('const.public_ip') . $job->user_id . '/' . md5($job->user_id) . '/' . $job->id;
             $job->files->image = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->files->director_id) . '/' . $job->files->image;
+        }
+        // response data
+        return $jobs;
+    }
+
+    /**
+     * Add on param arrtibute jobs in directors
+     *
+     * @param $jobs
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    private function addOnPathFileInDir($jobs)
+    {
+        foreach ($jobs as $job) {
+            $fileJobs = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->director_id) . '/' . $job->file_jobs;
+            // if jobs exits file
+            if (!is_null($job->files)) {
+                $job->files->path_download = config('const.public_ip') . $job->user_id . '/' . md5($job->user_id) . '/' . $job->id;
+                $job->files->image = app()->make(DirectoryRepositoryInterface::class)->dirJob($job->files->director_id) . '/' . $job->files->image;
+            }
+            $job->file_jobs_thumbnail = null;
         }
         // response data
         return $jobs;
