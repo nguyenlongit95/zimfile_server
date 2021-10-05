@@ -23,6 +23,7 @@ class Jobs extends Model
         'type',         // 1: Photo editing	2: Day to dusk	3: Virtual Staging	4:Additional Retouching
         'editor_assign',
         'file_jobs_thumbnail',
+        'note',
     ];
 
     /**

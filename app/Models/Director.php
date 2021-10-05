@@ -19,6 +19,9 @@ class Director extends Model
         'parent_id',    // id of master
         'path',         // Json string encode
         'type',         // 1: Photo editing	2: Day to dusk	3: Virtual Staging	4:Additional Retouching
+        'status',       // 0: reject, 1 chưa assign, 2 đã asign, 3 confirm, 4 done
+        'editor_id',    // id user of editor
+        'note',
     ];
 
     /**

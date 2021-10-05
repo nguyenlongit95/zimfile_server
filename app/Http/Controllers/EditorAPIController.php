@@ -79,14 +79,23 @@ class EditorAPIController extends Controller
         if ($this->jobRepository->checkJobOld($param) == false) {
             return app()->make(ResponseHelper::class)->validation('You still have unfinished business, finish it then get more work.');
         }
-        // Update jobs data
+        $dir = $this->directoryRepository->find($param['dir_id']);
+        $jobInDirect = $this->jobRepository->jobInDir($dir);
         $param['editor_assign'] = Auth::user()->getAuthIdentifier();
         $param['status'] = 2;
-        $param['id'] = $param['job_id'];
+        if (!empty($jobInDirect)) {
+            foreach ($jobInDirect as $item) {
+                // Update jobs data
+                $this->jobRepository->update($param, $item->id);
+            }
+        }
+        // Update folder
         try {
-            $this->jobRepository->update($param, $param['id']);
-            return app()->make(ResponseHelper::class)->success($this->jobRepository->find($param['id']));
+            $param['editor_id'] = Auth::user()->getAuthIdentifier();
+            $this->directoryRepository->update($param, $param['dir_id']);
+            return app()->make(ResponseHelper::class)->success($this->directoryRepository->find($param['dir_id']));
         } catch (\Exception $exception) {
+            dd($exception);
             Log::error($exception->getMessage());
             return app()->make(ResponseHelper::class)->error();
         }
@@ -128,18 +137,24 @@ class EditorAPIController extends Controller
     {
         $param = $request->all();
         // Get for job
-        $job = $this->jobRepository->find($param['job_id']);
-        if (!$job) {
+        $dir = $this->directoryRepository->find($param['dir_id']);
+        if (!$dir) {
             return app()->make(ResponseHelper::class)->error();
+        }
+        $jobInDIr = $this->jobRepository->jobInDir($dir);
+        if (!empty($jobInDIr)) {
+            foreach ($jobInDIr as $job) {
+                $dataJob['time_confirm'] = Carbon::now();
+                $dataJob['time_upload'] = Carbon::now();
+                $dataJob['status'] = 3;
+                $this->jobRepository->update($dataJob, $job->id);
+            }
         }
         // Data init update job to confirm
         $data['status'] = 3;
-        $data['time_confirm'] = Carbon::now();
-        $data['time_upload'] = Carbon::now();
         try {
             // Update jobs to be confirm
-            $confirm = $this->jobRepository->update($data, $job->id);
-            if (!$confirm) {
+            if (!$this->directoryRepository->update($data, $dir->id)) {
                 return app()->make(ResponseHelper::class)->error();
             }
         } catch (\Exception $exception) {

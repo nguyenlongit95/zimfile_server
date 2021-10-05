@@ -2,6 +2,7 @@
 
 namespace App\Repositories\JobRepository;
 
+use App\Models\Director;
 use App\Models\Files;
 use App\Models\Jobs;
 use App\Repositories\Directory\DirectoryRepositoryInterface;
@@ -110,17 +111,9 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function getJobsForEditor($param)
     {
-        $jobs = Jobs::on();
-        if (isset($param['status'])) {
-            $jobs = $jobs->where('status', $param['status']);
-        }
-        if (isset($param['type'])) {
-            $jobs = $jobs->where('type', $param['type']);
-        }
-
-        return $jobs->where('editor_assign', Auth::user()->getAuthIdentifier())
-            ->orWhere('editor_assign', null)
-            ->orderBy('id', 'DESC')->paginate(config('const.paginate'));
+        // Response query data
+        return Director::where('level', 2)->where('editor_id', null)->orWhere('editor_id', Auth::id())
+            ->orderByRaw('status', [1, 0, 3])->get();
     }
 
     /**
@@ -151,11 +144,11 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function checkJobsBeforeAssign($param)
     {
-        $job = Jobs::find($param['job_id']);
+        $job = Director::find($param['dir_id']);
         if (!$job) {
             return false;
         }
-        if ($job->editor_assign == Auth::user()->getAuthIdentifier() || !is_null($job->editor_assign)) {
+        if ($job->editor_id == Auth::user()->getAuthIdentifier() || !is_null($job->editor_assign)) {
             return false;
         }
 
@@ -215,7 +208,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function checkJobOld($param)
     {
-        $jobs = Jobs::where('editor_assign', Auth::user()->getAuthIdentifier())
+        $jobs = Director::where('editor_id', Auth::user()->getAuthIdentifier())
             ->where('status', 2)->count();
         if ($jobs > 0) {
             return false;
