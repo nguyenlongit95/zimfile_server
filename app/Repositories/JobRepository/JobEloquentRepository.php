@@ -112,7 +112,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
     public function getJobsForEditor($param)
     {
         return Director::where('level', 2)->where('editor_id', null)->orWhere('editor_id', Auth::id())
-            ->orderByRaw('status', [1, 0, 3])->get();
+            ->where('status', 0)->orderBy('id', 'ASC')->first();
     }
 
     /**
