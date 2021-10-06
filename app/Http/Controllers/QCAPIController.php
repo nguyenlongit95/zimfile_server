@@ -75,15 +75,15 @@ class QCAPIController extends Controller
     public function checkConfirmJobs(Request $request)
     {
         $param = $request->all();
-        $job = $this->jobRepository->find($param['job_id']);
-        if (!$job) {
+        $dir = $this->directoryRepository->find($param['dir_id']);
+        if (!$dir) {
             return app()->make(ResponseHelper::class)->error();
         }
         // 0: reject
         if ($param['status'] == 0) {
-            if ($this->jobRepository->update($param, $job->id)) {
+            if ($this->directoryRepository->update($param, $dir->id)) {
                 return app()->make(ResponseHelper::class)->success(
-                    $this->jobRepository->find($param['job_id'])
+                    $this->directoryRepository->find($param['dir_id'])
                 );
             } else {
                 return app()->make(ResponseHelper::class)->error();
@@ -92,24 +92,20 @@ class QCAPIController extends Controller
         // 4 done
         if ($param['status'] == 4) {
             try {
-                $file = $this->filesRepository->find($job->file_id);dd($file);
-                app()->make(DirectoryRepositoryInterface::class)->dirJob($job->director_id) . '/' . $job->file_jobs;
-                // Create thumbnail and return data
-//                $file = Storage::disk('ftp')->get();
-
-                // Get path file product
-                $path = config('const.public_ip') . $job->user_id . '/' . md5($job->user_id) . '/' . $job->id;
-                $user = User::find($job->user_id);
-                if ($this->jobRepository->update($param, $job->id)) {
-
-
+                $file = $this->filesRepository->find($dir->file_id);
+                /**
+                 * Check again path file download
+                 */
+                $path = config('const.public_ip') . $dir->user_id . '/' . md5($dir->user_id) . '/' . $dir->id;
+                $user = User::find($dir->user_id);
+                if ($this->directoryRepository->update($param, $dir->id)) {
                     // Send email to email user
                     Mail::to($user->email)->send(
                         new MailNotification($path)
                     );
                     // Send email to user
                     return app()->make(ResponseHelper::class)->success(
-                        $this->jobRepository->find($param['job_id'])
+                        $this->jobRepository->find($param['dir_id'])
                     );
                 } else {
                     return app()->make(ResponseHelper::class)->error();

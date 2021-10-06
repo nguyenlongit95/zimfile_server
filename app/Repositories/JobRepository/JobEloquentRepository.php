@@ -111,29 +111,20 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function getJobsForEditor($param)
     {
-        // Response query data
         return Director::where('level', 2)->where('editor_id', null)->orWhere('editor_id', Auth::id())
             ->orderByRaw('status', [1, 0, 3])->get();
     }
 
     /**
-     * Function list jobs for QC
-     *  QC can only see jobs with status of 2 assigned, 3 confirm
+     * Function list jobs for QC, QC can only see jobs with status 3 confirm
+     *
      * @param array $param
      * @return mixed
      */
     public function getJobsForQC($param)
     {
-        $jobs = Jobs::on();
-        if (isset($param['status'])) {
-            $jobs = $jobs->where('status', $param['status']);
-        }
-        if (isset($param['type'])) {
-            $jobs = $jobs->where('type', $param['type']);
-        }
-
-        return $jobs->whereIn('status', [2, 3])
-            ->orderBy('id', 'DESC')->with(['files'])->paginate(config('const.paginate'));
+        return Director::where('level', 2)->where('editor_id', '<>', null)
+            ->where('status', 3)->get();
     }
 
     /**
@@ -151,7 +142,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         if ($job->editor_id == Auth::user()->getAuthIdentifier() || !is_null($job->editor_assign)) {
             return false;
         }
-
+        // Return pass param
         return true;
     }
 
