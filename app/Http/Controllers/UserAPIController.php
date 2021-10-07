@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Models\User;
 use App\Repositories\Directory\DirectoryRepositoryInterface;
 use App\Repositories\Files\FilesRepositoryInterface;
 use App\Repositories\JobRepository\JobRepositoryInterface;
@@ -331,19 +332,22 @@ class UserAPIController extends Controller
      *
      * @param Request $request
      * @param $userId
-     * @param $slug
-     * @param $jobId
      * @return |null
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function downloadFileProduct(Request $request, $userId, $slug, $jobId)
+    public function downloadFileProduct(Request $request)
     {
-        $job = $this->jobRepository->find($jobId);
-        if (!$job) {
-            return null;
+        $param = $request->all();
+        $user = User::find($param['user_id']);
+        // Check user exits
+        if (!$user) {
+            return app()->make(ResponseHelper::class)->error();
         }
+        // Init path download
+        $pathUser = config('const.base_path') . $user->name . '/done/' . $param['date'];
         // Response download file for jobs
         return Storage::disk('ftp')->download(
-            $this->directoryRepository->dirJob($job->director_id) . '/' . $job->file_jobs
+            Storage::disk('ftp')->files($pathUser)[0]
         );
     }
 
