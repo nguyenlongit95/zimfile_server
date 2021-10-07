@@ -135,11 +135,8 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function checkJobsBeforeAssign($param)
     {
-        $job = Director::find($param['dir_id']);
-        if (!$job) {
-            return false;
-        }
-        if ($job->editor_id == Auth::user()->getAuthIdentifier() || !is_null($job->editor_assign)) {
+        $job = DB::table('directors')->where('editor_id', '=', Auth::user()->id)->where('status', 2)->count();
+        if ($job > 0) {
             return false;
         }
         // Return pass param
@@ -199,7 +196,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function checkJobOld($param)
     {
-        $jobs = Director::where('editor_id', Auth::user()->getAuthIdentifier())
+        $jobs = Director::where('editor_id', Auth::user()->id)
             ->where('status', 2)->count();
         if ($jobs > 0) {
             return false;

@@ -75,11 +75,7 @@ class EditorAPIController extends Controller
         if ($this->jobRepository->checkJobsBeforeAssign($param) == false) {
             return app()->make(ResponseHelper::class)->validation('This job has been assigned.');
         }
-        // Check for old job confirm
-        if ($this->jobRepository->checkJobOld($param) == false) {
-            return app()->make(ResponseHelper::class)->validation('You still have unfinished business, finish it then get more work.');
-        }
-        $dir = $this->directoryRepository->find($param['dir_id']);
+        $dir = $this->jobRepository->getJobsForEditor($param);
         $jobPath = $this->directoryRepository->dirJob($dir->id);
         $jobInDirect = $this->jobRepository->jobInDir($dir);
         $this->directoryRepository->copyJobsToEditor($jobPath, $dir);
@@ -95,8 +91,8 @@ class EditorAPIController extends Controller
         try {
             $param['editor_id'] = Auth::user()->getAuthIdentifier();
             // Copy file job to dir of editors
-            $this->directoryRepository->update($param, $param['dir_id']);
-            return app()->make(ResponseHelper::class)->success($this->directoryRepository->find($param['dir_id']));
+            $this->directoryRepository->update($param, $dir->id);
+            return app()->make(ResponseHelper::class)->success($dir);
         } catch (\Exception $exception) {
             dd($exception);
             Log::error($exception->getMessage());
