@@ -138,4 +138,14 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
         }
 
     }
+
+    /**
+     * Function get MyJobs
+     *
+     * @return mixed
+     */
+    public function getMyJobs()
+    {
+        return Director::where('editor_id', Auth::user()->id)->where('status', 2)->first();
+    }
 }

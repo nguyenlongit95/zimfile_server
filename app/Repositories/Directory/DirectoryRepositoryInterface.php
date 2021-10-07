@@ -37,4 +37,9 @@ interface DirectoryRepositoryInterface
      * @return mixed
      */
     public function deleteFileInEditorFolder($editorId);
+
+    /**
+     * @return mixed
+     */
+    public function getMyJobs();
 }

@@ -73,7 +73,7 @@ class EditorAPIController extends Controller
     {
         $param = $request->all();
         if ($this->jobRepository->checkJobsBeforeAssign($param) == false) {
-            return app()->make(ResponseHelper::class)->validation('This job has been assigned.');
+            return app()->make(ResponseHelper::class)->success($this->directoryRepository->getMyJobs());
         }
         $dir = $this->jobRepository->getJobsForEditor($param);
         $jobPath = $this->directoryRepository->dirJob($dir->id);
