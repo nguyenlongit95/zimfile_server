@@ -80,7 +80,9 @@ class EditorAPIController extends Controller
             return app()->make(ResponseHelper::class)->validation('You still have unfinished business, finish it then get more work.');
         }
         $dir = $this->directoryRepository->find($param['dir_id']);
+        $jobPath = $this->directoryRepository->dirJob($dir->id);
         $jobInDirect = $this->jobRepository->jobInDir($dir);
+        $this->directoryRepository->copyJobsToEditor($jobPath, $dir);
         $param['editor_assign'] = Auth::user()->getAuthIdentifier();
         $param['status'] = 2;
         if (!empty($jobInDirect)) {
@@ -92,6 +94,7 @@ class EditorAPIController extends Controller
         // Update folder
         try {
             $param['editor_id'] = Auth::user()->getAuthIdentifier();
+            // Copy file job to dir of editors
             $this->directoryRepository->update($param, $param['dir_id']);
             return app()->make(ResponseHelper::class)->success($this->directoryRepository->find($param['dir_id']));
         } catch (\Exception $exception) {

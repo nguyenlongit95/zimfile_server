@@ -97,11 +97,11 @@ class UserAPIController extends Controller
         if (!isset($param['director'])) {
             return app()->make(ResponseHelper::class)->error();
         }
-        $dir = self::BASE_PATH . '/' . Auth::user()->name;
+        $dir = self::BASE_PATH . '/' . Auth::user()->name . '/';
         if ($param['level'] > 1 && $param['parent_id'] > 0) {
             // Sub folder
             $parentDir = $this->directoryRepository->find($param['parent_id']);
-            $dir = $dir . $parentDir->nas_dir . $param['director'];
+            $dir = $dir . $parentDir->nas_dir . '/' . $param['director'];
         } else {
             // Main folder
             $dir = self::BASE_PATH . '/' . Auth::user()->name . '/' . $param['director'];
@@ -369,6 +369,7 @@ class UserAPIController extends Controller
             foreach ($editors as $editor) {
                 // Create director in NAS
                 Storage::disk('ftp')->makeDirectory(config('const.base_path') . '/editors/' . $editor->name . '_' . $editor->id);
+                Storage::disk('ftp')->makeDirectory(config('const.base_path') . '/editors/' . $editor->name . '_' . $editor->id . '/done');
             }
         }
     }

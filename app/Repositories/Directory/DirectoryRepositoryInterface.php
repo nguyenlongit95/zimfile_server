@@ -24,4 +24,11 @@ interface DirectoryRepositoryInterface
      * @return mixed
      */
     public function getParentDir($parentId);
+
+    /**
+     * @param $jobPath
+     * @param $dir
+     * @return mixed
+     */
+    public function copyJobsToEditor($jobPath, $dir);
 }

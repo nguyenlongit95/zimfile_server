@@ -5,8 +5,11 @@ namespace App\Repositories\Directory;
 use App\Models\Director;
 use App\Models\User;
 use App\Repositories\Eloquent\EloquentRepository;
+use App\Repositories\JobRepository\JobEloquentRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class DirectoryEloquentRepository extends EloquentRepository implements DirectoryRepositoryInterface
 {
@@ -82,5 +85,35 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
         }
         // Response data path
         return $path;
+    }
+
+    /**
+     * Function copy file jobs to editor folders
+     *
+     * @param $jobPath
+     * @param $dir
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function copyJobsToEditor($jobPath, $dir)
+    {
+        // list all jobs in directors
+        $listJobFile = app()->make(JobEloquentRepository::class)->jobInDir($dir);
+        if (is_null($listJobFile)) {
+            return null;
+        }
+        // Init path and copy file jobs to folder of editor
+        $editorPath = config('const.base_path') . 'editors/' . Auth::user()->name . '_' . Auth::user()->id;
+        foreach ($listJobFile as $job) {
+            try {
+                // Copy file to editor folder
+                Storage::disk('ftp')->copy($jobPath . '/' . $job->file_jobs, $editorPath . '/' . $job->file_jobs);
+            } catch (\Exception $exception) {
+                Log::error($exception->getMessage());
+                return null;
+            }
+        }
+        // Response pass status
+        return true;
     }
 }
