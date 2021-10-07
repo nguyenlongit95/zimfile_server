@@ -75,7 +75,8 @@ class QCAPIController extends Controller
     public function checkConfirmJobs(Request $request)
     {
         $param = $request->all();
-        $dir = $this->directoryRepository->find($param['dir_id']);
+
+        $this->directoryRepository->deleteFileInEditorFolder($dir->editor_id);
         if (!$dir) {
             return app()->make(ResponseHelper::class)->error();
         }
@@ -96,9 +97,11 @@ class QCAPIController extends Controller
                 /**
                  * Check again path file download
                  */
-                $path = config('const.public_ip') . $dir->user_id . '/' . md5($dir->user_id) . '/' . $dir->id;
+                $path = config('const.public_ip') . 'download?user_id=' . $dir->user_id . '&date=' . Carbon::now()->format('dmY');
                 $user = User::find($dir->user_id);
                 if ($this->directoryRepository->update($param, $dir->id)) {
+                    // Delete all files from folder of editor
+                    $dir = $this->directoryRepository->find($param['dir_id']);
                     // Send email to email user
                     Mail::to($user->email)->send(
                         new MailNotification($path)

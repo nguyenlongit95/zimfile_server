@@ -116,4 +116,26 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
         // Response pass status
         return true;
     }
+
+    /**
+     * Function delete all file in editor folder
+     *
+     * @param int $editorId
+     * @return mixed
+     */
+    public function deleteFileInEditorFolder($editorId)
+    {
+        $editor = User::find($editorId);
+        $editorPath = config('const.base_path') . 'editors/' . $editor->name . '_' . $editor->id;
+        $files = Storage::disk('ftp')->files($editorPath);
+        try {
+            Storage::disk('ftp')->delete($files);
+            Log::info('QC: ' . Auth::user()->id . ' accept job and delete all file jobs in folder editor: ' . $editor);
+            return true;
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return null;
+        }
+
+    }
 }

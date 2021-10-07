@@ -31,4 +31,10 @@ interface DirectoryRepositoryInterface
      * @return mixed
      */
     public function copyJobsToEditor($jobPath, $dir);
+
+    /**
+     * @param $editorId
+     * @return mixed
+     */
+    public function deleteFileInEditorFolder($editorId);
 }
