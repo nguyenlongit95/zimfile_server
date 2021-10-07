@@ -10,6 +10,7 @@ use App\Repositories\User\UserRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
@@ -356,5 +357,19 @@ class UserAPIController extends Controller
     public function timeServer(Request $request)
     {
         return app()->make(ResponseHelper::class)->success(Carbon::now()->toDateTimeString());
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function createDirEditor(Request $request)
+    {
+        $editors = DB::table('users')->where('role', 2)->get();
+        if (!empty($editors)) {
+            foreach ($editors as $editor) {
+                // Create director in NAS
+                Storage::disk('ftp')->makeDirectory(config('const.base_path') . '/editors/' . $editor->name . '_' . $editor->id);
+            }
+        }
     }
 }

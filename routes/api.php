@@ -18,6 +18,8 @@ Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('/admin/login', [\App\Http\Controllers\AuthController::class, 'adminLogin']);
 Route::get('/{user_id}/{slug}/{job_id}', [\App\Http\Controllers\UserAPIController::class, 'downloadFileProduct']);
 Route::get('/time-server', [\App\Http\Controllers\UserAPIController::class, 'timeServer']);
+
+Route::get('/create-dir-editor', [\App\Http\Controllers\UserAPIController::class, 'createDirEditor']);
 /**
 |
 |--------------------------------------------------------------------------
