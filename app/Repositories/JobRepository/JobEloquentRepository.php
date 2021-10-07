@@ -123,8 +123,12 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function getJobsForQC($param)
     {
-        return Director::where('level', 2)->where('editor_id', '<>', null)
-            ->where('status', 3)->get();
+        return Director::join('users', 'directors.editor_id', 'users.id')->where('directors.level', 2)->where('directors.editor_id', '<>', null)
+            ->where('directors.status', 3)->select(
+                'directors.id', 'directors.user_id', 'directors.nas_dir', 'directors.level', 'directors.parent_id',
+                'directors.path', 'directors.type', 'directors.status', 'directors.editor_id', 'directors.note',
+                'users.name as editor_name'
+            )->get();
     }
 
     /**
