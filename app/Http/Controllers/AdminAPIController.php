@@ -12,7 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Maatwebsite\Excel\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class AdminAPIController extends Controller
 {
@@ -94,10 +94,8 @@ class AdminAPIController extends Controller
         if (empty($user)) {
             return app()->make(ResponseHelper::class)->notFound(trans('message.data_notfound'));
         }
-        $resData['user'] = $user;
-        $directories = $this->directoryRepository->listDirectories($user->id);
-        $resData['directories'] = $directories;
-
+        $resData = $user;
+        // Response data this user
         return  app()->make(ResponseHelper::class)->success($resData);
     }
 
@@ -192,19 +190,79 @@ class AdminAPIController extends Controller
     public function createUser(Request $request)
     {
         $param = $request->all();
+        // Init data user
         $param['email_verified_at'] = Carbon::now();
         $param['password'] = Hash::make($request->password);
         $param['verified_token'] = $param['password'];
         $param['status'] = config('const.users.status.active');
         $param['total_file'] = 0;
-        $param['base_path'] = '/files/user/';
+        $param['base_path'] = config('const.base_path');
         $param['role'] = config('const.user');
+        $param['remember_token'] = Hash::make($request->password);
+        $create = $this->userRepository->create($param);
+        if ($create) {
+            // Create director in NAS storage
+            Storage::disk('ftp')->makeDirectory(config('const.base_path') . $param['name']);
+            Storage::disk('ftp')->makeDirectory(config('const.base_path') . $param['name'] . '/done');
+            return app()->make(ResponseHelper::class)->success($param);
+        }
+        // Response error
+        return app()->make(ResponseHelper::class)->error();
+    }
+
+    /**
+     * Controller function create new editor
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function createEditor(Request $request)
+    {
+        $param = $request->all();
+        // Init data user
+        $param['email_verified_at'] = Carbon::now();
+        $param['password'] = Hash::make($request->password);
+        $param['verified_token'] = $param['password'];
+        $param['status'] = config('const.users.status.active');
+        $param['total_file'] = 0;
+        $param['base_path'] = config('const.base_path');
+        $param['role'] = config('const.editor');
+        $param['remember_token'] = Hash::make($request->password);
+        $create = $this->userRepository->create($param);
+        if ($create) {
+            // Create director in NAS storage
+            Storage::disk('ftp')->makeDirectory(config('const.base_path') . 'editors/' . $param['name'] . '_' . $create->id);
+            return app()->make(ResponseHelper::class)->success($param);
+        }
+        // Response error
+        return app()->make(ResponseHelper::class)->error();
+    }
+
+    /**
+     * Controller function create a QC
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function createQC(Request $request)
+    {
+        $param = $request->all();
+        // Init data user
+        $param['email_verified_at'] = Carbon::now();
+        $param['password'] = Hash::make($request->password);
+        $param['verified_token'] = $param['password'];
+        $param['status'] = config('const.users.status.active');
+        $param['total_file'] = 0;
+        $param['base_path'] = config('const.base_path');
+        $param['role'] = config('const.qc');
         $param['remember_token'] = Hash::make($request->password);
         $create = $this->userRepository->create($param);
         if ($create) {
             return app()->make(ResponseHelper::class)->success($param);
         }
-
+        // Response error
         return app()->make(ResponseHelper::class)->error();
     }
 

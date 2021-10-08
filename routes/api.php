@@ -52,6 +52,8 @@ Route::middleware('auth:api')->group(function () {
             Route::get('/list-image', [\App\Http\Controllers\AdminAPIController::class, 'listImage']);
             Route::post('/update-profile', [\App\Http\Controllers\AdminAPIController::class, 'updateProfile']);
             Route::post('/create-user', [\App\Http\Controllers\AdminAPIController::class, 'createUser']);
+            Route::post('/create-editor', [\App\Http\Controllers\AdminAPIController::class, 'createEditor']);
+            Route::post('/create-qc', [\App\Http\Controllers\AdminAPIController::class, 'createQC']);
             Route::get('/delete-user', [\App\Http\Controllers\AdminAPIController::class, 'deleteUser']);
             Route::get('{date}/download-file', [\App\Http\Controllers\AdminAPIController::class, 'downloadFile']);
         });

@@ -3,6 +3,8 @@ return [
     'paginate' => 10,
     'admin' => 0,
     'user' => 1,
+    'editor' => 2,
+    'qc' => 3,
     'users' => [
         'status' => [
             'active' => 1,
