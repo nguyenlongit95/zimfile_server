@@ -235,7 +235,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function manualAssignJob($param)
     {
-        $job = Jobs::find($param['job_id']);
+        $job = Jobs::find($param['dir_id']);
         if (!$job) {
             return false;
         }
@@ -244,8 +244,8 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             return false;
         }
         // update editor for jobs
-        return DB::table('jobs')->where('id', $job->id)->update([
-             'editor_assign' => $param['editor_id']
+        return DB::table('directors')->where('id', $job->id)->update([
+             'editor_id' => $param['editor_id']
         ]);
     }
 
