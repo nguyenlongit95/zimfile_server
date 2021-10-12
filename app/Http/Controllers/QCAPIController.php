@@ -93,15 +93,12 @@ class QCAPIController extends Controller
                 if ($this->directoryRepository->update($param, $dir->id)) {
                     // Delete all files from folder of editor
                     $this->directoryRepository->deleteFileInEditorFolder($dir->editor_id);
-                    // Send email to email user
-                    Mail::to($user->email)->send(
-                        new MailNotification($path)
-                    );
-                    // Send email to user
+                    // Response data success
                     return app()->make(ResponseHelper::class)->success(
                         $this->jobRepository->find($param['dir_id'])
                     );
                 } else {
+                    // Update error and response none
                     return app()->make(ResponseHelper::class)->error();
                 }
             } catch (\Exception $exception) {
