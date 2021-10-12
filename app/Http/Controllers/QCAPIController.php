@@ -88,8 +88,6 @@ class QCAPIController extends Controller
         if ($param['status'] == 4) {
             try {
                 // Check again path file download
-                $path = config('const.public_ip') . 'download?user_id=' . $dir->user_id . '&date=' . Carbon::now()->format('dmY');
-                $user = User::find($dir->user_id);
                 if ($this->directoryRepository->update($param, $dir->id)) {
                     // Delete all files from folder of editor
                     $this->directoryRepository->deleteFileInEditorFolder($dir->editor_id);
