@@ -42,6 +42,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/delete-multi-file', [\App\Http\Controllers\UserAPIController::class, 'deleteMultipleFile']);
     Route::post('/change-password', [\App\Http\Controllers\UserAPIController::class, 'changePassword']);
     Route::get('/jobs-in-dir', [\App\Http\Controllers\UserAPIController::class, 'listJobInDir']);
+    Route::get('/list-dir-in-done', [\App\Http\Controllers\UserAPIController::class, 'listDirInDone']);
     /**
      * Group route for admin panel
      */
@@ -75,6 +76,6 @@ Route::middleware('auth:api')->group(function () {
      */
     Route::group(['prefix' => 'qc'], function () {
         Route::get('list-jobs', [\App\Http\Controllers\QCAPIController::class, 'listJobs']);
-        Route::get('check-confirm-job', [\App\Http\Controllers\QCAPIController::class, 'checkConfirmJobs']);
+        Route::post('check-confirm-job', [\App\Http\Controllers\QCAPIController::class, 'checkConfirmJobs']);
     });
 });

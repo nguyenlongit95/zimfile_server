@@ -28,11 +28,6 @@ class QCAPIController extends Controller
     protected $jobRepository;
 
     /**
-     * Define global variable base path
-     */
-    const BASE_PATH = '/disk1/DATA';
-
-    /**
      * UserAPIController constructor.
      * @param UserRepositoryInterface $userRepository
      * @param FilesRepositoryInterface $filesRepository
@@ -92,10 +87,7 @@ class QCAPIController extends Controller
         // 4 done
         if ($param['status'] == 4) {
             try {
-                $file = $this->filesRepository->find($dir->file_id);
-                /**
-                 * Check again path file download
-                 */
+                // Check again path file download
                 $path = config('const.public_ip') . 'download?user_id=' . $dir->user_id . '&date=' . Carbon::now()->format('dmY');
                 $user = User::find($dir->user_id);
                 if ($this->directoryRepository->update($param, $dir->id)) {
