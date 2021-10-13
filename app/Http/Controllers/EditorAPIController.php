@@ -97,7 +97,6 @@ class EditorAPIController extends Controller
             $this->directoryRepository->update($param, $dir->id);
             return app()->make(ResponseHelper::class)->success($dir);
         } catch (\Exception $exception) {
-            dd($exception);
             Log::error($exception->getMessage());
             return app()->make(ResponseHelper::class)->error();
         }
