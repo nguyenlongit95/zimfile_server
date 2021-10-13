@@ -77,7 +77,7 @@ class EditorAPIController extends Controller
         }
         $dir = $this->jobRepository->getJobsForEditor($param);
         if (empty($dir)) {
-            return app()->make(ResponseHelper::class)->success();
+            return app()->make(ResponseHelper::class)->validation('Jobs not found.');
         }
         $jobPath = $this->directoryRepository->dirJob($dir->id);
         $jobInDirect = $this->jobRepository->jobInDir($dir);
