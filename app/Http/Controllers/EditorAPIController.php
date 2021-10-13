@@ -76,6 +76,9 @@ class EditorAPIController extends Controller
             return app()->make(ResponseHelper::class)->success($this->directoryRepository->getMyJobs());
         }
         $dir = $this->jobRepository->getJobsForEditor($param);
+        if (empty($dir)) {
+            return app()->make(ResponseHelper::class)->success();
+        }
         $jobPath = $this->directoryRepository->dirJob($dir->id);
         $jobInDirect = $this->jobRepository->jobInDir($dir);
         $this->directoryRepository->copyJobsToEditor($jobPath, $dir);
