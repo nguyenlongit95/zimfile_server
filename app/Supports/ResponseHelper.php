@@ -86,7 +86,7 @@ class ResponseHelper
             'message' => $message,
             'code' => 422,
             'data' => null,
-        ], 200);
+        ], 422);
     }
 
     /**
