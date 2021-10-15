@@ -8,6 +8,7 @@ use App\Repositories\Eloquent\EloquentRepository;
 use App\Repositories\MailLog\MailLogRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserEloquentRepository extends EloquentRepository implements UserRepositoryInterface
 {
@@ -53,5 +54,42 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
     public function getDirAndImage($user)
     {
 
+    }
+
+    /**
+     * Function list all customer
+     * 
+     * @param array $param
+     */
+    public function listCustomers($param) 
+    {
+        $user = User::on();
+        // Condition srarch isset
+        if (isset($param['name'])) {
+            $user->where('name', 'like', '%' . $param['name'] . '%');
+        }
+        if (isset($param['email'])) {
+            $user->where('email', 'like', '%' . $param['email'] . '%');
+        }
+        if (isset($param['phone'])) {
+            $user->where('phone', 'like', '%' . $param['phone'] . '%');
+        }
+        if (isset($param['address'])) {
+            $user->where('address', 'like', '%' . $param['address'] . '%');
+        }
+        // Response data
+        return $user->where('role', 1)->where('status', 1)->orderBy('id', 'DESC')->paginate(config('const.paginate'));
+    }
+
+    /**
+     * Function soft delete a customer
+     * 
+     * @param array $id
+     */
+    public function deleteCustomer($id)
+    {
+        return DB::table('users')->where('id', $id)->update([
+            'status' => 0
+        ]);
     }
 }

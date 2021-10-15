@@ -21,4 +21,16 @@ interface UserRepositoryInterface
      * @return mixed
      */
     public function getDirAndImage($user);
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function listCustomers($param);
+
+    /**
+     * @param $id
+     * @return mixed 
+     */
+    public function deleteCustomer($id);
 }
