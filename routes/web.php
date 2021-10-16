@@ -27,29 +27,29 @@ Route::post('/admin/login',[LoginAndRegisterController::class, 'postLogin']);
  * */
 Route::group(['prefix'=>'admin'],function() {
     // Trang DashBoard sẽ là nơi thống kê sản phẩm và các thông tin liên quan
-    Route::get('/dashboard', [adminController::class, 'dashboard']);
-    Route::get('/logout', [adminController::class, 'logout']);
+    Route::get('/dashboard', [\App\Http\Controllers\AdminController::class, 'dashboard']);
+    Route::get('/logout', [\App\Http\Controllers\AdminController::class, 'logout']);
 
     Route::group(['prefix' => 'customers'], function () {
-        Route::get('/', [adminController::class, 'listCustomers']);
-        Route::post('/search', [adminController::class, 'searchCustomers']);
-        Route::get('/edit/{id}', [adminController::class, 'editCustomers']);
-        Route::post('/update/{id}', [adminController::class, 'updateCustomers']);
-        Route::get('/delete/{id}', [adminController::class, 'deleteCustomers']);
+        Route::get('/', [\App\Http\Controllers\AdminController::class, 'listCustomers']);
+        Route::post('/search', [\App\Http\Controllers\AdminController::class, 'searchCustomers']);
+        Route::get('/edit/{id}', [\App\Http\Controllers\AdminController::class, 'editCustomers']);
+        Route::post('/update/{id}', [\App\Http\Controllers\AdminController::class, 'updateCustomers']);
+        Route::get('/delete/{id}', [\App\Http\Controllers\AdminController::class, 'deleteCustomers']);
     });
 
     Route::group(['prefix' => 'editors'], function () {
-        Route::get('/', [adminController::class, 'listEditors']);
-        Route::post('/search', [adminController::class, 'searchEditors']);
-        Route::post('/edit/{id}', [adminController::class, 'updateEditors']);
-        Route::get('/delete/{id}', [adminController::class, 'deleteEditor']);
-        Route::get('/assign-job/{id}', [adminController::class, 'assignJobs']);
+        Route::get('/', [\App\Http\Controllers\AdminController::class, 'listEditors']);
+        Route::post('/search', [\App\Http\Controllers\AdminController::class, 'searchEditors']);
+        Route::post('/edit/{id}', [\App\Http\Controllers\AdminController::class, 'updateEditors']);
+        Route::get('/delete/{id}', [\App\Http\Controllers\AdminController::class, 'deleteEditor']);
+        Route::get('/assign-job/{id}', [\App\Http\Controllers\AdminController::class, 'assignJobs']);
     });
 
     Route::group(['prefix' => 'qc'], function () {
-        Route::get('/', [adminController::class, 'listQC']);
-        Route::post('/search', [adminController::class, 'searchQC']);
-        Route::post('/edit/{id}', [adminController::class, 'editQC']);
-        Route::get('/delete/{id}', [adminController::class, 'deleteQC']);
+        Route::get('/', [\App\Http\Controllers\AdminController::class, 'listQC']);
+        Route::post('/search', [\App\Http\Controllers\AdminController::class, 'searchQC']);
+        Route::post('/edit/{id}', [\App\Http\Controllers\AdminController::class, 'editQC']);
+        Route::get('/delete/{id}', [\App\Http\Controllers\AdminController::class, 'deleteQC']);
     });
 });
