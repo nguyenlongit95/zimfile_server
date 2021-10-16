@@ -67,4 +67,10 @@ interface JobRepositoryInterface
      * @return mixed
      */
     public function jobInDir($dir);
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function adminAssingJob($id);
 }

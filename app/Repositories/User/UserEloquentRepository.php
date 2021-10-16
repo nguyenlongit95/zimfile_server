@@ -84,12 +84,50 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
     /**
      * Function soft delete a customer
      * 
-     * @param array $id
+     * @param int $id
      */
     public function deleteCustomer($id)
     {
         return DB::table('users')->where('id', $id)->update([
             'status' => 0
         ]);
+    }
+
+    /**
+     * Function list all editors
+     * @param array $param
+     */
+    public function listEditors($param)
+    {
+        $user = User::on();
+        // Condition srarch isset
+        if (isset($param['name'])) {
+            $user->where('name', 'like', '%' . $param['name'] . '%');
+        }
+        if (isset($param['email'])) {
+            $user->where('email', 'like', '%' . $param['email'] . '%');
+        }
+        if (isset($param['phone'])) {
+            $user->where('phone', 'like', '%' . $param['phone'] . '%');
+        }
+        if (isset($param['address'])) {
+            $user->where('address', 'like', '%' . $param['address'] . '%');
+        }
+        // Addon data jobs assign
+        $user = $user->where('role', 2)->where('status', 1)->orderBy('id', 'DESC')
+            ->paginate(config('const.paginate'));
+        if (!empty($user)) {
+            foreach ($user as $value) {
+                $dir = DB::table('directors')->where('editor_id', $value->id)
+                    ->where('status', 2)->count();
+                if ($dir > 0) {
+                    $value->assigned = true;
+                } else {
+                    $value->assigned = false;
+                }
+            }
+        }
+// Response data
+        return $user;
     }
 }

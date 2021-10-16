@@ -31,12 +31,17 @@
             <!-- Widgets dùng để quản lý các thành phần của website như header, sidebar footer -->
             <li>
                 <a href="{{ url('/admin/customers/') }}">
-                <i class="fa fa-user"></i> <span>Customers</span>
+                    <i class="fa fa-circle-o"></i> <span>Customers</span>
                 </a>
             </li>
             <li>
-                <a href="{{ url('/admin/employees/') }}">
-                    <i class="fa fa-circle-o"></i> <span>Employee</span>
+                <a href="{{ url('/admin/editors/') }}">
+                    <i class="fa fa-circle-o"></i> <span>Editors</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/admin/qc/') }}">
+                    <i class="fa fa-circle-o"></i> <span>QC</span>
                 </a>
             </li>
             <li><a href="admin/Documentation"><i class="fa fa-book"></i> <span>Documentation</span></a></li>

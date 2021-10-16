@@ -315,4 +315,15 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         // response data
         return $jobs;
     }
+
+    /**
+     * Function admin assign job
+     */
+    public function adminAssingJob($id)
+    {
+        return DB::table('directors')->where('editor_id', null)->where('status', 1)->orderBy('id', 'ASC')->update([
+            'editor_id' => $id,
+            'status' => 2
+        ]);
+    }
 }

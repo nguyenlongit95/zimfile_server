@@ -33,4 +33,10 @@ interface UserRepositoryInterface
      * @return mixed 
      */
     public function deleteCustomer($id);
+
+    /**
+     * @param $param
+     * @return mixed 
+     */
+    public function listEditors($param);
 }

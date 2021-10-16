@@ -99,7 +99,7 @@ class adminController extends Controller
      */
     public function addCustomers(Request $request)
     {
-        Validation::validationCustomer($request);
+        Validation::validationUsers($request);
         // Initialize user data
         $param = $request->all();
         // Init data user
@@ -140,7 +140,7 @@ class adminController extends Controller
         if (empty($customer)) {
             return redirect('/admin/customers/')->with('thong_bao', 'User account not found.');
         }
-        Validation::validationCustomer($request);
+        Validation::validationUsers($request);
         $param = $request->all();
         if ($param['password'] != null) {
             $param['password'] = Hash::make($request->password);
@@ -170,5 +170,128 @@ class adminController extends Controller
         }
         // Response error message
         return redirect('/admin/customers/')->with('thong_bao', 'User account delete errors, please check again.');
+    }
+
+    /**
+     * Controller function list all editors
+     */
+    public function listEditors(Request $request)
+    {
+        $param = $request->all();
+        $editors = $this->userRepository->listEditors($param);
+        return view('admin.editors.index', compact('editors'));
+    }
+
+    /**
+     * Controller function search editors
+     */
+    public function searchEditors(Request $request)
+    {
+        $param = $request->all();
+        if (isset($param['create']) && $param['create'] != null) {
+            if ($this->addEditor($request)) {
+                return redirect('/admin/editors')->with('thong_bao', 'User account creation successful');
+            }
+            return redirect('/admin/editors')->with('thong_bao', 'User account creation failed, check the system again');            
+        }
+        if (isset($param['search']) && $param['search'] != null) {
+            $editors = $this->userRepository->listEditors($param);
+            return view('admin.editors.index', compact('editors'));
+        }
+    }
+
+    /**
+     * Controller function add new customer
+     */
+    public function addEditor(Request $request)
+    {
+        Validation::validationUsers($request);
+        // Initialize user data
+        $param = $request->all();
+        // Init data user
+        $param['email_verified_at'] = Carbon::now();
+        $param['password'] = Hash::make($request->password);
+        $param['verified_token'] = $param['password'];
+        $param['status'] = config('const.users.status.active');
+        $param['total_file'] = 0;
+        $param['base_path'] = config('const.base_path');
+        $param['role'] = config('const.editor');
+        $param['remember_token'] = Hash::make($request->password);
+        $create = $this->userRepository->create($param);
+        if ($create) {
+            try {
+                // Create director in NAS storage
+                Storage::disk('ftp')->makeDirectory(config('const.base_path') . '/editors/' . $create->name . '_' . $create->id);
+                Storage::disk('ftp')->makeDirectory(config('const.base_path') . '/editors/' . $create->name . '_' . $create->id . '/done');
+                return true;
+            } catch (\Exception $e) {
+                \Log::error($e->getMessage());
+                return false;
+            }
+            return true;
+        }
+        // Error response redirect
+        return false;
+    }
+
+    /**
+     * Controller function update editors
+     */
+    public function updateEditors(Request $request, $id)
+    {
+        $editor = $this->userRepository->find($id);
+        if (empty($editor)) {
+            return redirect('/admin/editors/')->with('thong_bao', 'Editor account not found.');
+        }
+        Validation::validationUsers($request);
+        $param = $request->all();
+        if ($param['password'] != null) {
+            $param['password'] = Hash::make($request->password);
+        } else {
+            unset($param['password']);
+        }
+        if ($this->userRepository->update($param, $id)) {
+            return redirect('/admin/editors/')->with('thong_bao', 'Editor account success.');
+        }
+        // Response error message
+        return redirect('/admin/editors/')->with('thong_bao', 'Editor account errors, please check again.');
+    }
+
+    /**
+     * Controller function delete editor
+     */
+    public function deleteEditor(Request $request, $id)
+    {
+        // Check Editors has exits
+        $editor = $this->userRepository->find($id);
+        if (empty($editor)) {
+            return redirect('/admin/editors/')->with('thong_bao', 'Editor account not found.');
+        }
+        // Soft delete editors
+        $param['status'] = 0;
+        if ($this->userRepository->update($param, $id)) {
+            return redirect('/admin/editors/')->with('thong_bao', 'Editor account deleted.');
+        }
+        // Response error system
+        return redirect('/admin/editors/')->with('thong_bao', 'Editor account errors.');
+    }
+
+    /**
+     * Controller function assign jobs to editors
+     */
+    public function assignJobs(Request $request, $id)
+    {
+        // Check Editors has exits
+        $editor = $this->userRepository->find($id);
+        if (empty($editor)) {
+            return redirect('/admin/editors/')->with('thong_bao', 'Editor account not found.');
+        }
+        // Assign jobs for editor
+        $jobs = $this->jobRepository->adminAssingJob($id);
+        if ($jobs == true) {
+            return redirect('/admin/editors/')->with('thong_bao', 'Assign jobs for editor success.');
+        }
+        // Response data errors
+        return redirect('/admin/editors/')->with('thong_bao', 'Assign jobs for editor failed system.');
     }
 }

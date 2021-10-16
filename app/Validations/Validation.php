@@ -9,7 +9,7 @@ class Validation
      *
      * @param $request
      */
-    public static function validationCustomer($request)
+    public static function validationUsers($request)
     {
         $request->validate([
             'name' => 'required',

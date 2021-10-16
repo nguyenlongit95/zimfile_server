@@ -37,4 +37,12 @@ Route::group(['prefix'=>'admin'],function() {
         Route::post('/update/{id}', [adminController::class, 'updateCustomers']);
         Route::get('/delete/{id}', [adminController::class, 'deleteCustomers']);
     });
+
+    Route::group(['prefix' => 'editors'], function () {
+        Route::get('/', [adminController::class, 'listEditors']);
+        Route::post('/search', [adminController::class, 'searchEditors']);
+        Route::post('/edit/{id}', [adminController::class, 'updateEditors']);
+        Route::get('/delete/{id}', [adminController::class, 'deleteEditor']);
+        Route::get('/assign-job/{id}', [adminController::class, 'assignJobs']);
+    });
 });
