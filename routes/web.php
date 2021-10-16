@@ -45,4 +45,11 @@ Route::group(['prefix'=>'admin'],function() {
         Route::get('/delete/{id}', [adminController::class, 'deleteEditor']);
         Route::get('/assign-job/{id}', [adminController::class, 'assignJobs']);
     });
+
+    Route::group(['prefix' => 'qc'], function () {
+        Route::get('/', [adminController::class, 'listQC']);
+        Route::post('/search', [adminController::class, 'searchQC']);
+        Route::post('/edit/{id}', [adminController::class, 'editQC']);
+        Route::get('/delete/{id}', [adminController::class, 'deleteQC']);
+    });
 });

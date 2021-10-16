@@ -127,7 +127,32 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
                 }
             }
         }
-// Response data
+        // Response data
         return $user;
+    }
+
+    /**
+     * Function list all QC
+     * 
+     * @param array $param
+     */
+    public function listQC($param)
+    {
+        $user = User::on();
+        // Condition srarch isset
+        if (isset($param['name'])) {
+            $user->where('name', 'like', '%' . $param['name'] . '%');
+        }
+        if (isset($param['email'])) {
+            $user->where('email', 'like', '%' . $param['email'] . '%');
+        }
+        if (isset($param['phone'])) {
+            $user->where('phone', 'like', '%' . $param['phone'] . '%');
+        }
+        if (isset($param['address'])) {
+            $user->where('address', 'like', '%' . $param['address'] . '%');
+        }
+        return $user->where('role', 3)->where('status', 1)->orderBy('id', 'DESC')
+        ->paginate(config('const.paginate'));
     }
 }

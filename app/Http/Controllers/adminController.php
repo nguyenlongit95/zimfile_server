@@ -12,6 +12,7 @@ use App\Validations\Validation;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class adminController extends Controller
 {
@@ -293,5 +294,100 @@ class adminController extends Controller
         }
         // Response data errors
         return redirect('/admin/editors/')->with('thong_bao', 'Assign jobs for editor failed system.');
+    }
+
+    /**
+     * Controller function list all QC
+     */
+    public function listQC(Request $request)
+    {
+        $param = $request->all();
+        $qcs = $this->userRepository->listQC($param);
+        return view('admin.qc.index', compact('qcs'));
+    }
+
+    /**
+     * Controller function search QC
+     */
+    public function searchQC(Request $request)
+    {
+        $param = $request->all();
+        if (isset($param['create']) && $param['create'] != null) {
+            if ($this->addQC($request)) {
+                return redirect('/admin/qc')->with('thong_bao', 'User account creation successful');
+            }
+            return redirect('/admin/qc')->with('thong_bao', 'User account creation failed, check the system again');            
+        }
+        if (isset($param['search']) && $param['search'] != null) {
+            $qcs = $this->userRepository->listQC($param);
+            return view('admin.qc.index', compact('qcs'));
+        }
+    }
+
+    /**
+     * Controller function add new customer
+     */
+    public function addQC(Request $request)
+    {
+        Validation::validationUsers($request);
+        // Initialize user data
+        $param = $request->all();
+        // Init data user
+        $param['email_verified_at'] = Carbon::now();
+        $param['password'] = Hash::make($request->password);
+        $param['verified_token'] = $param['password'];
+        $param['status'] = config('const.users.status.active');
+        $param['total_file'] = 0;
+        $param['base_path'] = config('const.base_path');
+        $param['role'] = config('const.qc');
+        $param['remember_token'] = Hash::make($request->password);
+        $create = $this->userRepository->create($param);
+        if ($create) {
+            return true;
+        }
+        // Error response redirect
+        return false;
+    }
+
+    /**
+     * Controller function edit for qc
+     */
+    public function editQC(Request $request, $id)
+    {
+        $qc = $this->userRepository->find($id);
+        if (empty($qc)) {
+            return redirect('/admin/qc/')->with('thong_bao', 'QC account not found.');
+        }
+        Validation::validationUsers($request);
+        $param = $request->all();
+        if ($param['password'] != null) {
+            $param['password'] = Hash::make($request->password);
+        } else {
+            unset($param['password']);
+        }
+        if ($this->userRepository->update($param, $id)) {
+            return redirect('/admin/qc/')->with('thong_bao', 'QC account success.');
+        }
+        // Response error message
+        return redirect('/admin/qc/')->with('thong_bao', 'QC account errors, please check again.');
+    }
+
+    /**
+     * Controller function delete QC
+     */
+    public function deleteQC(Request $request, $id)
+    {
+        // Check QC exits
+        $qc = $this->userRepository->find($id);
+        if (empty($qc)) {
+            return redirect('/admin/qc/')->with('thong_bao', 'QC account not found.');
+        }
+        // Soft delete editors
+        $param['status'] = 0;
+        if ($this->userRepository->update($param, $id)) {
+            return redirect('/admin/qc/')->with('thong_bao', 'QC account deleted.');
+        }
+        // Response error system
+        return redirect('/admin/qc/')->with('thong_bao', 'QC account errors.');
     }
 }

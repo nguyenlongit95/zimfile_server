@@ -44,7 +44,7 @@
                     <i class="fa fa-circle-o"></i> <span>QC</span>
                 </a>
             </li>
-            <li><a href="admin/Documentation"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
+            <li><a target="_blank" href="https://docs.google.com/document/d/15npdEv7eAbYIBWHIBrbizTHAxFuaYMnbM3m7tLBMFGE/edit?fbclid=IwAR2Vck1YYqo6ByDxpSOfCCHg0-A9kqAarme5Aeta711VtnCxmgF7bs_7q9w"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
         </ul>
     </section>
     <!-- /.sidebar -->

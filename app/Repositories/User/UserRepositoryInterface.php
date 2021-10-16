@@ -39,4 +39,10 @@ interface UserRepositoryInterface
      * @return mixed 
      */
     public function listEditors($param);
+    
+    /**
+     * @param $param
+     * @return mixed 
+     */
+    public function listQC($param);
 }
