@@ -14,7 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
-class adminController extends Controller
+class AdminController extends Controller
 {
     /**
      * @var UserRepositoryInterface
