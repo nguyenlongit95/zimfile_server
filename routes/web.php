@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\LoginAndRegisterController;
-use \App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,7 +19,7 @@ use \App\Http\Controllers\AdminController;
 Route::get('/admin/login', [LoginAndRegisterController::class, 'getLogin']);
 Route::post('/admin/login',[LoginAndRegisterController::class, 'postLogin']);
 /*
- * Route cho phia admin
+ * Route cho admin
  * */
 Route::group(['prefix'=>'admin'],function() {
     // Trang DashBoard sẽ là nơi thống kê sản phẩm và các thông tin liên quan
