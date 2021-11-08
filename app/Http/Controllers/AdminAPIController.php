@@ -385,7 +385,16 @@ class AdminAPIController extends Controller
      */
     public function addCustomers(Request $request)
     {
-        Validation::validationUsers($request);
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required|numeric',
+        ], [
+            'name.require' => 'How often do you enter the name of the user?',
+            'email.require' => 'Do you often enter users emails?',
+            'phone.require' => 'How often do you chat with peoples phones?',
+            'phone.numeric' => 'Is the phone so bad?',
+        ]);
         // Initialize user data
         $param = $request->all();
         // Init data user
@@ -426,7 +435,16 @@ class AdminAPIController extends Controller
         if (empty($customer)) {
             return redirect('/admin/customers/')->with('thong_bao', 'User account not found.');
         }
-        Validation::validationUsers($request);
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required|numeric',
+        ], [
+            'name.require' => 'How often do you enter the name of the user?',
+            'email.require' => 'Do you often enter users emails?',
+            'phone.require' => 'How often do you chat with peoples phones?',
+            'phone.numeric' => 'Is the phone so bad?',
+        ]);
         $param = $request->all();
         if ($param['password'] != null) {
             $param['password'] = Hash::make($request->password);
@@ -491,7 +509,16 @@ class AdminAPIController extends Controller
      */
     public function addEditor(Request $request)
     {
-        Validation::validationUsers($request);
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required|numeric',
+        ], [
+            'name.require' => 'How often do you enter the name of the user?',
+            'email.require' => 'Do you often enter users emails?',
+            'phone.require' => 'How often do you chat with peoples phones?',
+            'phone.numeric' => 'Is the phone so bad?',
+        ]);
         // Initialize user data
         $param = $request->all();
         // Init data user
@@ -529,7 +556,16 @@ class AdminAPIController extends Controller
         if (empty($editor)) {
             return redirect('/admin/editors/')->with('thong_bao', 'Editor account not found.');
         }
-        Validation::validationUsers($request);
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required|numeric',
+        ], [
+            'name.require' => 'How often do you enter the name of the user?',
+            'email.require' => 'Do you often enter users emails?',
+            'phone.require' => 'How often do you chat with peoples phones?',
+            'phone.numeric' => 'Is the phone so bad?',
+        ]);
         $param = $request->all();
         if ($param['password'] != null) {
             $param['password'] = Hash::make($request->password);
@@ -614,7 +650,16 @@ class AdminAPIController extends Controller
      */
     public function addQC(Request $request)
     {
-        Validation::validationUsers($request);
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required|numeric',
+        ], [
+            'name.require' => 'How often do you enter the name of the user?',
+            'email.require' => 'Do you often enter users emails?',
+            'phone.require' => 'How often do you chat with peoples phones?',
+            'phone.numeric' => 'Is the phone so bad?',
+        ]);
         // Initialize user data
         $param = $request->all();
         // Init data user
@@ -643,7 +688,16 @@ class AdminAPIController extends Controller
         if (empty($qc)) {
             return redirect('/admin/qc/')->with('thong_bao', 'QC account not found.');
         }
-        Validation::validationUsers($request);
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required|numeric',
+        ], [
+            'name.require' => 'How often do you enter the name of the user?',
+            'email.require' => 'Do you often enter users emails?',
+            'phone.require' => 'How often do you chat with peoples phones?',
+            'phone.numeric' => 'Is the phone so bad?',
+        ]);
         $param = $request->all();
         if ($param['password'] != null) {
             $param['password'] = Hash::make($request->password);
