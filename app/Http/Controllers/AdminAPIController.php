@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Validations\Validation;
 
 class AdminAPIController extends Controller
 {
@@ -385,16 +386,7 @@ class AdminAPIController extends Controller
      */
     public function addCustomers(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'phone' => 'required|numeric',
-        ], [
-            'name.require' => 'How often do you enter the name of the user?',
-            'email.require' => 'Do you often enter users emails?',
-            'phone.require' => 'How often do you chat with peoples phones?',
-            'phone.numeric' => 'Is the phone so bad?',
-        ]);
+        Validation::validationUsers($request);
         // Initialize user data
         $param = $request->all();
         // Init data user
@@ -435,16 +427,7 @@ class AdminAPIController extends Controller
         if (empty($customer)) {
             return redirect('/admin/customers/')->with('thong_bao', 'User account not found.');
         }
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'phone' => 'required|numeric',
-        ], [
-            'name.require' => 'How often do you enter the name of the user?',
-            'email.require' => 'Do you often enter users emails?',
-            'phone.require' => 'How often do you chat with peoples phones?',
-            'phone.numeric' => 'Is the phone so bad?',
-        ]);
+        Validation::validationUsers($request);
         $param = $request->all();
         if ($param['password'] != null) {
             $param['password'] = Hash::make($request->password);
@@ -509,16 +492,7 @@ class AdminAPIController extends Controller
      */
     public function addEditor(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'phone' => 'required|numeric',
-        ], [
-            'name.require' => 'How often do you enter the name of the user?',
-            'email.require' => 'Do you often enter users emails?',
-            'phone.require' => 'How often do you chat with peoples phones?',
-            'phone.numeric' => 'Is the phone so bad?',
-        ]);
+        Validation::validationUsers($request);
         // Initialize user data
         $param = $request->all();
         // Init data user
@@ -556,16 +530,7 @@ class AdminAPIController extends Controller
         if (empty($editor)) {
             return redirect('/admin/editors/')->with('thong_bao', 'Editor account not found.');
         }
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'phone' => 'required|numeric',
-        ], [
-            'name.require' => 'How often do you enter the name of the user?',
-            'email.require' => 'Do you often enter users emails?',
-            'phone.require' => 'How often do you chat with peoples phones?',
-            'phone.numeric' => 'Is the phone so bad?',
-        ]);
+        Validation::validationUsers($request);
         $param = $request->all();
         if ($param['password'] != null) {
             $param['password'] = Hash::make($request->password);
@@ -650,16 +615,7 @@ class AdminAPIController extends Controller
      */
     public function addQC(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'phone' => 'required|numeric',
-        ], [
-            'name.require' => 'How often do you enter the name of the user?',
-            'email.require' => 'Do you often enter users emails?',
-            'phone.require' => 'How often do you chat with peoples phones?',
-            'phone.numeric' => 'Is the phone so bad?',
-        ]);
+        Validation::validationUsers($request);
         // Initialize user data
         $param = $request->all();
         // Init data user
@@ -688,16 +644,7 @@ class AdminAPIController extends Controller
         if (empty($qc)) {
             return redirect('/admin/qc/')->with('thong_bao', 'QC account not found.');
         }
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'phone' => 'required|numeric',
-        ], [
-            'name.require' => 'How often do you enter the name of the user?',
-            'email.require' => 'Do you often enter users emails?',
-            'phone.require' => 'How often do you chat with peoples phones?',
-            'phone.numeric' => 'Is the phone so bad?',
-        ]);
+        Validation::validationUsers($request);
         $param = $request->all();
         if ($param['password'] != null) {
             $param['password'] = Hash::make($request->password);
