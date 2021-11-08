@@ -676,4 +676,13 @@ class AdminAPIController extends Controller
         // Response error system
         return redirect('/admin/qc/')->with('thong_bao', 'QC account errors.');
     }
+
+    /**
+     * Controller list all jobs for dashboard
+     */
+    public function listJobsDashBoard(Request $request) 
+    {
+        $jobs = $this->directoryRepository->getAllJobsDashBoard(config('const.paginate'), 'DESC');
+        return view('admin.jobs.index', compact('jobs'));
+    }
 }

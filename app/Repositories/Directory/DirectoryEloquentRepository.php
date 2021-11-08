@@ -3,6 +3,7 @@
 namespace App\Repositories\Directory;
 
 use App\Models\Director;
+use App\Models\Jobs;
 use App\Models\User;
 use App\Repositories\Eloquent\EloquentRepository;
 use App\Repositories\JobRepository\JobEloquentRepository;
@@ -147,5 +148,40 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
     public function getMyJobs()
     {
         return Director::where('editor_id', Auth::user()->id)->where('status', 2)->first();
+    }
+
+    /**
+     * Sql function get all jobs for admin dashboard
+     * 
+     * @return mixed
+     */
+    public function getAllJobsDashBoard()
+    {
+        // Sql get the jobs data
+        $jobs = Director::join('users', 'directors.editor_id', 'users.id')
+            ->where('directors.level', 2)->where('directors.parent_id', '<>', 0)
+            ->orderBy('directors.id', 'DESC')
+            ->select(
+                'users.email', 'users.name as editor_name', 'directors.id', 'directors.user_id', 
+                'directors.nas_dir', 'directors.status', 'directors.type', 
+                'directors.editor_id', 'directors.note'
+            )->paginate(config('const.paginate'));
+        // Check empty jobs and return null data
+        if (empty($jobs)) {
+            return null;
+        }
+        // Addon data editor assign to jobs
+        foreach ($jobs as $job) {
+            $user = User::where('id', $job->user_id)->select('name')->first();
+            if (empty($user)) {
+                $job->user_name = '-';
+            } else {
+                $job->user_name = $user->name;
+            }
+            $job = Director::convertType($job);
+            $job = Director::convertStatus($job);
+        }
+        // Response the jobs
+        return $jobs;
     }
 }

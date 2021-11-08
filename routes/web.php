@@ -48,4 +48,8 @@ Route::group(['prefix'=>'admin'],function() {
         Route::post('/edit/{id}', [\App\Http\Controllers\AdminAPIController::class, 'editQC']);
         Route::get('/delete/{id}', [\App\Http\Controllers\AdminAPIController::class, 'deleteQC']);
     });
+
+    Route::group(['prefix' => 'jobs'], function () {
+        Route::get('/', [\App\Http\Controllers\AdminAPIController::class, 'listJobsDashBoard']);
+    });
 });

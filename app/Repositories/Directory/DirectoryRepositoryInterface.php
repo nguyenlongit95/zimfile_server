@@ -42,4 +42,9 @@ interface DirectoryRepositoryInterface
      * @return mixed
      */
     public function getMyJobs();
+
+    /**
+     * @return mixed
+     */
+    public function getAllJobsDashBoard();
 }
