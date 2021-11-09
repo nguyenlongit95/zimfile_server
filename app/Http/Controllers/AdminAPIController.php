@@ -334,20 +334,23 @@ class AdminAPIController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new JobsExport(), 'jobs_'.Carbon::now()->format('Y-m-d').'.xlsx');
     }
 
-    /*
+    /**
      * Quan tri chung cho website
      * Chia cac vung widgets tuong tu cho website
      * widget sẽ được hiểu là các thành phần phụ của website
      * */
-    public function DashBoard() 
+    public function DashBoard()
     {
         return view('admin.index');
     }
 
     /**
      * Logout function
+     *
+     * @param Request $request
+     * @return mixed
      */
-    public function logout(Request $request) 
+    public function logout(Request $request)
     {
         Auth::logout();
         return redirect('/admin/login');
@@ -355,8 +358,11 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function list all Customer
+     *
+     * @param Request $request
+     * @return mixed
      */
-    public function listCustomers(Request $request) 
+    public function listCustomers(Request $request)
     {
         $param = $request->all();
         $customers = $this->userRepository->listCustomers($param);
@@ -365,15 +371,18 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function list all Customer
+     *
+     * @param Request $request
+     * @return mixed
      */
-    public function searchCustomers(Request $request) 
+    public function searchCustomers(Request $request)
     {
         $param = $request->all();
         if (isset($param['create']) && $param['create'] != null) {
             if ($this->addCustomers($request)) {
                 return redirect('/admin/customers')->with('thong_bao', 'User account creation successful');
             }
-            return redirect('/admin/customers')->with('thong_bao', 'User account creation failed, check the system again');            
+            return redirect('/admin/customers')->with('thong_bao', 'User account creation failed, check the system again');
         }
         if (isset($param['search']) && $param['search'] != null) {
             $customers = $this->userRepository->listCustomers($param);
@@ -383,6 +392,9 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function add new customer
+     *
+     * @param Request $request
+     * @return mixed
      */
     public function addCustomers(Request $request)
     {
@@ -411,6 +423,10 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function render view edit a customer
+     *
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
     public function editCustomers(Request $request, $id)
     {
@@ -420,6 +436,10 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function update a customers
+     *
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
     public function updateCustomers(Request $request, $id)
     {
@@ -443,6 +463,10 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function soft delete a customer
+     *
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
     public function deleteCustomers(Request $request, $id)
     {
@@ -461,6 +485,9 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function list all editors
+     *
+     * @param Request $request
+     * @return mixed
      */
     public function listEditors(Request $request)
     {
@@ -471,6 +498,9 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function search editors
+     *
+     * @param Request $request
+     * @return mixed
      */
     public function searchEditors(Request $request)
     {
@@ -479,7 +509,7 @@ class AdminAPIController extends Controller
             if ($this->addEditor($request)) {
                 return redirect('/admin/editors')->with('thong_bao', 'User account creation successful');
             }
-            return redirect('/admin/editors')->with('thong_bao', 'User account creation failed, check the system again');            
+            return redirect('/admin/editors')->with('thong_bao', 'User account creation failed, check the system again');
         }
         if (isset($param['search']) && $param['search'] != null) {
             $editors = $this->userRepository->listEditors($param);
@@ -489,6 +519,9 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function add new customer
+     *
+     * @param Request $request
+     * @return mixed
      */
     public function addEditor(Request $request)
     {
@@ -523,6 +556,10 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function update editors
+     *
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
     public function updateEditors(Request $request, $id)
     {
@@ -546,6 +583,10 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function delete editor
+     *
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
     public function deleteEditor(Request $request, $id)
     {
@@ -565,6 +606,10 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function assign jobs to editors
+     *
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
     public function assignJobs(Request $request, $id)
     {
@@ -584,6 +629,9 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function list all QC
+     *
+     * @param Request $request
+     * @return mixed
      */
     public function listQC(Request $request)
     {
@@ -594,6 +642,9 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function search QC
+     *
+     * @param Request $request
+     * @return mixed
      */
     public function searchQC(Request $request)
     {
@@ -602,7 +653,7 @@ class AdminAPIController extends Controller
             if ($this->addQC($request)) {
                 return redirect('/admin/qc')->with('thong_bao', 'User account creation successful');
             }
-            return redirect('/admin/qc')->with('thong_bao', 'User account creation failed, check the system again');            
+            return redirect('/admin/qc')->with('thong_bao', 'User account creation failed, check the system again');
         }
         if (isset($param['search']) && $param['search'] != null) {
             $qcs = $this->userRepository->listQC($param);
@@ -612,6 +663,9 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function add new customer
+     *
+     * @param Request $request
+     * @return mixed
      */
     public function addQC(Request $request)
     {
@@ -637,6 +691,10 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function edit for qc
+     *
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
     public function editQC(Request $request, $id)
     {
@@ -660,6 +718,10 @@ class AdminAPIController extends Controller
 
     /**
      * Controller function delete QC
+     *
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
     public function deleteQC(Request $request, $id)
     {
@@ -679,10 +741,26 @@ class AdminAPIController extends Controller
 
     /**
      * Controller list all jobs for dashboard
+     *
+     * @param Request $request
+     * @return mixed
      */
-    public function listJobsDashBoard(Request $request) 
+    public function listJobsDashBoard(Request $request)
     {
-        $jobs = $this->directoryRepository->getAllJobsDashBoard(config('const.paginate'), 'DESC');
+        $jobs = $this->directoryRepository->getAllJobsDashBoard(null);
+        return view('admin.jobs.index', compact('jobs'));
+    }
+
+    /**
+     * Controller function search jobs for dashboard
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function searchJobsDashBoard(Request $request)
+    {
+        $param = $request->all();
+        $jobs = $this->directoryRepository->getAllJobsDashBoard($param);
         return view('admin.jobs.index', compact('jobs'));
     }
 }

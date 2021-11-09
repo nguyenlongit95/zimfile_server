@@ -152,31 +152,51 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
 
     /**
      * Sql function get all jobs for admin dashboard
-     * 
+     *
+     * @param null $param
      * @return mixed
      */
-    public function getAllJobsDashBoard()
+    public function getAllJobsDashBoard($param = null)
     {
         // Sql get the jobs data
-        $jobs = Director::join('users', 'directors.editor_id', 'users.id')
-            ->where('directors.level', 2)->where('directors.parent_id', '<>', 0)
+        $jobs = Director::on();
+        $jobs = $jobs->join('users', 'directors.user_id', 'users.id')
+            ->where('directors.level', 2)
+            ->where('directors.parent_id', '<>', 0)
+            ->where(function ($query) use ($param) {
+                // Pass param condition param search
+                if (isset($param['name_editor']) && !is_null($param['name_editor'])) {
+                    $query->where('users.name', 'like', '%' . $param['name_editor'] . '%');
+                }
+                if (isset($param['name_user']) && !is_null($param['name_user'])) {
+                    $query->where('users.name', 'like', '%' . $param['name_user'] . '%');
+                }
+                if (isset($param['type']) && !is_null($param['type'])) {
+                    $query->where('directors.type', $param['type']);
+                }
+                if (isset($param['status']) && !is_null($param['status'])) {
+                    $query->where('directors.status', $param['status']);
+                }
+                // Response sql search
+                return $query;
+            })
             ->orderBy('directors.id', 'DESC')
             ->select(
-                'users.email', 'users.name as editor_name', 'directors.id', 'directors.user_id', 
-                'directors.nas_dir', 'directors.status', 'directors.type', 
+                'users.email', 'users.name as user_name', 'directors.id', 'directors.user_id',
+                'directors.nas_dir', 'directors.status', 'directors.type',
                 'directors.editor_id', 'directors.note'
             )->paginate(config('const.paginate'));
         // Check empty jobs and return null data
         if (empty($jobs)) {
             return null;
         }
-        // Addon data editor assign to jobs
+        // Add on data editor assign to jobs
         foreach ($jobs as $job) {
-            $user = User::where('id', $job->user_id)->select('name')->first();
+            $user = User::where('id', $job->editor_id)->select('name')->first();
             if (empty($user)) {
-                $job->user_name = '-';
+                $job->editor_name = '-';
             } else {
-                $job->user_name = $user->name;
+                $job->editor_name = $user->name;
             }
             $job = Director::convertType($job);
             $job = Director::convertStatus($job);

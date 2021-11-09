@@ -67,6 +67,7 @@
                             <th>User name</th>
                             <th>Time create</th>
                             <th>Type</th>
+                            <th>Note</th>
                             <th class="text-center">Status</th>
                         </tr>
                         </thead>
@@ -78,6 +79,7 @@
                                 <td>{{ $job->user_name }}</td>
                                 <td>{{ \Carbon\Carbon::create($job->created_at)->format('d-m-Y') }}</td>
                                 <td>{{ $job->type_txt }}</td>
+                                <td>{{ $job->note }}</td>
                                 <td class="text-center">{{ $job->status_txt }}</td>
                             </tr>
                         @endforeach

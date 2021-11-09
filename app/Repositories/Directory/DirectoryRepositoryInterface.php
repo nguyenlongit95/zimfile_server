@@ -44,7 +44,8 @@ interface DirectoryRepositoryInterface
     public function getMyJobs();
 
     /**
+     * @param null $param
      * @return mixed
      */
-    public function getAllJobsDashBoard();
+    public function getAllJobsDashBoard($param = null);
 }
