@@ -25,6 +25,7 @@ Route::group(['prefix'=>'admin'],function() {
     // Trang DashBoard sẽ là nơi thống kê sản phẩm và các thông tin liên quan
     Route::get('/dashboard', [\App\Http\Controllers\AdminAPIController::class, 'dashboard']);
     Route::get('/logout', [\App\Http\Controllers\AdminAPIController::class, 'logout']);
+    Route::get('/export', [\App\Http\Controllers\AdminAPIController::class, 'exportCSV']);
 
     Route::group(['prefix' => 'customers'], function () {
         Route::get('/', [\App\Http\Controllers\AdminAPIController::class, 'listCustomers']);
