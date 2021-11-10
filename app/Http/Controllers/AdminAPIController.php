@@ -9,6 +9,8 @@ use App\Repositories\JobRepository\JobRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Supports\ResponseHelper;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -336,10 +338,8 @@ class AdminAPIController extends Controller
     }
 
     /**
-     * Quan tri chung cho website
-     * Chia cac vung widgets tuong tu cho website
-     * widget sẽ được hiểu là các thành phần phụ của website
-     * */
+     * @return Factory|View
+     */
     public function DashBoard()
     {
         return view('admin.index');
@@ -756,7 +756,7 @@ class AdminAPIController extends Controller
      * Controller function search jobs for dashboard
      *
      * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return Factory|View
      */
     public function searchJobsDashBoard(Request $request)
     {
