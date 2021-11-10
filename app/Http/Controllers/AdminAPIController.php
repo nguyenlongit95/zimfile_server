@@ -330,8 +330,9 @@ class AdminAPIController extends Controller
      */
     public function exportCSV(Request $request)
     {
+        $param = $request->all();
         // Export excel file by month
-        return \Maatwebsite\Excel\Facades\Excel::download(new JobsExport(), 'jobs_'.Carbon::now()->format('Y-m-d').'.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new JobsExport($param['month']), 'jobs_'.Carbon::now()->subMonths($param['month'])->format('Y-m-d').'.xlsx');
     }
 
     /**

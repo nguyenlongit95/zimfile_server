@@ -16,14 +16,16 @@ use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 class JobsExport implements FromCollection, WithHeadings, WithMapping, WithEvents
 {
     public $directors;
+    public $month;
 
     /**
      * JobsExport constructor.
+     * @param $month
      */
-    public function __construct()
+    public function __construct($month)
     {
         $directors = Director::join('users', 'directors.user_id', 'users.id')
-            ->whereMonth('directors.created_at', Carbon::now()->format('m'))->where('directors.level', 2)
+            ->whereMonth('directors.created_at', Carbon::now()->subMonths($month)->format('m'))->where('directors.level', 2)
             ->where('directors.parent_id', '<>', 0)
             ->select(
                 'users.id', 'users.name as client',
@@ -46,7 +48,7 @@ class JobsExport implements FromCollection, WithHeadings, WithMapping, WithEvent
                 }
             }
         }
-
+        // add data param
         $this->directors = $directors;
     }
 
