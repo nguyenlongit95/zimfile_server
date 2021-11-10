@@ -8,6 +8,7 @@ use App\Models\Jobs;
 use App\Repositories\Directory\DirectoryRepositoryInterface;
 use App\Repositories\Eloquent\EloquentRepository;
 use App\Repositories\Files\FilesRepositoryInterface;
+use App\Repositories\User\UserRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -120,11 +121,16 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      *
      * @param array $param
      * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function getJobsForQC($param)
     {
-        return Director::join('users', 'directors.editor_id', 'users.id')->where('directors.level', 2)->where('directors.editor_id', '<>', null)
-            ->where('directors.status', 3)->select(
+        // List all id of user belong
+        $listUserId = app()->make(UserRepositoryInterface::class)->listIdUserBelongQc(Auth::user()->getAuthIdentifier())->toArray();
+        // Response data
+        return Director::join('users', 'directors.editor_id', 'users.id')->where('directors.editor_id', '<>', null)
+            ->where('directors.level', 2)->where('directors.status', 3)->whereIn('directors.user_id', $listUserId)
+            ->select(
                 'directors.id', 'directors.user_id', 'directors.nas_dir', 'directors.level', 'directors.parent_id',
                 'directors.path', 'directors.type', 'directors.status', 'directors.editor_id', 'directors.note',
                 'users.name as editor_name'

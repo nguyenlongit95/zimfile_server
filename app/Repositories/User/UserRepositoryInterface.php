@@ -30,19 +30,54 @@ interface UserRepositoryInterface
 
     /**
      * @param $id
-     * @return mixed 
+     * @return mixed
      */
     public function deleteCustomer($id);
 
     /**
      * @param $param
-     * @return mixed 
+     * @return mixed
      */
     public function listEditors($param);
-    
+
     /**
      * @param $param
-     * @return mixed 
+     * @return mixed
      */
     public function listQC($param);
+
+    /**
+     * @return mixed
+     */
+    public function getUserNotAssign();
+
+    /**
+     * @return mixed
+     */
+    public function getUserAssigned();
+
+    /**
+     * @param $qcId
+     * @return mixed
+     */
+    public function userBelongQC($qcId);
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function removeUserAssign($id);
+
+    /**
+     * @param $userId
+     * @param $qcId
+     * @return mixed
+     */
+    public function assignedUser($userId, $qcId);
+
+    /**
+     * @param $qcId
+     * @return mixed
+     */
+    public function listIdUserBelongQc($qcId);
 }

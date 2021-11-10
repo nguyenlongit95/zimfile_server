@@ -59,6 +59,7 @@
                             <th>Address</th>
                             <th>Phone</th>
                             <th>Password</th>
+                            <th class="text-center">Assign Users</th>
                             <th class="text-center">Update</th>
                             <th class="text-center">Delete</th>
                         </tr>
@@ -83,6 +84,9 @@
                             </td>
                             <td>
                                 <input type="password" name="password" class="form-control" placeholder="Enter new password here!">
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ url('/admin/qc/assign-user/' . $qc->id ) }}" class="btn btn-primary">Assign Users</a>
                             </td>
                             <td class="text-center">
                                 <input type="submit" class="btn btn-warning" name="update" value="update">

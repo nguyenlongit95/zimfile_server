@@ -764,4 +764,58 @@ class AdminAPIController extends Controller
         $jobs = $this->directoryRepository->getAllJobsDashBoard($param);
         return view('admin.jobs.index', compact('jobs'));
     }
+
+    /**
+     * Controller render view assign user belong qc
+     *
+     * @param Request $request
+     * @param $id
+     * @return Factory|View|\Illuminate\Http\RedirectResponse
+     */
+    public function assignUsers(Request $request, $id)
+    {
+        $qc = $this->userRepository->find($id);
+        if (empty($qc)) {
+            return redirect()->back()->with('status', 'Cannot find qc');
+        }
+        $userNotAssign = $this->userRepository->getUserNotAssign();
+        $userBelongMe = $this->userRepository->userBelongQC($id);
+        return view('admin.qc.assign', compact('qc', 'userBelongMe', 'userNotAssign'));
+    }
+
+    /**
+     * Controller function remove a user belong qc
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function removeBelong(Request $request, $id)
+    {
+        $remove = $this->userRepository->removeUserAssign($id);
+        if ($remove) {
+            return redirect()->back()->with('status', 'Remove user success.');
+        }
+        return redirect()->back()->with('status', 'Remove user failed, check again system.');
+    }
+
+    /**
+     * Controller function assign user belong to qc
+     *
+     * @param Request $request
+     * @param int $qcId
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function assigningUsers(Request $request, $qcId)
+    {
+        $param = $request->all();
+        if (isset($param['user_id'])) {
+            foreach ($param['user_id'] as $userId) {
+                $this->userRepository->assignedUser($userId, $qcId);
+            }
+            return redirect('/admin/qc/assign-user/' . $qcId)->with('status', 'Assign user success.');
+        } else {
+            return redirect('/admin/qc/assign-user/' . $qcId)->with('status', 'Please select user.');
+        }
+    }
 }
