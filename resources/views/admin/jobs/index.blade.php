@@ -65,6 +65,7 @@
                             <th>#</th>
                             <th>Editor name</th>
                             <th>User name</th>
+                            <th>Jobs dir name</th>
                             <th>Time create</th>
                             <th>Type</th>
                             <th>Note</th>
@@ -77,13 +78,14 @@
                                 <td>{{ $job->id }}</td>
                                 <td>{{ $job->editor_name }}</td>
                                 <td>{{ $job->user_name }}</td>
+                                <td>{{ $job->nas_dir }}</td>
                                 <td>{{ \Carbon\Carbon::create($job->created_at)->format('d-m-Y') }}</td>
                                 <td>{{ $job->type_txt }}</td>
                                 <td>{{ $job->note }}</td>
                                 <td class="text-center">{{ $job->status_txt }}</td>
                             </tr>
                         @endforeach
-                        </tfoot>
+                        </tbody>
                     </table>
                     {!! $jobs->render() !!}
                 </div>

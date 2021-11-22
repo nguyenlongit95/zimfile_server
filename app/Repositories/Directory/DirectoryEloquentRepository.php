@@ -34,11 +34,11 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
         $dir = null;
         // List base dir
         if ($parentId == 0) {
-            $dir = Director::where('user_id', $userId)->where('parent_id', 0)->orderBy('id', 'DESC')->get();
+            $dir = Director::where('parent_id', 0)->where('user_id', $userId)->orderBy('id', 'DESC')->get();
         }
         // List subs dir
         if ($parentId > 0) {
-            $dir = Director::where('parent_id', $parentId)->orderBy('id', 'DESC')->get();
+            $dir = Director::where('parent_id', $parentId)->where('user_id', $userId)->orderBy('id', 'DESC')->get();
         }
         $dir->parent_dir = $this->getParentDir($parentId);
         // response dir
@@ -137,7 +137,6 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
             Log::error($exception->getMessage());
             return null;
         }
-
     }
 
     /**
