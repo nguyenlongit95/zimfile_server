@@ -141,26 +141,51 @@ class UserAPIController extends Controller
             return app()->make(ResponseHelper::class)->error(trans('message.data_notfound'));
         }
         $param = $request->all();
-        $file = $request->file('file');
-        $validateFile = $this->filesRepository->validateFile($file);
-        switch ($validateFile) {
-            case 1:
-                // passed
-                $upFile = $this->jobRepository->uploadJobs($file, $param['directory_id']);
-                if ($upFile == false) {
+        if (!is_array($param['file'])) {
+            $file = $request->file('file');
+            $validateFile = $this->filesRepository->validateFile($file);
+            switch ($validateFile) {
+                case 1:
+                    // passed
+                    $upFile = $this->jobRepository->uploadJobs($file, $param['directory_id']);
+                    if ($upFile == false) {
+                        return app()->make(ResponseHelper::class)->error();
+                    }
+                    return app()->make(ResponseHelper::class)->success($upFile);
+                case 2:
+                    return app()->make(ResponseHelper::class)->validation(trans('validation.files.max_file_size'));
+                    break;
+                case 3:
+                    return app()->make(ResponseHelper::class)->validation(trans('validation.files.file_ext'));
+                    break;
+                default:
                     return app()->make(ResponseHelper::class)->error();
-                }
-                return app()->make(ResponseHelper::class)->success($upFile);
-            case 2:
-                return app()->make(ResponseHelper::class)->validation(trans('validation.files.max_file_size'));
-                break;
-            case 3:
-                return app()->make(ResponseHelper::class)->validation(trans('validation.files.file_ext'));
-                break;
-            default:
-                return app()->make(ResponseHelper::class)->error();
-                break;
+                    break;
+            }
         }
+        // Check each file to see if it is valid or not?
+        $listFileFailed = 0;
+        for ($i = 0; $i < count($param['file']); $i++) {
+            $file = $param['file'][$i];
+            if ($this->filesRepository->validateFile($file) != 1) {
+                $listFileFailed++;
+            }
+        }
+        if ($listFileFailed > 0) {
+            return app()->make(ResponseHelper::class)->validation('Invalid file exists, please check again');
+        }
+        // Pass all file and upload file
+        $listFileUpload = [];
+        for ($j = 0; $j < count($param['file']); $j++) {
+            $file = $param['file'][$j];
+            $upFile = $this->jobRepository->uploadJobs($file, $param['directory_id']);
+            if ($upFile == false) {
+                return app()->make(ResponseHelper::class)->error();
+            }
+            $listFileUpload[$j] = $file->getClientOriginalName();
+        }
+        // Response data upload
+        return app()->make(ResponseHelper::class)->success($listFileUpload);
     }
 
     /**
@@ -402,5 +427,17 @@ class UserAPIController extends Controller
         }
         // Response list all directories
         return app()->make(ResponseHelper::class)->success($arrDirectories);
+    }
+
+    public function testUploadMultiFiles(Request $request)
+    {
+        $param = $request->all();
+        $listFiles = $param['listFiles'];
+        if (is_array($listFiles)) {
+            foreach ($listFiles as $file) {
+                $file = $file;
+                Storage::disk('public')->put(storage_path('disk1/DATA/long_nct_test/dir_08072021/' . $file->getClientOriginalName()), $file);
+            }
+        }
     }
 }
