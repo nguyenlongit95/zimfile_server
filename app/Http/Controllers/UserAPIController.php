@@ -182,7 +182,7 @@ class UserAPIController extends Controller
             if ($upFile == false) {
                 return app()->make(ResponseHelper::class)->error();
             }
-            $listFileUpload[$j] = $file->getClientOriginalName();
+            $listFileUpload[$j] = $upFile;
         }
         // Response data upload
         return app()->make(ResponseHelper::class)->success($listFileUpload);
