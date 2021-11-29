@@ -65,6 +65,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         $param['file_jobs_thumbnail'] = null;         // Thumbnails
         $create = $this->create($param);
         // Upload file to storage
+        ini_set('memory_limit', '-1');
         Storage::disk('ftp')->put($path, $file->get());
         Log::info('User: ' . Auth::user()->email . ' create a job in : ' . $path);
         return $create;
