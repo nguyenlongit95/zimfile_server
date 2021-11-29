@@ -21,7 +21,7 @@
             border-color: #fff;
             text-align:center;
         }
-        .panel-login>.panel-heading a{
+        .panel-login>.panel-heading a {
             text-decoration: none;
             color: #666;
             font-weight: bold;
@@ -30,11 +30,11 @@
             -moz-transition: all 0.1s linear;
             transition: all 0.1s linear;
         }
-        .panel-login>.panel-heading a.active{
+        .panel-login>.panel-heading a.active {
             color: #029f5b;
             font-size: 18px;
         }
-        .panel-login>.panel-heading hr{
+        .panel-login>.panel-heading hr {
             margin-top: 10px;
             margin-bottom: 0px;
             clear: both;
@@ -154,10 +154,6 @@
                                 <div class="form-group">
                                     <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
                                 </div>
-                                <!-- <div class="form-group text-center">
-                                    <input type="checkbox" tabindex="3" class="" name="remember" id="remember">
-                                    <label for="remember"> Remember Me</label>
-                                </div> -->
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-sm-6 col-sm-offset-3">
@@ -165,15 +161,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <div class="text-center">
-                                                <a href="https://phpoll.com/recover" tabindex="5" class="forgot-password">Forgot Password?</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
                             </form>
                         </div>
                     </div>

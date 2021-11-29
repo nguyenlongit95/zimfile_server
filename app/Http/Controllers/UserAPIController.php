@@ -425,8 +425,11 @@ class UserAPIController extends Controller
         foreach ($listDir as $dir) {
             array_push($arrDirectories, array_reverse(explode('/', $dir))[0]);
         }
+        if (count($arrDirectories) > 0) {
+            return app()->make(ResponseHelper::class)->success($arrDirectories);
+        }
         // Response list all directories
-        return app()->make(ResponseHelper::class)->success($arrDirectories);
+        return app()->make(ResponseHelper::class)->error("Cannot find file products!");
     }
 
     public function testUploadMultiFiles(Request $request)
