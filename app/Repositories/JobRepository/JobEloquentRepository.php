@@ -51,32 +51,27 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             $pathFile = $parentDir->nas_dir . '/' . $pathFile;
         }
         DB::beginTransaction();
-        try {
-            $path = config('const.base_path') . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
-            // Insert into database
-            $param['user_id'] = Auth::user()->getAuthIdentifier();
-            $param['director_id'] = $directoryId;
-            $param['file_id'] = null;
-            $param['file_jobs'] = $file->getClientOriginalName();
-            $param['status'] = 1;                                   // status default 1 is not assign
-            $param['time_upload'] = Carbon::now();
-            $param['time_confirm'] = null;
-            $param['time_done'] = null;
-            $param['type'] = 0;
-            $param['file_jobs_thumbnail'] = null;         // Thumbnails
-            Log::info('User: ' . Auth::user()->email . ' create a job in : ' . $path);
-            $this->create($param);
-            // Upload file to storage
-            $putNASStorage = Storage::disk('ftp')->put($path, $file->get());
-            if (!$putNASStorage) {
-                DB::rollBack();
-                return false;
-            }
-            DB::commit();
-        } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
+        $path = config('const.base_path') . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
+        // Insert into database
+        $param['user_id'] = Auth::user()->getAuthIdentifier();
+        $param['director_id'] = $directoryId;
+        $param['file_id'] = null;
+        $param['file_jobs'] = $file->getClientOriginalName();
+        $param['status'] = 1;                                   // status default 1 is not assign
+        $param['time_upload'] = Carbon::now();
+        $param['time_confirm'] = null;
+        $param['time_done'] = null;
+        $param['type'] = 0;
+        $param['file_jobs_thumbnail'] = null;         // Thumbnails
+        $this->create($param);
+        // Upload file to storage
+        $putNASStorage = Storage::disk('ftp')->put($path, $file->get());
+        Log::info('User: ' . Auth::user()->email . ' create a job in : ' . $path);
+        if (!$putNASStorage) {
+            DB::rollBack();
             return false;
         }
+        DB::commit();
     }
 
     /**
