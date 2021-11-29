@@ -180,7 +180,7 @@ class UserAPIController extends Controller
             $file = $param['file'][$j];
             $upFile = $this->jobRepository->uploadJobs($file, $param['directory_id']);
             if ($upFile == false) {
-                return app()->make(ResponseHelper::class)->error();
+                return app()->make(ResponseHelper::class)->error("Upload file failed system.");
             }
             $listFileUpload[$j] = $upFile;
         }
