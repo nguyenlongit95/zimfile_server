@@ -50,7 +50,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             $parentDir = app()->make(DirectoryRepositoryInterface::class)->find($directory->parent_id);
             $pathFile = $parentDir->nas_dir . '/' . $pathFile;
         }
-        DB::beginTransaction();
+
         $path = config('const.base_path') . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
         // Insert into database
         $param['user_id'] = Auth::user()->getAuthIdentifier();
@@ -63,15 +63,11 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         $param['time_done'] = null;
         $param['type'] = 0;
         $param['file_jobs_thumbnail'] = null;         // Thumbnails
-        $this->create($param);
+        $create = $this->create($param);
         // Upload file to storage
-        $putNASStorage = Storage::disk('ftp')->put($path, $file->get());
+        Storage::disk('ftp')->put($path, $file->get());
         Log::info('User: ' . Auth::user()->email . ' create a job in : ' . $path);
-        if (!$putNASStorage) {
-            DB::rollBack();
-            return false;
-        }
-        DB::commit();
+        return $create;
     }
 
     /**
