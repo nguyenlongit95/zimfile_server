@@ -431,16 +431,4 @@ class UserAPIController extends Controller
         // Response list all directories
         return app()->make(ResponseHelper::class)->error("Cannot find file products!");
     }
-
-    public function testUploadMultiFiles(Request $request)
-    {
-        $param = $request->all();
-        $listFiles = $param['listFiles'];
-        if (is_array($listFiles)) {
-            foreach ($listFiles as $file) {
-                $file = $file;
-                Storage::disk('public')->put(storage_path('disk1/DATA/long_nct_test/dir_08072021/' . $file->getClientOriginalName()), $file);
-            }
-        }
-    }
 }
