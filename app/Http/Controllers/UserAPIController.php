@@ -425,6 +425,7 @@ class UserAPIController extends Controller
         foreach ($listDir as $dir) {
             array_push($arrDirectories, array_reverse(explode('/', $dir))[0]);
         }
+        dd($arrDirectories);
         if (count($arrDirectories) > 0) {
             return app()->make(ResponseHelper::class)->success($arrDirectories);
         }
