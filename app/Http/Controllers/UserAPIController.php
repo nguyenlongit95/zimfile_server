@@ -178,11 +178,12 @@ class UserAPIController extends Controller
         $listFileUpload = [];
         for ($j = 0; $j < count($param['file']); $j++) {
             $file = $param['file'][$j];
-            $upFile = $this->jobRepository->uploadJobs($file, $param['directory_id']);
-            if ($upFile == false) {
-                return app()->make(ResponseHelper::class)->error("Upload file failed system.");
+            try {
+                $upFile = $this->jobRepository->uploadJobs($file, $param['directory_id']);
+                $listFileUpload[$j] = $upFile;
+            } catch (\Exception $exception) {
+                Log::error($exception->getMessage());
             }
-            $listFileUpload[$j] = $upFile;
         }
         // Response data upload
         return app()->make(ResponseHelper::class)->success($listFileUpload);
