@@ -418,14 +418,13 @@ class UserAPIController extends Controller
         $listDir = Storage::disk('ftp')->directories(config('const.base_path') . Auth::user()->name . '/done');
         // Check data response and response null data
         if (empty($listDir)) {
-            return app()->make(ResponseHelper::class)->success();
+            return app()->make(ResponseHelper::class)->success("File products not found.");
         }
         // Add to array and response data
         $arrDirectories = array();
         foreach ($listDir as $dir) {
             array_push($arrDirectories, array_reverse(explode('/', $dir))[0]);
         }
-        dd($arrDirectories);
         if (count($arrDirectories) > 0) {
             return app()->make(ResponseHelper::class)->success($arrDirectories);
         }
