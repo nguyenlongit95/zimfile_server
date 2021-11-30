@@ -111,7 +111,7 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
                 Storage::disk('ftp')->copy($jobPath . '/' . $job->file_jobs, $editorPath . '/' . $job->file_jobs);
             } catch (\Exception $exception) {
                 Log::error($exception->getMessage());
-                return null;
+                continue;
             }
         }
         // Response pass status
