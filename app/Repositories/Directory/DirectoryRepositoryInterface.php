@@ -34,9 +34,10 @@ interface DirectoryRepositoryInterface
 
     /**
      * @param $editorId
+     * @param $dirId
      * @return mixed
      */
-    public function deleteFileInEditorFolder($editorId);
+    public function deleteFileInEditorFolder($editorId, $dirId);
 
     /**
      * @return mixed

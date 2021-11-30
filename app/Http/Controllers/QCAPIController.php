@@ -9,6 +9,8 @@ use App\Repositories\User\UserRepositoryInterface;
 use App\Supports\ResponseHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use PhpParser\Node\Scalar\MagicConst\Dir;
 
 class QCAPIController extends Controller
 {
@@ -83,7 +85,7 @@ class QCAPIController extends Controller
                 // Check again path file download
                 if ($this->directoryRepository->update($param, $dir->id)) {
                     // Delete all files from folder of editor
-                    $this->directoryRepository->deleteFileInEditorFolder($dir->editor_id);
+                    $this->directoryRepository->deleteFileInEditorFolder($dir->editor_id, $dir->id);
                     // Response data success
                     return app()->make(ResponseHelper::class)->success(
                         $this->jobRepository->find($param['dir_id'])
