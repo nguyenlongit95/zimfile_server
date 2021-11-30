@@ -146,7 +146,7 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
      */
     public function getMyJobs()
     {
-        return Director::where('editor_id', Auth::user()->id)->where('status', 2)->first();
+        return Director::where('editor_id', Auth::user()->id)->where('level', 2)->where('status', 2)->first();
     }
 
     /**
