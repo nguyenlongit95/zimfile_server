@@ -818,4 +818,74 @@ class AdminAPIController extends Controller
             return redirect('/admin/qc/assign-user/' . $qcId)->with('status', 'Please select user.');
         }
     }
+
+    /**
+     * Controller function render view list all user and user assigned priority for this editor
+     *
+     * @param Request $request
+     * @param int $id
+     * @return Factory|View
+     */
+    public function priority(Request $request, $id)
+    {
+        // List my users assign for me
+        $listMyPriority = $this->userRepository->getPriority($id);
+        // List my id user ass for me
+        $listIdMyPriority = $this->userRepository->getIdUserAssignPriority($id);
+        // List all user assigned for editor
+        $listAllIdUnPriority = $this->userRepository->getAllIdUserAssignPriority();
+        // List all user not assign for editor
+        $listUserUnAssignPriority= $this->userRepository->getUserUnAssignPriority($listAllIdUnPriority);
+        // Render view
+        return view('admin.editors.priority', compact(
+            'listMyPriority', 'listIdMyPriority', 'listAllIdUnPriority', 'listUserUnAssignPriority', 'id'
+        ));
+    }
+
+    /**
+     * Controller function Assign priority
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function assignPriority(Request $request, $id)
+    {
+        // Check editor
+        $editor = $this->userRepository->find($id);
+        if (!$editor) {
+            return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'Cannot find the editor.');
+        }
+        // Pass param and check param
+        $param = $request->all();
+        if (!$param['priority'] || is_null($param['priority'])) {
+            return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'Please enter the priority for this user.');
+        }
+        // Assign user to editor priority
+        $assignPriority = $this->userRepository->assignPriority($id, $param['userId'], $param['priority']);
+        if (!$assignPriority) {
+            return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'A system error has occurred, please check the logs.');
+        }
+        // Response redirect success
+        return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'Assign priority success.');
+    }
+
+    /**
+     * Controller function remove priority
+     *
+     * @param Request $request
+     * @param int $id
+     * @param int $userId
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function removePriority(Request $request, $id, $userId)
+    {
+        // Remove assign priority
+        $removePriority = $this->userRepository->removeAssignPriority($id, $userId);
+        if (!$removePriority) {
+            return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'Remove failed, please check log system.');
+        }
+        // Response redirect success
+        return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'Remove success.');
+    }
 }

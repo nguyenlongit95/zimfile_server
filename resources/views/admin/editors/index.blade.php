@@ -60,6 +60,7 @@
                             <th>Phone</th>
                             <th>Password</th>
                             <th class="text-center">Assign Job</th>
+                            <th class="text-center">Priority</th>
                             <th class="text-center">Update</th>
                             <th class="text-center">Delete</th>
                         </tr>
@@ -87,6 +88,9 @@
                             </td>
                             <td class="text-center">
                                 <a @if($editor->assigned == true) disabled @else href="{{ url('/admin/editors/assign-job/' . $editor->id) }}" @endif class="btn btn-success">Assign Job</a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ url('/admin/editors/priority/' . $editor->id) }}" class="btn btn-default">Priority</a>
                             </td>
                             <td class="text-center">
                                 <input type="submit" class="btn btn-warning" name="update" value="update">

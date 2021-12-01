@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UserDiscount;
 use App\Repositories\Eloquent\EloquentRepository;
 use App\Repositories\MailLog\MailLogRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -237,6 +238,120 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Sql function get Priority using editor id
+     *
+     * @param $userId
+     * @return mixed|void
+     */
+    public function getPriority($userId)
+    {
+        try {
+            return DB::table('user_priority')->join('users', 'user_priority.user_id', '=', 'users.id')
+                ->select('user_priority.priority', 'users.id', 'users.name', 'users.email', 'users.phone')
+                ->where('user_priority.editor_id', $userId)
+                ->orderBy('user_priority.priority', 'ASC')
+                ->get();
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Sql function get list id of user priority using editor id
+     *
+     * @param $userId
+     * @return array|null
+     */
+    public function getIdUserAssignPriority($userId)
+    {
+        try {
+            return DB::table('user_priority')->join('users', 'user_priority.user_id', '=', 'users.id')
+                ->where('user_priority.editor_id', $userId)
+                ->orderBy('user_priority.priority', 'ASC')
+                ->pluck('users.id')->toArray();
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Sql function get list id of user priority using editor id
+     *
+     * @return array|null
+     */
+    public function getAllIdUserAssignPriority()
+    {
+        try {
+            return DB::table('user_priority')->join('users', 'user_priority.user_id', '=', 'users.id')
+                ->orderBy('user_priority.priority', 'ASC')
+                ->pluck('users.id')->toArray();
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Sql function get all user Un Assign priority
+     *
+     * @param array $arrIdUserAssigned
+     * @return \Illuminate\Support\Collection|null
+     */
+    public function getUserUnAssignPriority($arrIdUserAssigned)
+    {
+        try {
+            return DB::table('users')->whereNotIn('id', $arrIdUserAssigned)->where('role', 1)->get();
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Sql function assign priority
+     *
+     * @param int $editorId
+     * @param int $userId
+     * @param int $priority
+     * @return mixed
+     */
+    public function assignPriority($editorId, $userId, $priority)
+    {
+        try {
+            return DB::table('user_priority')->insert([
+                'user_id' => $userId,
+                'editor_id' => $editorId,
+                'priority' => $priority,
+                'created_at' => Carbon::now()
+            ]);
+        } catch (\Exception $exception) {
+            Log::error($exception);
+            return null;
+        }
+    }
+
+    /**
+     * Sql function remove priority
+     *
+     * @param int $editorId
+     * @param int $userId
+     * @return mixed
+     */
+    public function removeAssignPriority($editorId, $userId)
+    {
+        try {
+            return DB::table('user_priority')->where('user_id', $userId)
+                ->where('editor_id', $editorId)
+                ->delete();
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return null;
         }
     }
 }

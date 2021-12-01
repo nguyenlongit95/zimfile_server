@@ -80,4 +80,42 @@ interface UserRepositoryInterface
      * @return mixed
      */
     public function listIdUserBelongQc($qcId);
+
+    /**
+     * @param $userId
+     * @return mixed
+     */
+    public function getPriority($userId);
+
+    /**
+     * @param $userId
+     * @return mixed
+     */
+    public function getIdUserAssignPriority($userId);
+
+    /**
+     * @return mixed
+     */
+    public function getAllIdUserAssignPriority();
+
+    /**
+     * @param $arrIdUserAssigned
+     * @return mixed
+     */
+    public function getUserUnAssignPriority($arrIdUserAssigned);
+
+    /**
+     * @param $editorId
+     * @param $userId
+     * @param $priority
+     * @return mixed
+     */
+    public function assignPriority($editorId, $userId, $priority);
+
+    /**
+     * @param $editorId
+     * @param $userId
+     * @return mixed
+     */
+    public function removeAssignPriority($editorId, $userId);
 }

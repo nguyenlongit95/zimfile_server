@@ -41,6 +41,9 @@ Route::group(['prefix'=>'admin'],function() {
         Route::post('/edit/{id}', [\App\Http\Controllers\AdminAPIController::class, 'updateEditors']);
         Route::get('/delete/{id}', [\App\Http\Controllers\AdminAPIController::class, 'deleteEditor']);
         Route::get('/assign-job/{id}', [\App\Http\Controllers\AdminAPIController::class, 'assignJobs']);
+        Route::get('/priority/{id}', [\App\Http\Controllers\AdminAPIController::class, 'priority']);
+        Route::post('/priority/assign/{id}', [\App\Http\Controllers\AdminAPIController::class, 'assignPriority']);
+        Route::get('/priority/{id}/remove/{userId}', [\App\Http\Controllers\AdminAPIController::class, 'removePriority']);
     });
 
     Route::group(['prefix' => 'qc'], function () {

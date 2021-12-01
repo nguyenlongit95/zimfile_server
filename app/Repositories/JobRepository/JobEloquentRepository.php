@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Image;
 
 class JobEloquentRepository extends EloquentRepository implements JobRepositoryInterface
 {
@@ -107,8 +106,22 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function getJobsForEditor($param)
     {
-        return Director::where('level', 2)->where('editor_id', null)->orWhere('editor_id', Auth::id())
-            ->where('status', 0)->orderBy('id', 'ASC')->first();
+        $listPriority = DB::table('user_priority')->where('editor_id', Auth::id())
+            ->orderBy('priority', 'ASC')->select('user_id')->get();
+        if (empty($listPriority)) {
+            return null;
+        }
+        foreach ($listPriority as $priority) {
+            $dir = Director::where('level', 2)->where('editor_id', null)->orWhere('editor_id', Auth::id())
+                ->where('status', 0)->orderBy('id', 'ASC')->first();
+            if (empty($dir)) {
+                continue;
+            }
+            if ($dir->user_id != $priority->user_id) {
+                continue;
+            }
+            return $dir;
+        }
     }
 
     /**
@@ -140,7 +153,8 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function checkJobsBeforeAssign($param)
     {
-        $job = DB::table('directors')->where('editor_id', '=', Auth::user()->id)->where('status', 2)->count();
+        $job = DB::table('directors')->where('editor_id', '=', Auth::user()->id)
+            ->where('status', 2)->count();
         if ($job > 0) {
             return false;
         }
