@@ -22,6 +22,8 @@ class Director extends Model
         'status',       // 0: reject, 1 chưa assign, 2 đã asign, 3 confirm, 4 done
         'editor_id',    // id user of editor
         'note',
+        'qc_id',
+        'qty',
     ];
 
     /**
@@ -46,8 +48,9 @@ class Director extends Model
 
     /**
      * Model method function convert type of directories
-     * 
-     * 1: Photo editing 2: Day to dusk	3: Virtual Staging	4: Additional Retouching
+     *
+     * 1: Photo editing 2: Day to dusk    3: Virtual Staging    4: Additional Retouching
+     * @param $director
      * @return mixed
      */
     public static function convertType($director)
@@ -76,8 +79,9 @@ class Director extends Model
 
     /**
      * Model method convert the status of directories
-     * 
+     *
      * 0: reject, 1 chưa assign, 2 đã asign, 3 confirm, 4 done
+     * @param $director
      * @return mixed
      */
     public static function convertStatus($director)

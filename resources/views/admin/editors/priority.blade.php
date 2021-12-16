@@ -28,8 +28,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if(!empty($listMyPriority))
-                                            @foreach($listMyPriority as $user)
+                                        @if(!empty($listAllPriorityForMe))
+                                            @foreach($listAllPriorityForMe as $user)
                                             <tr>
                                                 <td class="text-center">{{ $user->id }}</td>
                                                 <td>{{ $user->name }}</td>
@@ -66,8 +66,8 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    @if(!empty($listUserUnAssignPriority))
-                                        @foreach($listUserUnAssignPriority as $user)
+                                    @if(!empty($listAllFreePriority))
+                                        @foreach($listAllFreePriority as $user)
                                             <form action="{{ url('/admin/editors/priority/assign/' . $id) }}" method="POST" enctype="multipart/form-data">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="hidden" name="userId" value="{{ $user->id }}">

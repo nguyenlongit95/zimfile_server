@@ -30,7 +30,7 @@ class JobsExport implements FromCollection, WithHeadings, WithMapping, WithEvent
             ->select(
                 'users.id', 'users.name as client',
                 'directors.id', 'directors.nas_dir', 'directors.type', 'directors.status', 'directors.created_at',
-                'directors.editor_id', 'directors.note'
+                'directors.editor_id', 'directors.note', 'directors.qty as quantity'
             )->get();
         // compare and merge text for const number
         if ($directors) {
@@ -38,8 +38,6 @@ class JobsExport implements FromCollection, WithHeadings, WithMapping, WithEvent
                 $director = Director::convertStatus($director);
                 $director = Director::convertType($director);
                 $director->date_create = Carbon::now()->format('m-Y');
-                // Quantity
-                $director->quantity = Jobs::where('director_id', $director->id)->count();
                 $editor = User::where('id', $director->editor_id)->select('name')->first();
                 if (empty($editor)) {
                     $director->editor = '-';

@@ -50,7 +50,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             $pathFile = $parentDir->nas_dir . '/' . $pathFile;
         }
 
-        $path = config('const.base_path') . '/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
+        $path = config('const.base_path') . 'clients/' . Auth::user()->name . '/' . $pathFile . '/' . $file->getClientOriginalName();
         // Insert into database
         $param['user_id'] = Auth::user()->getAuthIdentifier();
         $param['director_id'] = $directoryId;
@@ -112,12 +112,9 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             return null;
         }
         foreach ($listPriority as $priority) {
-            $dir = Director::where('level', 2)->where('editor_id', null)->orWhere('editor_id', Auth::id())
-                ->where('status', 0)->orderBy('id', 'ASC')->first();
+            $dir = Director::where('level', 2)->where('user_id', $priority->user_id)->where('editor_id', null)
+                ->whereIn('status', [0, 1])->orderBy('id', 'ASC')->first();
             if (empty($dir)) {
-                continue;
-            }
-            if ($dir->user_id != $priority->user_id) {
                 continue;
             }
             return $dir;
@@ -133,15 +130,13 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function getJobsForQC($param)
     {
-        // List all id of user belong
-        $listUserId = app()->make(UserRepositoryInterface::class)->listIdUserBelongQc(Auth::user()->getAuthIdentifier())->toArray();
         // Response data
         return Director::join('users', 'directors.editor_id', 'users.id')->where('directors.editor_id', '<>', null)
-            ->where('directors.level', 2)->where('directors.status', 3)->whereIn('directors.user_id', $listUserId)
+            ->where('directors.level', 2)->where('directors.status', 3)
             ->select(
                 'directors.id', 'directors.user_id', 'directors.nas_dir', 'directors.level', 'directors.parent_id',
                 'directors.path', 'directors.type', 'directors.status', 'directors.editor_id', 'directors.note',
-                'users.name as editor_name'
+                'users.name as editor_name', 'directors.qc_id'
             )->get();
     }
 
@@ -153,13 +148,14 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function checkJobsBeforeAssign($param)
     {
-        $job = DB::table('directors')->where('editor_id', '=', Auth::user()->id)
+        $job = DB::table('directors')->where('editor_id',  Auth::user()->id)
             ->where('status', 2)->count();
-        if ($job > 0) {
-            return false;
+        if (empty($job)) {
+            return null;
         }
         // Return pass param
-        return true;
+        return DB::table('directors')->where('editor_id', '=', Auth::user()->id)
+            ->where('status', 2)->first();
     }
 
     /**
@@ -340,5 +336,33 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             'editor_id' => $id,
             'status' => 2
         ]);
+    }
+
+    /**
+     * Function qc get check for jobs
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function qcGetCheckJobs($id)
+    {
+        $jobs = Director::find($id);
+        // Check jobs already exit's
+        if (empty($jobs)) {
+            return null;
+        }
+        if (!is_null($jobs->qc_id)) {
+            return false;
+        }
+        // Response update sql
+        try {
+            DB::table('directors')->where('id', $id)->update([
+                'qc_id' => Auth::id()
+            ]);
+            return Director::find($id);
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return null;
+        }
     }
 }

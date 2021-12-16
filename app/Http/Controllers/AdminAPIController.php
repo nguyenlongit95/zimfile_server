@@ -414,8 +414,8 @@ class AdminAPIController extends Controller
         $create = $this->userRepository->create($param);
         if ($create) {
             // Create director in NAS storage
-            Storage::disk('ftp')->makeDirectory(config('const.base_path') . $param['name']);
-            Storage::disk('ftp')->makeDirectory(config('const.base_path') . $param['name'] . '/done');
+            Storage::disk('ftp')->makeDirectory(config('const.base_path') . '/clients/' . $param['name']);
+            Storage::disk('ftp')->makeDirectory(config('const.base_path') . '/clients/' . $param['name'] . '/done');
             return true;
         }
         // Error response redirect
@@ -828,17 +828,13 @@ class AdminAPIController extends Controller
      */
     public function priority(Request $request, $id)
     {
-        // List my users assign for me
-        $listMyPriority = $this->userRepository->getPriority($id);
-        // List my id user ass for me
-        $listIdMyPriority = $this->userRepository->getIdUserAssignPriority($id);
-        // List all user assigned for editor
-        $listAllIdUnPriority = $this->userRepository->getAllIdUserAssignPriority();
-        // List all user not assign for editor
-        $listUserUnAssignPriority= $this->userRepository->getUserUnAssignPriority($listAllIdUnPriority);
+        // List all priority for free
+        $listAllFreePriority = $this->userRepository->listUserPriorityFree($id);
+        // List all priority for me
+        $listAllPriorityForMe = $this->userRepository->listUserPriorityForMe($id);
         // Render view
         return view('admin.editors.priority', compact(
-            'listMyPriority', 'listIdMyPriority', 'listAllIdUnPriority', 'listUserUnAssignPriority', 'id'
+            'id', 'listAllFreePriority', 'listAllPriorityForMe'
         ));
     }
 

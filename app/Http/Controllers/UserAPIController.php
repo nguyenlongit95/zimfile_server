@@ -98,14 +98,14 @@ class UserAPIController extends Controller
         if (!isset($param['director'])) {
             return app()->make(ResponseHelper::class)->error();
         }
-        $dir = self::BASE_PATH . '/' . Auth::user()->name . '/';
+        $dir = self::BASE_PATH . '/clients/' . Auth::user()->name . '/';
         if ($param['level'] > 1 && $param['parent_id'] > 0) {
             // Sub folder
             $parentDir = $this->directoryRepository->find($param['parent_id']);
             $dir = $dir . $parentDir->nas_dir . '/' . $param['director'];
         } else {
             // Main folder
-            $dir = self::BASE_PATH . '/' . Auth::user()->name . '/' . $param['director'];
+            $dir = self::BASE_PATH . '/clients/' . Auth::user()->name . '/' . $param['director'];
         }
         try {
             // Create dir on NAS storage
@@ -370,7 +370,7 @@ class UserAPIController extends Controller
             return app()->make(ResponseHelper::class)->error();
         }
         // Init path download
-        $pathUser = config('const.base_path') . $user->name . '/done/' . $param['date'];
+        $pathUser = config('const.base_path') . 'clients/' . $user->name . '/done/' . $param['date'];
         // Response download file for jobs
         return Storage::disk('ftp')->download(
             Storage::disk('ftp')->files($pathUser)[0]
@@ -416,7 +416,7 @@ class UserAPIController extends Controller
     public function listDirInDone(Request $request)
     {
         // Connect NAS and list all folder in done folder
-        $listDir = Storage::disk('ftp')->directories(config('const.base_path') . Auth::user()->name . '/done');
+        $listDir = Storage::disk('ftp')->directories(config('const.base_path') . 'clients/' . Auth::user()->name . '/done');
         // Check data response and response null data
         if (empty($listDir)) {
             return app()->make(ResponseHelper::class)->success("File products not found.");

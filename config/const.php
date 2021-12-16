@@ -13,5 +13,5 @@ return [
     ],
     'base_path' => '/disk1/DATA/',
     'max_size' => 52428800,
-    'public_ip' => 'http://3.12.146.14/api/',
+    'public_ip' => 'http://18.216.48.237/api/',
 ];

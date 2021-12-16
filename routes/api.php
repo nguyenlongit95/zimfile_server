@@ -76,6 +76,7 @@ Route::middleware('auth:api')->group(function () {
      */
     Route::group(['prefix' => 'qc'], function () {
         Route::get('list-jobs', [\App\Http\Controllers\QCAPIController::class, 'listJobs']);
+        Route::get('get-job-to-check', [\App\Http\Controllers\QCAPIController::class, 'getJobsToCheck']);
         Route::post('check-confirm-job', [\App\Http\Controllers\QCAPIController::class, 'checkConfirmJobs']);
     });
 });

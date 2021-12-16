@@ -102,4 +102,25 @@ class QCAPIController extends Controller
         // Response error
         return app()->make(ResponseHelper::class)->error();
     }
+
+    /**
+     * Controller function qc get jobs to check local
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function getJobsToCheck(Request $request)
+    {
+        $param = $request->all();
+        $checkJobs = $this->jobRepository->qcGetCheckJobs($param['job_id']);
+        if (is_null($checkJobs)) {
+            return app()->make(ResponseHelper::class)->notFound('Jobs not found.');
+        }
+        if (!$checkJobs) {
+            return app()->make(ResponseHelper::class)->validation('There is a QC to check this job already!');
+        }
+        // Response success
+        return app()->make(ResponseHelper::class)->success($checkJobs);
+    }
 }

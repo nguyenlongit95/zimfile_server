@@ -241,76 +241,53 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
         }
     }
 
+
     /**
-     * Sql function get Priority using editor id
+     * Function list all user free priority
      *
-     * @param $userId
-     * @return mixed|void
+     * @param int $editorId
+     * @return mixed
      */
-    public function getPriority($userId)
+    public function listUserPriorityFree($editorId)
     {
-        try {
-            return DB::table('user_priority')->join('users', 'user_priority.user_id', '=', 'users.id')
-                ->select('user_priority.priority', 'users.id', 'users.name', 'users.email', 'users.phone')
-                ->where('user_priority.editor_id', $userId)
-                ->orderBy('user_priority.priority', 'ASC')
-                ->get();
-        } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
-            return null;
-        }
+        // Get all id user has priority for me
+        $priorityForMe = $this->getIdUserPriorityForMe($editorId);
+        // Return all customer not assign priority for this editorId
+        return DB::table('users')->where('role', config('const.user'))
+            ->whereNotIn('id', $priorityForMe)
+            ->select('id', 'name', 'email')
+            ->get();
     }
 
     /**
-     * Sql function get list id of user priority using editor id
+     * Function list all user priority assign for me
      *
-     * @param $userId
-     * @return array|null
+     * @param int $editorId
+     * @return mixed
      */
-    public function getIdUserAssignPriority($userId)
+    public function listUserPriorityForMe($editorId)
     {
-        try {
-            return DB::table('user_priority')->join('users', 'user_priority.user_id', '=', 'users.id')
-                ->where('user_priority.editor_id', $userId)
-                ->orderBy('user_priority.priority', 'ASC')
-                ->pluck('users.id')->toArray();
-        } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
-            return null;
-        }
+        // Get all id user has priority for me
+        $priorityForMe = $this->getIdUserPriorityForMe($editorId);
+        // Return all customer assign for me
+        return DB::table('users')->join('user_priority', 'users.id', 'user_priority.user_id')
+            ->where('user_priority.editor_id', $editorId)
+            ->where('users.role', config('const.user'))
+            ->whereIn('users.id', $priorityForMe)
+            ->orderBy('user_priority.priority', 'ASC')
+            ->select('users.id', 'users.name', 'users.email', 'user_priority.priority')
+            ->get();
     }
 
     /**
-     * Sql function get list id of user priority using editor id
+     * Sql function get all id user assign priority for me
      *
-     * @return array|null
+     * @param int $editorId
+     * @return mixed
      */
-    public function getAllIdUserAssignPriority()
+    public function getIdUserPriorityForMe($editorId)
     {
-        try {
-            return DB::table('user_priority')->join('users', 'user_priority.user_id', '=', 'users.id')
-                ->orderBy('user_priority.priority', 'ASC')
-                ->pluck('users.id')->toArray();
-        } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Sql function get all user Un Assign priority
-     *
-     * @param array $arrIdUserAssigned
-     * @return \Illuminate\Support\Collection|null
-     */
-    public function getUserUnAssignPriority($arrIdUserAssigned)
-    {
-        try {
-            return DB::table('users')->whereNotIn('id', $arrIdUserAssigned)->where('role', 1)->get();
-        } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
-            return null;
-        }
+        return DB::table('user_priority')->where('editor_id', $editorId)->pluck('user_id');
     }
 
     /**
@@ -327,8 +304,7 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
             return DB::table('user_priority')->insert([
                 'user_id' => $userId,
                 'editor_id' => $editorId,
-                'priority' => $priority,
-                'created_at' => Carbon::now()
+                'priority' => $priority
             ]);
         } catch (\Exception $exception) {
             Log::error($exception);
@@ -337,20 +313,19 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
     }
 
     /**
-     * Sql function remove priority
+     * Sql function remove assign priority
      *
-     * @param int $editorId
+     * @param int $id
      * @param int $userId
      * @return mixed
      */
-    public function removeAssignPriority($editorId, $userId)
+    public function removeAssignPriority($id, $userId)
     {
         try {
-            return DB::table('user_priority')->where('user_id', $userId)
-                ->where('editor_id', $editorId)
+            return DB::table('user_priority')->where('editor_id', $id)->where('user_id', $userId)
                 ->delete();
         } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
+            Log::error($exception);
             return null;
         }
     }

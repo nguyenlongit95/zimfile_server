@@ -72,8 +72,9 @@ class EditorAPIController extends Controller
     public function getJob(Request $request)
     {
         $param = $request->all();
-        if ($this->jobRepository->checkJobsBeforeAssign($param) == false) {
-            return app()->make(ResponseHelper::class)->success($this->directoryRepository->getMyJobs());
+        $checkJobs = $this->jobRepository->checkJobsBeforeAssign($param);
+        if ($checkJobs != null) {
+            return app()->make(ResponseHelper::class)->success($checkJobs);
         }
         $dir = $this->jobRepository->getJobsForEditor($param);
         if (empty($dir) || is_null($dir)) {

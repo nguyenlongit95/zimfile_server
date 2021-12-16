@@ -73,4 +73,10 @@ interface JobRepositoryInterface
      * @return mixed
      */
     public function adminAssingJob($id);
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function qcGetCheckJobs($id);
 }

@@ -77,12 +77,12 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
         $user = User::find($dir->user_id);
         // Path level 1
         if ($dir->level == 1 && $dir->parent_id == 0) {
-            $path = $path . config('const.base_path') . $user->name . '/' . $dir->nas_dir;
+            $path = $path . config('const.base_path') . '/clients/' . $user->name . '/' . $dir->nas_dir;
         }
         // Path level 2
         if ($dir->level > 1 && $dir->parent_id > 0) {
             $parent = Director::find($dir->parent_id);
-            $path = $path . config('const.base_path') . $user->name . '/' . $parent->nas_dir . '/' . $dir->nas_dir;
+            $path = $path . config('const.base_path') . '/clients/' . $user->name . '/' . $parent->nas_dir . '/' . $dir->nas_dir;
         }
         // Response data path
         return $path;
