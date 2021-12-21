@@ -147,13 +147,23 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
     public function getJobsForQC($param)
     {
         // Response data
-        return Director::join('users', 'directors.editor_id', 'users.id')->where('directors.editor_id', '<>', null)
+        $jobs = Director::join('users', 'directors.editor_id', 'users.id')->where('directors.editor_id', '<>', null)
             ->where('directors.level', 2)->where('directors.status', 3)
             ->select(
                 'directors.id', 'directors.user_id', 'directors.nas_dir', 'directors.level', 'directors.parent_id',
                 'directors.path', 'directors.type', 'directors.status', 'directors.editor_id', 'directors.note',
+                'directors.user_id as customer_id',
                 'users.name as editor_name', 'directors.qc_id'
             )->get();
+        if (!empty($jobs)) {
+            foreach ($jobs as $job) {
+                $job = $this->mergeCustomerInfo($job);
+            }
+            // Response jobs data
+            return $jobs;
+        }
+        // Response null data
+        return null;
     }
 
     /**
