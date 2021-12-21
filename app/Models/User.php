@@ -27,6 +27,7 @@ class User extends Authenticatable
         'total_file',
         'base_path',
         'role',     // 0 adminstator, 1 user, 2 editor, 3 qc
+        'group_id',
     ];
 
     /**

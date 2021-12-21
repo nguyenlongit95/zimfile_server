@@ -6,6 +6,8 @@ use App\Repositories\Directory\DirectoryEloquentRepository;
 use App\Repositories\Directory\DirectoryRepositoryInterface;
 use App\Repositories\Files\FilesEloquentRepository;
 use App\Repositories\Files\FilesRepositoryInterface;
+use App\Repositories\Group\GroupEloquentRepository;
+use App\Repositories\Group\GroupRepositoryInterface;
 use App\Repositories\JobRepository\JobEloquentRepository;
 use App\Repositories\JobRepository\JobRepositoryInterface;
 use App\Repositories\User\UserEloquentRepository;
@@ -37,6 +39,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             JobRepositoryInterface::class,
             JobEloquentRepository::class
+        );
+        $this->app->bind(
+            GroupRepositoryInterface::class,
+            GroupEloquentRepository::class
         );
     }
 

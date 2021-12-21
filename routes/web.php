@@ -41,9 +41,9 @@ Route::group(['prefix'=>'admin'],function() {
         Route::post('/edit/{id}', [\App\Http\Controllers\AdminAPIController::class, 'updateEditors']);
         Route::get('/delete/{id}', [\App\Http\Controllers\AdminAPIController::class, 'deleteEditor']);
         Route::get('/assign-job/{id}', [\App\Http\Controllers\AdminAPIController::class, 'assignJobs']);
-        Route::get('/priority/{id}', [\App\Http\Controllers\AdminAPIController::class, 'priority']);
-        Route::post('/priority/assign/{id}', [\App\Http\Controllers\AdminAPIController::class, 'assignPriority']);
-        Route::get('/priority/{id}/remove/{userId}', [\App\Http\Controllers\AdminAPIController::class, 'removePriority']);
+        Route::get('/assign-group/{id}', [\App\Http\Controllers\AdminAPIController::class, 'editorAssignGroup']);
+        Route::get('/{editorId}/assign-group/{groupId}', [\App\Http\Controllers\AdminAPIController::class, 'assignGroupForEditor']);
+        Route::get('/{editorId}/remove-group/{groupId}', [\App\Http\Controllers\AdminAPIController::class, 'removeGroupForEditor']);
     });
 
     Route::group(['prefix' => 'qc'], function () {
@@ -59,5 +59,14 @@ Route::group(['prefix'=>'admin'],function() {
     Route::group(['prefix' => 'jobs'], function () {
         Route::get('/', [\App\Http\Controllers\AdminAPIController::class, 'listJobsDashBoard']);
         Route::get('/search', [\App\Http\Controllers\AdminAPIController::class, 'searchJobsDashBoard']);
+    });
+
+    Route::group(['prefix' => 'groups'], function () {
+        Route::get('/', [\App\Http\Controllers\AdminAPIController::class, 'listGroups']);
+        Route::post('/create', [\App\Http\Controllers\AdminAPIController::class, 'createGroup']);
+        Route::post('{id}/edit', [\App\Http\Controllers\AdminAPIController::class, 'update']);
+        Route::get('{id}/assign-customers', [\App\Http\Controllers\AdminAPIController::class, 'assignCustomer']);
+        Route::get('/{groupId}/assign-customer/{customerId}', [\App\Http\Controllers\AdminAPIController::class, 'assignCustomerToGroup']);
+        Route::get('/{groupId}/remove-customer/{customerId}', [\App\Http\Controllers\AdminAPIController::class, 'removeCustomerInGroup']);
     });
 });

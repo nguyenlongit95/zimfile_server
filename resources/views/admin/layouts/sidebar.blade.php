@@ -24,6 +24,11 @@
 
             <!-- Widgets dùng để quản lý các thành phần của website như header, sidebar footer -->
             <li>
+                <a href="{{ url('/admin/groups/') }}">
+                    <i class="fa fa-group"></i> <span>Groups</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ url('/admin/customers/') }}">
                     <i class="fa fa-user"></i> <span>Customers</span>
                 </a>

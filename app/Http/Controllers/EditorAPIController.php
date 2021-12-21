@@ -72,8 +72,16 @@ class EditorAPIController extends Controller
     public function getJob(Request $request)
     {
         $param = $request->all();
+        $checkJobsRejected = $this->jobRepository->checkJobsRejected($param);
+        if (!empty($checkJobsRejected)) {
+            $jobPath = $this->directoryRepository->dirJob($checkJobsRejected->id);
+            $checkJobsRejected->path_job = config('const.public_nas_ip') . $jobPath;
+            return app()->make(ResponseHelper::class)->success($checkJobsRejected);
+        }
         $checkJobs = $this->jobRepository->checkJobsBeforeAssign($param);
         if ($checkJobs != null) {
+            $jobPath = $this->directoryRepository->dirJob($checkJobs->id);
+            $checkJobs->path_job = config('const.public_nas_ip') . $jobPath;
             return app()->make(ResponseHelper::class)->success($checkJobs);
         }
         $dir = $this->jobRepository->getJobsForEditor($param);
@@ -82,7 +90,7 @@ class EditorAPIController extends Controller
         }
         $jobPath = $this->directoryRepository->dirJob($dir->id);
         $jobInDirect = $this->jobRepository->jobInDir($dir);
-        $this->directoryRepository->copyJobsToEditor($jobPath, $dir);
+        $dir->path_job = config('const.public_nas_ip') . $jobPath;
         $param['editor_assign'] = Auth::user()->getAuthIdentifier();
         $param['status'] = 2;
         if (!empty($jobInDirect)) {

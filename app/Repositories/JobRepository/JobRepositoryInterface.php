@@ -42,6 +42,12 @@ interface JobRepositoryInterface
     public function checkJobsBeforeAssign($param);
 
     /**
+     * @param $param
+     * @return mixed
+     */
+    public function checkJobsRejected($param);
+
+    /**
      * @param $request
      * @param $path
      * @param $dir

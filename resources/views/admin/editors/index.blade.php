@@ -4,6 +4,7 @@
     <!-- Main content -->
     <section class="content">
         <div class="col-xs-12 col-md-12 col-lg-12">
+        @include('admin.layouts.alert')
         <div class="row">
         <div class="box">
                 <div class="box-header">
@@ -11,7 +12,6 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    @include('admin.layouts.alert')
                     <form action="{{ url('/admin/editors/search') }}" method="post">
                     <input class="fomr-control" name="_token" value="{{ csrf_token() }}" type="hidden">
                     <table id="example2" class="table table-bordered table-hover">
@@ -60,7 +60,7 @@
                             <th>Phone</th>
                             <th>Password</th>
                             <th class="text-center">Assign Job</th>
-                            <th class="text-center">Priority</th>
+                            <th class="text-center">Assign Group</th>
                             <th class="text-center">Update</th>
                             <th class="text-center">Delete</th>
                         </tr>
@@ -90,7 +90,7 @@
                                 <a @if($editor->assigned == true) disabled @else href="{{ url('/admin/editors/assign-job/' . $editor->id) }}" @endif class="btn btn-success">Assign Job</a>
                             </td>
                             <td class="text-center">
-                                <a href="{{ url('/admin/editors/priority/' . $editor->id) }}" class="btn btn-default">Priority</a>
+                                <a class="btn btn-primary" href="{{ url('/admin/editors/assign-group/' . $editor->id) }}">Assign groups</a>
                             </td>
                             <td class="text-center">
                                 <input type="submit" class="btn btn-warning" name="update" value="update">

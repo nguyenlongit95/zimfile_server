@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\JobsExport;
 use App\Repositories\Directory\DirectoryRepositoryInterface;
 use App\Repositories\Files\FilesRepositoryInterface;
+use App\Repositories\Group\GroupRepositoryInterface;
 use App\Repositories\JobRepository\JobRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Supports\ResponseHelper;
@@ -26,6 +27,7 @@ class AdminAPIController extends Controller
     protected $filesRepository;
     protected $directoryRepository;
     protected $jobRepository;
+    protected $groupRepository;
 
     /**
      * Define global variable base path
@@ -38,19 +40,22 @@ class AdminAPIController extends Controller
      * @param FilesRepositoryInterface $filesRepository
      * @param DirectoryRepositoryInterface $directoryRepository
      * @param JobRepositoryInterface $jobRepository
+     * @param GroupRepositoryInterface $groupRepository
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function __construct(
         UserRepositoryInterface $userRepository,
         FilesRepositoryInterface $filesRepository,
         DirectoryRepositoryInterface $directoryRepository,
-        JobRepositoryInterface $jobRepository
+        JobRepositoryInterface $jobRepository,
+        GroupRepositoryInterface $groupRepository
     )
     {
         $this->userRepository = $userRepository;
         $this->filesRepository = $filesRepository;
         $this->directoryRepository = $directoryRepository;
         $this->jobRepository = $jobRepository;
+        $this->groupRepository = $groupRepository;
         // check admin panel account
         if (Auth::check()) {
             if (Auth::user()->role !== config('const.admin')) {
@@ -794,9 +799,9 @@ class AdminAPIController extends Controller
     {
         $remove = $this->userRepository->removeUserAssign($id);
         if ($remove) {
-            return redirect()->back()->with('status', 'Remove user success.');
+            return redirect()->back()->with('thong_bao', 'Remove user success.');
         }
-        return redirect()->back()->with('status', 'Remove user failed, check again system.');
+        return redirect()->back()->with('thong_bao', 'Remove user failed, check again system.');
     }
 
     /**
@@ -813,75 +818,177 @@ class AdminAPIController extends Controller
             foreach ($param['user_id'] as $userId) {
                 $this->userRepository->assignedUser($userId, $qcId);
             }
-            return redirect('/admin/qc/assign-user/' . $qcId)->with('status', 'Assign user success.');
+            return redirect('/admin/qc/assign-user/' . $qcId)->with('thong_bao', 'Assign user success.');
         } else {
-            return redirect('/admin/qc/assign-user/' . $qcId)->with('status', 'Please select user.');
+            return redirect('/admin/qc/assign-user/' . $qcId)->with('thong_bao', 'Please select user.');
         }
     }
 
     /**
-     * Controller function render view list all user and user assigned priority for this editor
+     * Controller function list all groups and render view show all the groups
      *
      * @param Request $request
-     * @param int $id
      * @return Factory|View
      */
-    public function priority(Request $request, $id)
+    public function listGroups(Request $request)
     {
-        // List all priority for free
-        $listAllFreePriority = $this->userRepository->listUserPriorityFree($id);
-        // List all priority for me
-        $listAllPriorityForMe = $this->userRepository->listUserPriorityForMe($id);
-        // Render view
-        return view('admin.editors.priority', compact(
-            'id', 'listAllFreePriority', 'listAllPriorityForMe'
-        ));
+        $groups = $this->groupRepository->listAll();
+        return view('admin.groups.index', compact('groups'));
     }
 
     /**
-     * Controller function Assign priority
+     * Controller function create new group
      *
      * @param Request $request
-     * @param int $id
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function assignPriority(Request $request, $id)
+    public function createGroup(Request $request)
     {
-        // Check editor
-        $editor = $this->userRepository->find($id);
-        if (!$editor) {
-            return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'Cannot find the editor.');
-        }
-        // Pass param and check param
         $param = $request->all();
-        if (!$param['priority'] || is_null($param['priority'])) {
-            return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'Please enter the priority for this user.');
+        // Validation param group_name
+        if (!isset($param['group_name']) || is_null($param['group_name'])) {
+            return redirect('/admin/groups/')->with('thong_bao', 'Please enter name of group.');
         }
-        // Assign user to editor priority
-        $assignPriority = $this->userRepository->assignPriority($id, $param['userId'], $param['priority']);
-        if (!$assignPriority) {
-            return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'A system error has occurred, please check the logs.');
+        $create = $this->groupRepository->create($param);
+        if ($create) {
+            // Create success end return success msg
+            return redirect('/admin/groups/')->with('thong_bao', 'Create new groups success.');
         }
-        // Response redirect success
-        return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'Assign priority success.');
+        // Response error and check system
+        return redirect('/admin/groups/')->with('thong_bao', 'Create new groups failed, please check system again.');
     }
 
     /**
-     * Controller function remove priority
+     * Controller function update name a group
      *
      * @param Request $request
      * @param int $id
-     * @param int $userId
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function removePriority(Request $request, $id, $userId)
+    public function update(Request $request, $id)
     {
-        // Remove assign priority
-        $removePriority = $this->userRepository->removeAssignPriority($id, $userId);
-        if (!$removePriority) {
-            return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'Remove failed, please check log system.');
+        $param = $request->all();
+        // Validation param group_name
+        if (!isset($param['group_name']) || is_null($param['group_name'])) {
+            return redirect('/admin/groups/')->with('thong_bao', 'Please enter name of group.');
         }
-        // Response redirect success
-        return redirect('/admin/editors/priority/' . $id)->with('thong_bao', 'Remove success.');
+        // Update the data
+        $update = $this->groupRepository->update($param, $id);
+        if ($update) {
+            // Create success end return success msg
+            return redirect('/admin/groups/')->with('thong_bao', 'Update groups success.');
+        }
+        // Response error and check system
+        return redirect('/admin/groups/')->with('thong_bao', 'Update groups failed, please check system again.');
+    }
+
+    /**
+     * Controller function assign customer for group
+     *
+     * @param Request $request
+     * @param int $id
+     * @return Factory|View|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function assignCustomer(Request $request, $id)
+    {
+        $group = $this->groupRepository->find($id);
+        // Check group already
+        if (!$group) {
+            return redirect('/admin/groups/')->with('thong_bao', 'Cannot find the group.');
+        }
+        // list user group
+        $listUserFreeGroup = $this->groupRepository->listUserFreeGroup($group->id);
+        $listUserInGroup = $this->groupRepository->listUserInGroup($group->id);
+        // Render view data
+        return view('admin.groups.assign', compact('group', 'listUserFreeGroup', 'listUserInGroup'));
+    }
+
+    /**
+     * Controller function assign customer to a group
+     *
+     * @param Request $request
+     * @param $groupId
+     * @param $customerId
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function assignCustomerToGroup(Request $request, $groupId, $customerId)
+    {
+        $param['group_id'] = $groupId;
+        if ($this->userRepository->update($param, $customerId)) {
+            return redirect('/admin/groups/' . $groupId . '/assign-customers')->with('thong_bao', 'Assign customer to group success.');
+        }
+        return redirect('/admin/groups/' . $groupId . '/assign-customers')->with('thong_bao', 'Assign failed, please check again.');
+    }
+
+    /**
+     * Controlle function remove customer in group
+     *
+     * @param Request $request
+     * @param $groupId
+     * @param $customerId
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function removeCustomerInGroup(Request $request, $groupId, $customerId)
+    {
+        $param['group_id'] = null;
+        if ($this->userRepository->update($param, $customerId)) {
+            return redirect('/admin/groups/' . $groupId . '/assign-customers')->with('thong_bao', 'Remove customer to group success.');
+        }
+        return redirect('/admin/groups/' . $groupId . '/assign-customers')->with('thong_bao', 'Remove failed, please check again.');
+    }
+
+    /**
+     * Controller function lst and render view group
+     *
+     * @param Request $request
+     * @param int $id
+     * @return Factory|View|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function editorAssignGroup(Request $request, $id)
+    {
+        $editor = $this->userRepository->find($id);
+        // Check editor already
+        if (!$editor) {
+            return redirect('/admin/editors/')->with('thong_bao', 'Editor not found.');
+        }
+        // List group
+        $listGroupsForMe = $this->groupRepository->listGroupsForEditor($editor->id);
+        $listGroupsNotForMe = $this->groupRepository->listGroupsNotForEditor($editor->id);
+        // Render view
+        return view('admin.editors.assign', compact('editor', 'listGroupsForMe', 'listGroupsNotForMe'));
+    }
+
+    /**
+     * Controller function assign group for editor
+     *
+     * @param Request $request
+     * @param int $editorId
+     * @param int $groupId
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function assignGroupForEditor(Request $request, $editorId, $groupId)
+    {
+        if ($this->groupRepository->assignGroupForEditor($editorId, $groupId)) {
+            return redirect('/admin/editors/assign-group/' . $editorId)->with('thong_bao', 'Assign group success.');
+        }
+        // Response assign failed
+        return redirect('/admin/editors/assign-group/' . $editorId)->with('thong_bao', 'Assign group failed, please check system again.');
+    }
+
+    /**
+     * Controller function remove a group for editor
+     *
+     * @param Request $request
+     * @param int $editorId
+     * @param int $groupId
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function removeGroupForEditor(Request $request, $editorId, $groupId)
+    {
+        if ($this->groupRepository->removeGroupForEditor($editorId, $groupId)) {
+            return redirect('/admin/editors/assign-group/' . $editorId)->with('thong_bao', 'Remove group success.');
+        }
+        // Response assign failed
+        return redirect('/admin/editors/assign-group/' . $editorId)->with('thong_bao', 'Remove group failed, please check system again.');
     }
 }

@@ -14,4 +14,5 @@ return [
     'base_path' => '/disk1/DATA/',
     'max_size' => 52428800,
     'public_ip' => 'http://18.216.48.237/api/',
+    'public_nas_ip' => '\\192.168.1.111',
 ];

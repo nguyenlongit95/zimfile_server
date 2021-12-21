@@ -106,19 +106,35 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function getJobsForEditor($param)
     {
-        $listPriority = DB::table('user_priority')->where('editor_id', Auth::id())
-            ->orderBy('priority', 'ASC')->select('user_id')->get();
-        if (empty($listPriority)) {
+        // Get the list of groups assigned to this editor and the order of those groups
+        $groupIds = DB::table('editor_groups')->where('editor_id', Auth::id())
+            ->orderBy('id', 'ASC')->pluck('group_id')
+            ->toArray();
+        if (empty($groupIds)) {
             return null;
         }
-        foreach ($listPriority as $priority) {
-            $dir = Director::where('level', 2)->where('user_id', $priority->user_id)->where('editor_id', null)
-                ->whereIn('status', [0, 1])->orderBy('id', 'ASC')->first();
-            if (empty($dir)) {
+        // Get the list of groups in the correct order of name preference
+        foreach ($groupIds as $groupId) {
+            // Role 1 for customers and get all customer assign for groups
+            $customers = DB::table('users')->where('role', 1)
+                ->where('group_id', $groupId)->get();
+            if (empty($customers)) {
                 continue;
             }
-            return $dir;
+            // Check jobs of each customer
+            foreach ($customers as $customer) {
+                // list all jobs
+                $jobs =  Director::where('level', 2)->where('user_id', $customer->id)->where('editor_id', null)
+                    ->where('status', 1)->orderBy('id', 'ASC')->first();
+                if (empty($jobs)) {
+                    continue;
+                }
+                // Return job record
+                return $jobs;
+            }
         }
+        // Error null data
+        return null;
     }
 
     /**
@@ -148,14 +164,53 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      */
     public function checkJobsBeforeAssign($param)
     {
+        // Status equals 2 is assigned to the currently logged in editor
         $job = DB::table('directors')->where('editor_id',  Auth::user()->id)
-            ->where('status', 2)->count();
+            ->where('status', 2)->first();
         if (empty($job)) {
             return null;
         }
-        // Return pass param
-        return DB::table('directors')->where('editor_id', '=', Auth::user()->id)
-            ->where('status', 2)->first();
+        // Return record data jobs
+        return $this->mergeCustomerInfo($job);
+    }
+
+    /**
+     * Function to check if these editors have any rejected jobs?
+     *
+     * @param array $param
+     * @return mixed
+     */
+    public function checkJobsRejected($param)
+    {
+        // Status equals 0 is rejected to the currently logged in editor
+        $job = DB::table('directors')->where('editor_id', Auth::user()->id)
+            ->where('status', 0)->orderBy('id', 'ASC')->first();
+        if (empty($job)) {
+            return null;
+        }
+        // Return record data jobs
+        return $this->mergeCustomerInfo($job);
+    }
+
+    /**
+     * Local function merge information of customer
+     *
+     * @param object $job
+     * @return mixed
+     */
+    protected function mergeCustomerInfo($job)
+    {
+        // Get customer create job
+        $customer = DB::table('users')->where('id', $job->user_id)->first();
+        if (empty($customer)) {
+            $customer->customer_name = '-';
+            $customer->email = '-';
+        } else {
+            $job->customer_name = $customer->name;
+            $job->email = $customer->email;
+        }
+        // Return job data record
+        return $job;
     }
 
     /**
