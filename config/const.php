@@ -16,4 +16,5 @@ return [
     'max_size' => 52428800,
     'public_ip' => 'http://18.216.48.237/api/',
     'public_nas_ip' => '\\192.168.1.111',
+    'public_nas_address' => '\\zimstudio.ddns.net',
 ];
