@@ -5,6 +5,7 @@ return [
     'user' => 1,
     'editor' => 2,
     'qc' => 3,
+    'sub_admin' => 4,
     'users' => [
         'status' => [
             'active' => 1,

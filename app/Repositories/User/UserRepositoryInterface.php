@@ -113,4 +113,9 @@ interface UserRepositoryInterface
      * @return mixed
      */
     public function removeAssignPriority($id, $userId);
+
+    /**
+     * @return mixed
+     */
+    public function listSubAdmin();
 }

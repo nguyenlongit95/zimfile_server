@@ -69,4 +69,15 @@ Route::group(['prefix'=>'admin'],function() {
         Route::get('/{groupId}/assign-customer/{customerId}', [\App\Http\Controllers\AdminAPIController::class, 'assignCustomerToGroup']);
         Route::get('/{groupId}/remove-customer/{customerId}', [\App\Http\Controllers\AdminAPIController::class, 'removeCustomerInGroup']);
     });
+
+    Route::group(['prefix' => 'sub-admin'], function () {
+        Route::get('/', [\App\Http\Controllers\AdminAPIController::class, 'listSubAdmin']);
+    });
+
+    Route::group(['prefix' => 'notifications'], function () {
+        Route::get('/', [\App\Http\Controllers\AdminAPIController::class, 'listNotifications']);
+        Route::post('/create', [\App\Http\Controllers\AdminAPIController::class, 'createNotification']);
+        Route::post('/edit/{id}', [\App\Http\Controllers\AdminAPIController::class, 'editNotification']);
+        Route::get('/delete/{id}', [\App\Http\Controllers\AdminAPIController::class, 'deleteNotification']);
+    });
 });

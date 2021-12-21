@@ -14,7 +14,9 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Validations\Validation;
 
@@ -990,5 +992,109 @@ class AdminAPIController extends Controller
         }
         // Response assign failed
         return redirect('/admin/editors/assign-group/' . $editorId)->with('thong_bao', 'Remove group failed, please check system again.');
+    }
+
+    /**
+     * Controller function list sub admin
+     *
+     * @param Request $request
+     * @return Factory|View
+     */
+    public function listSubAdmin(Request $request)
+    {
+        $listSubAdmin = $this->userRepository->listSubAdmin();
+        return view('admin.subadmin.index', compact('listSubAdmin'));
+    }
+
+    /**
+     * Controller function list notification
+     *
+     * @param Request $request
+     * @return Factory|View
+     */
+    public function listNotifications(Request $request)
+    {
+        $listNotifications = DB::table('notifications')->orderBy('id', 'DESC')
+            ->paginate(config('const.paginate'));
+        return view('admin.notifications.index', compact('listNotifications'));
+    }
+
+    /**
+     * Controller function create new notification
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function createNotification(Request $request)
+    {
+        $param = $request->all();
+        if (is_null($param['notifications']) || $param['notifications'] == '') {
+            return redirect('/admin/notifications/')->with('thong_bao', 'Please enter the message content.');
+        }
+        try {
+            // Update all another record status un active
+            if ($param['status'] == 1) {
+                DB::table('notifications')->update([
+                    'status' => 0,
+                ]);
+            }
+            DB::table('notifications')->insert([
+                'notifications' => $param['notifications'],
+                'status' => $param['status'],
+            ]);
+            return redirect('/admin/notifications/')->with('thong_bao', 'Create new notification success.');
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return redirect('/admin/notifications/')->with('thong_bao', 'Error systems, please check again.');
+        }
+    }
+
+    /**
+     * Controller function edit a notifications
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function editNotification(Request $request, $id)
+    {
+        $param = $request->all();
+        if (is_null($param['notifications']) || $param['notifications'] == '') {
+            return redirect('/admin/notifications/')->with('thong_bao', 'Please enter the message content.');
+        }
+        try {
+            DB::table('notifications')->where('id', $id)->update([
+                'notifications' => $param['notifications'],
+                'status' => $param['status'],
+            ]);
+            // Update all another record status un active
+            if ($param['status'] == 1) {
+                DB::table('notifications')->where('id', '<>', $id)->update([
+                    'status' => 0,
+                ]);
+            }
+            return redirect('/admin/notifications/')->with('thong_bao', 'Update notification success.');
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return redirect('/admin/notifications/')->with('thong_bao', 'Error systems, please check again.');
+        }
+    }
+
+    /**
+     * Controller function delete a notifications
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function deleteNotification(Request $request, $id)
+    {
+        try {
+            DB::table('notifications')->where('id', $id)->delete();
+            return redirect('/admin/notifications/')->with('thong_bao', 'Delete a notification success.');
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return redirect('/admin/notifications/')->with('thong_bao', 'Error systems, please check again.');
+        }
     }
 }

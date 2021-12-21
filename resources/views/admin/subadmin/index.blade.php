@@ -8,6 +8,42 @@
             <div class="row">
                 <div class="box">
                     <div class="box-header">
+                        <h3 class="box-title">Create new sub admin</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <form action="{{ url('/admin/groups/create') }}" method="post">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        <div class="col-md-2">
+                                            <input class="form-control" id="create_name" name="name" type="text" placeholder="Name of sub admin.">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input class="form-control" id="create_email" name="email" type="email" placeholder="Email of sub sub admin.">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input class="form-control" id="create_address" name="address" type="text" placeholder="Address of sub admin.">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input class="form-control" id="create_phone" name="phone" type="text" placeholder="Phone of sub admin.">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input class="btn btn-success" name="create" type="submit" value="Create">
+                                        </div>
+                                    </th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </form>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+
+                <div class="box">
+                    <div class="box-header">
                         <h3 class="box-title">List sub admin</h3>
                     </div>
                     <!-- /.box-header -->
@@ -49,7 +85,6 @@
                             @endif
                             </tbody>
                         </table>
-                        {!! $editors->render() !!}
                     </div>
                     <!-- /.box-body -->
                 </div>

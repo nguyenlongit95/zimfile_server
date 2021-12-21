@@ -10,6 +10,7 @@ use App\Supports\ResponseHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -172,5 +173,23 @@ class EditorAPIController extends Controller
         }
         // response data success
         return app()->make(ResponseHelper::class)->success($data);
+    }
+
+    /**
+     * Controller function list a notifications has active
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function getNotifications(Request $request)
+    {
+        $notifications = DB::table('notifications')->where('status', 1)->orderBy('id', 'DESC')->first();
+        // Data notfound
+        if (empty($notifications)) {
+            return app()->make(ResponseHelper::class)->notFound("Notification not found");
+        }
+        // Response data
+        return app()->make(ResponseHelper::class)->success($notifications);
     }
 }

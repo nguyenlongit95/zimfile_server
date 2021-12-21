@@ -329,4 +329,15 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
             return null;
         }
     }
+
+    /**
+     * Sql function list all sub admin
+     *
+     * @return mixed
+     */
+    public function listSubAdmin()
+    {
+        return DB::table('users')->where('role', config('const.sub_admin'))
+            ->orderBy('id', 'DESC')->get();
+    }
 }
