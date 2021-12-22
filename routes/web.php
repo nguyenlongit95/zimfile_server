@@ -72,6 +72,9 @@ Route::group(['prefix'=>'admin'],function() {
 
     Route::group(['prefix' => 'sub-admin'], function () {
         Route::get('/', [\App\Http\Controllers\AdminAPIController::class, 'listSubAdmin']);
+        Route::post('/create', [\App\Http\Controllers\AdminAPIController::class, 'createSubAdmin']);
+        Route::post('/edit/{id}', [\App\Http\Controllers\AdminAPIController::class, 'editSubAdmin']);
+        Route::get('/delete/{id}', [\App\Http\Controllers\AdminAPIController::class, 'deleteSubAdmin']);
     });
 
     Route::group(['prefix' => 'notifications'], function () {

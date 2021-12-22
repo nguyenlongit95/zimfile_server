@@ -1097,4 +1097,81 @@ class AdminAPIController extends Controller
             return redirect('/admin/notifications/')->with('thong_bao', 'Error systems, please check again.');
         }
     }
+
+    /**
+     * Controller function create new sub admin
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function createSubAdmin(Request $request)
+    {
+        $param = $request->all();
+        $param['status'] = config('const.users.status.active');
+        $param['total_file'] = 0;
+        $param['group_id'] = 0;
+        $param['role'] = config('const.sub_admin');
+        $param['password'] = Hash::make($param['password']);
+        Validation::validationUsers($request);
+        $createSubAdmin = $this->userRepository->create($param);
+        if ($createSubAdmin) {
+            // Response success insert record
+            return redirect('/admin/sub-admin/')->with('thong_bao', 'Create sub admin success.');
+        }
+        // Response error system
+        return redirect('/admin/sub-admin/')->with('thong_bao', 'System error, please check again');
+    }
+
+    /**
+     * Controller function edit sub admin
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function editSubAdmin(Request $request, $id)
+    {
+        $subAdmin = $this->userRepository->find($id);
+        // Check sub admin already exit's
+        if (empty($subAdmin)) {
+            return redirect('/admin/sub-admin/')->with('thong_bao', 'Cannot find sub admin.');
+        }
+        // Check change password and unset in the field
+        $param = $request->all();
+        if (is_null($param['password']) || $param['password'] == '') {
+            unset($param['password']);
+        }
+        // Update the sub admin
+        $updateSubAdmin = $this->userRepository->update($param, $subAdmin->id);
+        if ($updateSubAdmin) {
+            // Response success insert record
+            return redirect('/admin/sub-admin/')->with('thong_bao', 'Edit sub admin success.');
+        }
+        // Response error system
+        return redirect('/admin/sub-admin/')->with('thong_bao', 'System error, please check again');
+    }
+
+    /**
+     * Controller function delete a sub admin
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function deleteSubAdmin(Request $request, $id)
+    {
+        $subAdmin = $this->userRepository->find($id);
+        // Check sub admin already exit's
+        if (empty($subAdmin)) {
+            return redirect('/admin/sub-admin/')->with('thong_bao', 'Cannot find sub admin.');
+        }
+        // Destroy the sub admin
+        $destroySubAdmin = $this->userRepository->delete($subAdmin->id);
+        if ($destroySubAdmin) {
+            // Response success insert record
+            return redirect('/admin/sub-admin/')->with('thong_bao', 'Delete sub admin success.');
+        }
+        // Response error system
+        return redirect('/admin/sub-admin/')->with('thong_bao', 'System error, please check again');
+    }
 }

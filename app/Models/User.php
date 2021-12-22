@@ -26,7 +26,7 @@ class User extends Authenticatable
         'status',   // status: tình trạng hoạt động của tài khoản: 0 block, 1 active
         'total_file',
         'base_path',
-        'role',     // 0 adminstator, 1 user, 2 editor, 3 qc
+        'role',     // 0 adminstator, 1 user, 2 editor, 3 qc, 4 sub admin
         'group_id',
     ];
 
