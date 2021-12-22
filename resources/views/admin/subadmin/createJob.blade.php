@@ -44,6 +44,7 @@
                                 <h3>Today's Directory: <span class="text-danger" id="main_folder_name"></span></h3>
                                 <p class="text-danger" id="txt-warning-step-2"></p>
                                 <button class="btn btn-warning pull-right hidden" id="btn-create-folder" onclick="createMainFolder()">Create folder</button>
+                                <img src="{{ asset('loading.gif') }}" id="loading-btn-crate-folder" class="img-loading pull-right hidden" alt="">
                             </div>
                             <!-- /.box-body -->
                             <div class="box-footer">
@@ -81,6 +82,7 @@
                             <!-- /.box-body -->
                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right" onclick="nextStep4()">Next step <i class="fa fa-arrow-right"></i> </button>
+                                <img src="{{ asset('loading.gif') }}" id="loading-btn-crate-job" class="img-loading pull-right hidden" alt="">
                             </div>
                         </div>
                     </div>
@@ -110,6 +112,10 @@
     <style>
         .height-box-body {
             height: 250px;
+        }
+        .img-loading {
+            height: 32px;
+            width: 32px;
         }
     </style>
 @endsection
@@ -186,6 +192,7 @@
             let idMainFolder = $('#id_main_folder').val();
             let director = $('#name_job').val();
             let typeJob = $('#type_job').val();
+            $('#loading-btn-crate-job').removeClass('hidden');
             if (director === null || director === '') {
                 alert('Please enter job name.');
             } else {
@@ -202,6 +209,7 @@
                        if (response.code === 200) {
                            // show box step
                             $('#step-4').removeClass('hidden');
+                           $('#loading-btn-crate-job').addClass('hidden');
                        } else {
                            alert('System error.');
                        }
@@ -215,6 +223,7 @@
          */
         function createMainFolder() {
             let user = $('#users').val();
+            $('#loading-btn-crate-folder').removeClass('hidden');
             $.ajax({
                 url: '{{ url('/admin/sub-admin/create-main-folders') }}',
                 method: 'GET',
@@ -231,6 +240,7 @@
                         $('#main_folder_name').text(data.nas_dir);
                         $('#txt-warning-step-2').text('Create folder success, choose next step.');
                         $('#btn-create-folder').addClass('hidden');
+                        $('#loading-btn-crate-folder').addClass('hidden');
                     }
                 }
             });
