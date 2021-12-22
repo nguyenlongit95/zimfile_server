@@ -63,5 +63,7 @@
 <!-- ./wrapper -->
 
 @include('admin.adminJS.footerJS')
+
+@yield('custom-js')
 </body>
 </html>

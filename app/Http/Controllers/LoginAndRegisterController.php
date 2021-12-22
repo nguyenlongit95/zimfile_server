@@ -31,9 +31,11 @@ class LoginAndRegisterController extends Controller
      */
     public function postLogin(Request $request) {
         if(Auth::attempt(["email" => $request->email,"password" => $request->password])) {
-            if (Auth::user()->role == 0) {
+            if (Auth::user()->role == config('const.admin')) {
                 return redirect("admin/dashboard")->with("thong_bao","Login success,welcome adminstator!");
-            }else {
+            } else if(Auth::user()->role == config('const.sub_admin')) {
+                return redirect("admin/sub-admin/create-jobs")->with("thong_bao"," Login success,welcome adminstator! ");
+            } else {
                 Auth::logout();
                 return redirect('/admin/login')->with("thong_bao","You don't have to pay attention to the staff.");
             }

@@ -75,6 +75,11 @@ Route::group(['prefix'=>'admin'],function() {
         Route::post('/create', [\App\Http\Controllers\AdminAPIController::class, 'createSubAdmin']);
         Route::post('/edit/{id}', [\App\Http\Controllers\AdminAPIController::class, 'editSubAdmin']);
         Route::get('/delete/{id}', [\App\Http\Controllers\AdminAPIController::class, 'deleteSubAdmin']);
+
+        Route::get('/create-jobs', [\App\Http\Controllers\AdminAPIController::class, 'subAdminCreateJobs']);
+        Route::get('/get-main-folder', [\App\Http\Controllers\AdminAPIController::class, 'subAdminGetMainFolder']);
+        Route::get('/create-main-folders', [\App\Http\Controllers\AdminAPIController::class, 'subAdminCreateMainFolder']);
+        Route::get('/create-job', [\App\Http\Controllers\AdminAPIController::class, 'subAdminCreateJob']);
     });
 
     Route::group(['prefix' => 'notifications'], function () {

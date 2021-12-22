@@ -7,6 +7,7 @@ use App\Models\Jobs;
 use App\Models\User;
 use App\Repositories\Eloquent\EloquentRepository;
 use App\Repositories\JobRepository\JobEloquentRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -207,5 +208,28 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
         }
         // Response the jobs
         return $jobs;
+    }
+
+    /**
+     * Function check dir on the day
+     *
+     * @param int $userId
+     * @return mixed
+     */
+    public function checkDirOnDay($userId)
+    {
+        // Get director in the day
+        $dir = Director::whereDate('created_at', Carbon::now())->where('level', 1)->where('user_id', $userId)
+            ->orderBy('id', 'DESC')->first();
+        return $dir;
+    }
+
+    /**
+     * @param $userId
+     * @return mixed
+     */
+    public function createMainFolder($userId)
+    {
+
     }
 }

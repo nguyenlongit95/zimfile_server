@@ -49,4 +49,16 @@ interface DirectoryRepositoryInterface
      * @return mixed
      */
     public function getAllJobsDashBoard($param = null);
+
+    /**
+     * @param $userId
+     * @return mixed
+     */
+    public function checkDirOnDay($userId);
+
+    /**
+     * @param $userId
+     * @return mixed
+     */
+    public function createMainFolder($userId);
 }

@@ -7,21 +7,20 @@
                 <img src="admin/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
-                <p>Adminstator</p>
+                <p>{{ \Illuminate\Support\Facades\Auth::user()->name }}</p>
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
 
-        <!-- /.search form -->
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
             <li class="header">MAIN NAVIGATION</li>
+            @if(\Illuminate\Support\Facades\Auth::user()->role == config('const.admin'))
             <li>
                 <a href="{{ url('/admin/dashboard') }}">
                     <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                 </a>
             </li>
-
             <!-- Widgets dùng để quản lý các thành phần của website như header, sidebar footer -->
             <li>
                 <a href="{{ url('/admin/groups/') }}">
@@ -59,6 +58,14 @@
                 </a>
             </li>
             <li><a target="_blank" href="https://docs.google.com/document/d/15npdEv7eAbYIBWHIBrbizTHAxFuaYMnbM3m7tLBMFGE/edit?fbclid=IwAR2Vck1YYqo6ByDxpSOfCCHg0-A9kqAarme5Aeta711VtnCxmgF7bs_7q9w"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
+            @endif
+            @if(\Illuminate\Support\Facades\Auth::user()->role == config('const.sub_admin'))
+            <li>
+                <a href="{{ url('/admin/sub-admin/create-jobs/') }}">
+                    <i class="fa fa-link"></i> <span>Create jobs</span>
+                </a>
+            </li>
+            @endif
         </ul>
     </section>
     <!-- /.sidebar -->

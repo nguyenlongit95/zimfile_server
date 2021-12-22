@@ -60,7 +60,7 @@ class AdminAPIController extends Controller
         $this->groupRepository = $groupRepository;
         // check admin panel account
         if (Auth::check()) {
-            if (Auth::user()->role !== config('const.admin')) {
+            if (Auth::user()->role !== config('const.admin') || Auth::user()->role !== config('const.sub_admin')) {
                 return app()->make(ResponseHelper::class)->unAuthenticated();
             }
         } else {
@@ -1141,6 +1141,9 @@ class AdminAPIController extends Controller
         if (is_null($param['password']) || $param['password'] == '') {
             unset($param['password']);
         }
+        if (!is_null($param['password']) && $param['password'] != '') {
+            $param['password'] = Hash::make($param['password']);
+        }
         // Update the sub admin
         $updateSubAdmin = $this->userRepository->update($param, $subAdmin->id);
         if ($updateSubAdmin) {
@@ -1173,5 +1176,105 @@ class AdminAPIController extends Controller
         }
         // Response error system
         return redirect('/admin/sub-admin/')->with('thong_bao', 'System error, please check again');
+    }
+
+    /**
+     * Controller function render view create jobs for sub admin
+     *
+     * @param Request $request
+     * @return Factory|View
+     */
+    public function subAdminCreateJobs(Request $request)
+    {
+        $listUsers = $this->userRepository->listUsers('ASC');
+        return view('admin.subadmin.createJob', compact('listUsers'));
+    }
+
+    /**
+     * Controller function check and get main folder in the day
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function subAdminGetMainFolder(Request $request)
+    {
+        $param = $request->all();
+        // Check user already
+        $user = $this->userRepository->find($param['user']);
+        if (!$user) {
+            return app()->make(ResponseHelper::class)->notfound('User not found.');
+        }
+        // Get the main folder in the day
+        $dir = $this->directoryRepository->checkDirOnDay($user->id);
+        // Response data
+        return app()->make(ResponseHelper::class)->success($dir);
+    }
+
+    public function subAdminCreateMainFolder(Request $request)
+    {
+        $param = $request->all();
+        $param['director'] = 'dir_' . Carbon::now()->format('mdY');
+        $user = $this->userRepository->find($param['user']);
+        if (empty($user)) {
+            return app()->make(ResponseHelper::class)->error();
+        }
+        // Main folder
+        $dir = self::BASE_PATH . '/clients/' . $user->name . '/' . $param['director'];
+        try {
+            // Create dir on NAS storage
+            Storage::disk('ftp')->makeDirectory($dir);
+            // Create database directory
+            $param['nas_dir'] = $param['director'];
+            $param['vps_dir'] = '-';
+            $param['user_id'] = $user->id;
+            $param['path'] = '';
+            $createDir = $this->directoryRepository->create($param);
+            $createDir->directory_id = $createDir->id;
+            if ($createDir) {
+                return app()->make(\App\Helpers\ResponseHelper::class)->success($createDir);
+            }
+            // response data has directory
+            return app()->make(ResponseHelper::class)->error();
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return app()->make(ResponseHelper::class)->error();
+        }
+    }
+
+    public function subAdminCreateJob(Request $request)
+    {
+        $param = $request->all();
+        $user = $this->userRepository->find($param['user']);
+        $dir = self::BASE_PATH . '/clients/' . $user->name . '/';
+        // Sub folder
+        $parentDir = $this->directoryRepository->find($param['idMainFolder']);
+        $dir = $dir . $parentDir->nas_dir . '/' . $param['director'];
+        $param['type'] = $param['typeJob'];
+        $param['status'] = 1;
+        $param['parent_id'] = $param['idMainFolder'];
+        $param['level'] = 2;
+        try {
+            // Create dir on NAS storage
+            Storage::disk('ftp')->makeDirectory($dir);
+            // Create database directory
+            $param['user_id'] = $user->id;
+            $param['nas_dir'] = $param['director'];
+            $param['vps_dir'] = '-';
+            $param['path'] = json_encode([
+                'id' => $parentDir->id,
+                'name' => $parentDir->nas_dir,
+            ]);
+            $createDir = $this->directoryRepository->create($param);
+            $createDir->directory_id = $createDir->id;
+            if ($createDir) {
+                return app()->make(\App\Helpers\ResponseHelper::class)->success($createDir);
+            }
+            // response data has directory
+            return app()->make(ResponseHelper::class)->error();
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return app()->make(ResponseHelper::class)->error();
+        }
     }
 }
