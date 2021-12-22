@@ -76,14 +76,14 @@ class EditorAPIController extends Controller
         $checkJobsRejected = $this->jobRepository->checkJobsRejected($param);
         if (!empty($checkJobsRejected)) {
             $jobPath = $this->directoryRepository->dirJob($checkJobsRejected->id);
-            $checkJobsRejected->path_job = config('const.public_nas_ip') . $jobPath;
+            $checkJobsRejected->path_job_lan = config('const.public_nas_ip') . $jobPath;
             $checkJobsRejected->path_job_online = config('const.public_nas_address') . $jobPath;
             return app()->make(ResponseHelper::class)->success($checkJobsRejected);
         }
         $checkJobs = $this->jobRepository->checkJobsBeforeAssign($param);
         if ($checkJobs != null) {
             $jobPath = $this->directoryRepository->dirJob($checkJobs->id);
-            $checkJobs->path_job = config('const.public_nas_ip') . $jobPath;
+            $checkJobs->path_job_lan = config('const.public_nas_ip') . $jobPath;
             $checkJobs->path_job_online = config('const.public_nas_address') . $jobPath;
             return app()->make(ResponseHelper::class)->success($checkJobs);
         }
@@ -93,7 +93,7 @@ class EditorAPIController extends Controller
         }
         $jobPath = $this->directoryRepository->dirJob($dir->id);
         $jobInDirect = $this->jobRepository->jobInDir($dir);
-        $dir->path_job = config('const.public_nas_ip') . $jobPath;
+        $dir->path_job_lan = config('const.public_nas_ip') . $jobPath;
         $dir->path_job_online = config('const.public_nas_address') . $jobPath;
         $param['editor_assign'] = Auth::user()->getAuthIdentifier();
         $param['status'] = 2;
