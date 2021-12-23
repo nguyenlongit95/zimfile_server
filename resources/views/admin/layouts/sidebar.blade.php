@@ -1,3 +1,4 @@
+@if(\Illuminate\Support\Facades\Auth::check())
 <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
@@ -7,7 +8,7 @@
                 <img src="admin/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
-                <p>{{ \Illuminate\Support\Facades\Auth::user()->name }}</p>
+                <p>@if(\Illuminate\Support\Facades\Auth::check()) {{ \Illuminate\Support\Facades\Auth::user()->name }} @endif</p>
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
@@ -15,7 +16,7 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
             <li class="header">MAIN NAVIGATION</li>
-            @if(\Illuminate\Support\Facades\Auth::user()->role == config('const.admin'))
+            @if( \Illuminate\Support\Facades\Auth::user()->role == config('const.admin'))
             <li>
                 <a href="{{ url('/admin/dashboard') }}">
                     <i class="fa fa-dashboard"></i> <span>Dashboard</span>
@@ -70,3 +71,6 @@
     </section>
     <!-- /.sidebar -->
 </aside>
+@else
+    {{ \Illuminate\Support\Facades\Auth::logout() }}
+@endif
