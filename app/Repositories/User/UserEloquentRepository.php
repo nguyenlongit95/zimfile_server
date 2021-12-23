@@ -125,7 +125,7 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
         if (!empty($user)) {
             foreach ($user as $value) {
                 $dir = DB::table('directors')->where('editor_id', $value->id)
-                    ->where('status', 2)->count();
+                    ->whereIn('status', [0, 2])->count();
                 if ($dir > 0) {
                     $value->assigned = true;
                 } else {
