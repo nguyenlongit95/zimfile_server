@@ -394,13 +394,44 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
 
     /**
      * Function admin assign job
+     *
+     * @param int $id of editor
+     * @return int|null
      */
     public function adminAssingJob($id)
     {
-        return DB::table('directors')->where('editor_id', null)->where('status', 1)->orderBy('id', 'ASC')->update([
-            'editor_id' => $id,
-            'status' => 2
-        ]);
+        // Get all group has assign
+        $groups = DB::table('editor_groups')->where('editor_id', $id)
+            ->orderBy('id', 'ASC')->pluck('group_id')
+            ->toArray();
+        if (empty($groups)) {
+            return null;
+        }
+        // Get the list of groups in the correct order of name preference
+        foreach ($groups as $groupId) {
+            // Role 1 for customers and get all customer assign for groups
+            $customers = DB::table('users')->where('role', 1)
+                ->where('group_id', $groupId)->get();
+            if (empty($customers)) {
+                continue;
+            }
+            // Check jobs of each customer
+            foreach ($customers as $customer) {
+                // Get the jobs free
+                $job =  Director::where('level', 2)->where('user_id', $customer->id)->where('editor_id', null)
+                    ->where('status', 1)->orderBy('id', 'ASC')->first();
+                if (empty($job)) {
+                    continue;
+                }
+                // Return job assigned record
+                return DB::table('directors')->where('id', $job->id)->update([
+                    'editor_id' => $id,
+                    'status' => 2,
+                ]);
+            }
+        }
+        // Error null data
+        return null;
     }
 
     /**
