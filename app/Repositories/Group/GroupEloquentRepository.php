@@ -40,6 +40,12 @@ class GroupEloquentRepository extends EloquentRepository implements GroupReposit
         return User::where('role', config('const.user'))->where('group_id', $groupId)->get();
     }
 
+    /**
+     * Sql function list all groups for editor
+     *
+     * @param int $editorId
+     * @return array
+     */
     public function listIdGroupsForEditor($editorId)
     {
         return DB::table('editor_groups')->where('editor_id', $editorId)->pluck('group_id')->toArray();
@@ -53,7 +59,11 @@ class GroupEloquentRepository extends EloquentRepository implements GroupReposit
      */
     public function listGroupsForEditor($editorId)
     {
-        return Group::whereIn('id', $this->listIdGroupsForEditor($editorId))->get();
+        return DB::table('editor_groups')->join('groups', 'editor_groups.group_id', '=', 'groups.id')
+            ->where('editor_groups.editor_id', $editorId)->orderBy('editor_groups.id', 'ASC')
+            ->select(
+                'editor_groups.id', 'groups.group_name', 'editor_groups.editor_id'
+            )->get();
     }
 
     /**
