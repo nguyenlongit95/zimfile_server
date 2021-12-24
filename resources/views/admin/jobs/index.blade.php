@@ -93,7 +93,7 @@
                                     @elseif($job->status == 3)
                                         <span class="text-warning">
                                     @else
-                                        <span class="text-success">
+                                        <span class="text-success text-bold">
                                     @endif
                                         {{ $job->status_txt }}
                                     </span>
