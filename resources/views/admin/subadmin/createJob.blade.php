@@ -81,7 +81,7 @@
                             </div>
                             <!-- /.box-body -->
                             <div class="box-footer">
-                                <button class="btn btn-primary pull-right" onclick="nextStep4()">Next step <i class="fa fa-arrow-right"></i> </button>
+                                <button class="btn btn-primary pull-right" onclick="nextStep4()">Create job <i class="fa fa-plus-square"></i> </button>
                                 <img src="{{ asset('loading.gif') }}" id="loading-btn-crate-job" class="img-loading pull-right hidden" alt="">
                             </div>
                         </div>

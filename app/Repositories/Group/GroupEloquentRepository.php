@@ -62,7 +62,7 @@ class GroupEloquentRepository extends EloquentRepository implements GroupReposit
         return DB::table('editor_groups')->join('groups', 'editor_groups.group_id', '=', 'groups.id')
             ->where('editor_groups.editor_id', $editorId)->orderBy('editor_groups.id', 'ASC')
             ->select(
-                'editor_groups.id', 'groups.group_name', 'editor_groups.editor_id'
+            'editor_groups.id', 'groups.group_name', 'editor_groups.editor_id'
             )->get();
     }
 
