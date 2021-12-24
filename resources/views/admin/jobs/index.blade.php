@@ -82,7 +82,22 @@
                                 <td>{{ \Carbon\Carbon::create($job->created_at)->format('d-m-Y') }}</td>
                                 <td>{{ $job->type_txt }}</td>
                                 <td>{{ $job->note }}</td>
-                                <td class="text-center">{{ $job->status_txt }}</td>
+                                <td class="text-center">
+                                    <!-- // 0: reject, 1 chưa assign, 2 đã asign, 3 confirm, 4 done -->
+                                    @if($job->status == 0)
+                                        <span class="text-danger">
+                                    @elseif($job->status == 1)
+                                        <span>
+                                    @elseif($job->status == 2)
+                                        <span class="text-green">
+                                    @elseif($job->status == 3)
+                                        <span class="text-warning">
+                                    @else
+                                        <span class="text-success">
+                                    @endif
+                                        {{ $job->status_txt }}
+                                    </span>
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>
