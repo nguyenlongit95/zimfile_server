@@ -43,7 +43,7 @@ Route::group(['prefix'=>'admin'],function() {
         Route::get('/assign-job/{id}', [\App\Http\Controllers\AdminAPIController::class, 'assignJobs']);
         Route::get('/assign-group/{id}', [\App\Http\Controllers\AdminAPIController::class, 'editorAssignGroup']);
         Route::get('/{editorId}/assign-group/{groupId}', [\App\Http\Controllers\AdminAPIController::class, 'assignGroupForEditor']);
-        Route::get('/{editorId}/remove-group/{groupId}', [\App\Http\Controllers\AdminAPIController::class, 'removeGroupForEditor']);
+        Route::get('/{editorGroupId}/remove-group', [\App\Http\Controllers\AdminAPIController::class, 'removeGroupForEditor']);
     });
 
     Route::group(['prefix' => 'qc'], function () {

@@ -36,7 +36,7 @@
                                                 <td>{{ $group->id }}</td>
                                                 <td>{{ $group->group_name }}</td>
                                                 <td>
-                                                    <a href="{{ url('/admin/editors/' . $editor->id . '/remove-group/' . $group->id . '/') }}"><i class="fa fa-trash"></i></a>
+                                                    <a href="{{ url('/admin/editors/' . $group->id . '/remove-group/') }}"><i class="fa fa-trash"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach

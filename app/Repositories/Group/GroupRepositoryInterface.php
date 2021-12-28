@@ -38,9 +38,8 @@ interface GroupRepositoryInterface
     public function assignGroupForEditor($editorId, $groupId);
 
     /**
-     * @param $editorId
-     * @param $groupId
+     * @param $editorGroupId
      * @return mixed
      */
-    public function removeGroupForEditor($editorId, $groupId);
+    public function removeGroupForEditor($editorGroupId);
 }

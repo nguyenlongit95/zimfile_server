@@ -100,15 +100,13 @@ class GroupEloquentRepository extends EloquentRepository implements GroupReposit
     /**
      * Sql function remove group for a editor
      *
-     * @param int $editorId
-     * @param int $groupId
+     * @param $editorGroupId
      * @return mixed
      */
-    public function removeGroupForEditor($editorId, $groupId)
+    public function removeGroupForEditor($editorGroupId)
     {
         try {
-            return DB::table('editor_groups')->where('editor_id', $editorId)
-                ->where('group_id', $groupId)->delete();
+            return DB::table('editor_groups')->where('id', $editorGroupId)->delete();
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             return null;

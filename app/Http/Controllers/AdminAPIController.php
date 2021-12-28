@@ -981,17 +981,17 @@ class AdminAPIController extends Controller
      * Controller function remove a group for editor
      *
      * @param Request $request
-     * @param int $editorId
-     * @param int $groupId
+     * @param int $editorGroupId
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function removeGroupForEditor(Request $request, $editorId, $groupId)
+    public function removeGroupForEditor(Request $request, $editorGroupId)
     {
-        if ($this->groupRepository->removeGroupForEditor($editorId, $groupId)) {
-            return redirect('/admin/editors/assign-group/' . $editorId)->with('thong_bao', 'Remove group success.');
+
+        if ($this->groupRepository->removeGroupForEditor($editorGroupId)) {
+            return redirect()->back()->with('thong_bao', 'Remove group success.');
         }
         // Response assign failed
-        return redirect('/admin/editors/assign-group/' . $editorId)->with('thong_bao', 'Remove group failed, please check system again.');
+        return redirect()->back()->with('thong_bao', 'Remove group failed, please check system again.');
     }
 
     /**
