@@ -5,6 +5,7 @@ namespace App\Repositories\JobRepository;
 use App\Models\Director;
 use App\Models\Files;
 use App\Models\Jobs;
+use App\Models\User;
 use App\Repositories\Directory\DirectoryRepositoryInterface;
 use App\Repositories\Eloquent\EloquentRepository;
 use App\Repositories\Files\FilesRepositoryInterface;
@@ -460,5 +461,51 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             Log::error($exception->getMessage());
             return null;
         }
+    }
+
+    /**
+     * List all jobs for editors
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function listJobForEditor($id)
+    {
+        // Select jobs
+        $jobs = Director::where('editor_id', $id)->where('status', 2)
+            ->where('level', 2)->orderBy('id', 'ASC')
+            ->paginate(config('const.paginate'));
+        if (empty($jobs)) {
+            return null;
+        }
+        // Add attr of customer
+        foreach ($jobs as $job) {
+            $job = $this->mergeCustomerInfo($job);
+        }
+        // Response list the jobs
+        return $jobs;
+    }
+
+    /**
+     * Function list all the jobs not for the editors
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function listJobsNotEditor($id)
+    {
+        $editor = User::find($id);
+        if (empty($editor)) {
+            return null;
+        }
+        $groups = DB::table('editor_groups')->where('editor_id', $editor->id)->pluck('group_id')->toArray();
+        $listUser = User::whereIn('group_id', $groups)->pluck('id')->toArray();
+        $jobs = Director::whereIn('user_id', $listUser)->where('level', 2)->where('status', 1)->where('editor_id', null)->orderBy('id', 'ASC')->get();
+        // Add attr of customer
+        foreach ($jobs as $job) {
+            $job = $this->mergeCustomerInfo($job);
+        }
+        // Response list jobs
+        return $jobs;
     }
 }

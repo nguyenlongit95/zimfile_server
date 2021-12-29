@@ -317,18 +317,18 @@ class AdminAPIController extends Controller
      * Controller function manual assign jobs of admin
      *
      * @param Request $request
+     * @param int $id of editors
      * @return mixed
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function manualAssignJob(Request $request)
+    public function manualAssignJob(Request $request, $id)
     {
         $param = $request->all();
-        $assign = $this->jobRepository->manualAssignJob($param);
-        if ($assign == false) {
-            return app()->make(ResponseHelper::class)->error();
-        }
-
-        return app()->make(ResponseHelper::class)->success($this->jobRepository->find($param['job_id']));
+        $editor = $this->userRepository->find($id);
+        $listJobOfEditor = $this->jobRepository->listJobForEditor($editor->id);
+        $listJobNotEditor = $this->jobRepository->listJobsNotEditor($editor->id);
+        return view('admin.editors.manual_assign', compact(
+            'param', 'editor', 'listJobOfEditor', 'listJobNotEditor'
+        ));
     }
 
     /**
@@ -1276,5 +1276,50 @@ class AdminAPIController extends Controller
             Log::error($exception->getMessage());
             return app()->make(ResponseHelper::class)->error();
         }
+    }
+
+    /**
+     * Controller function remove manual assign jobs for the editors
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function removeManualAssign(Request $request, $id)
+    {
+        $job = $this->directoryRepository->find($id);
+        if (empty($job)) {
+            return redirect()->back()->with('thong_bao', 'Jobs not found.');
+        }
+        $param['status'] = 1;
+        $param['editor_id'] = null;
+        $remove = $this->directoryRepository->update($param, $job->id);
+        if ($remove) {
+            return redirect()->back()->with('thong_bao', 'Remove job success.');
+        }
+        return redirect()->back()->with('thong_bao', 'Remove job failed.');
+    }
+
+    /**
+     * Controller function manual assign jobs for the editor
+     *
+     * @param Request $request
+     * @param int $id
+     * @param $editorId
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function manualAssign(Request $request, $id, $editorId)
+    {
+        $job = $this->directoryRepository->find($id);
+        if (empty($job)) {
+            return redirect()->back()->with('thong_bao', 'Jobs not found.');
+        }
+        $param['status'] = 2;
+        $param['editor_id'] = $editorId;
+        $assign = $this->directoryRepository->update($param, $job->id);
+        if ($assign) {
+            return redirect()->back()->with('thong_bao', 'Assign job success.');
+        }
+        return redirect()->back()->with('thong_bao', 'Assign job failed.');
     }
 }

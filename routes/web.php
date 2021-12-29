@@ -44,6 +44,9 @@ Route::group(['prefix'=>'admin'],function() {
         Route::get('/assign-group/{id}', [\App\Http\Controllers\AdminAPIController::class, 'editorAssignGroup']);
         Route::get('/{editorId}/assign-group/{groupId}', [\App\Http\Controllers\AdminAPIController::class, 'assignGroupForEditor']);
         Route::get('/{editorGroupId}/remove-group', [\App\Http\Controllers\AdminAPIController::class, 'removeGroupForEditor']);
+        Route::get('/{id}/manual-assign', [\App\Http\Controllers\AdminAPIController::class, 'manualAssignJob']);
+        Route::get('/{id}/remove-manual-assign', [\App\Http\Controllers\AdminAPIController::class, 'removeManualAssign']);
+        Route::get('/{id}/manual-assign/{editorId}', [\App\Http\Controllers\AdminAPIController::class, 'manualAssign']);
     });
 
     Route::group(['prefix' => 'qc'], function () {

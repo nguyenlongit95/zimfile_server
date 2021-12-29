@@ -85,4 +85,16 @@ interface JobRepositoryInterface
      * @return mixed
      */
     public function qcGetCheckJobs($id);
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function listJobForEditor($id);
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function listJobsNotEditor($id);
 }

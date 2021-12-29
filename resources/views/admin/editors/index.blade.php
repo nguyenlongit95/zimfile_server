@@ -87,7 +87,7 @@
                                 <input type="password" name="password" class="form-control" placeholder="Enter new password here!">
                             </td>
                             <td class="text-center">
-                                <a @if($editor->assigned == true) disabled @else href="{{ url('/admin/editors/assign-job/' . $editor->id) }}" @endif class="btn btn-success">Assign Job</a>
+                                <a href="{{ url('/admin/editors/' . $editor->id . '/manual-assign') }}" class="btn btn-success">Assign Job</a>
                             </td>
                             <td class="text-center">
                                 <a class="btn btn-primary" href="{{ url('/admin/editors/assign-group/' . $editor->id) }}">Assign groups</a>
