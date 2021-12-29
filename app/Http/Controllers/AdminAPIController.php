@@ -483,8 +483,11 @@ class AdminAPIController extends Controller
         if (empty($customer)) {
             return redirect('/admin/customers/')->with('thong_bao', 'User account not found.');
         }
+        if($this->userRepository->checkDeleteUser($customer->id) == false) {
+            return redirect('/admin/customers/')->with('thong_bao', 'This user cannot be deleted because it has dependent data.');
+        }
         // Soft delete customers
-        if ($this->userRepository->deleteCustomer($id)) {
+        if ($this->userRepository->delete($id)) {
             return redirect('/admin/customers/')->with('thong_bao', 'User account delete success.');
         }
         // Response error message
@@ -603,9 +606,11 @@ class AdminAPIController extends Controller
         if (empty($editor)) {
             return redirect('/admin/editors/')->with('thong_bao', 'Editor account not found.');
         }
-        // Soft delete editors
-        $param['status'] = 0;
-        if ($this->userRepository->update($param, $id)) {
+        if($this->userRepository->checkDeleteEditor($editor->id) == false) {
+            return redirect('/admin/customers/')->with('thong_bao', 'This user cannot be deleted because it has dependent data.');
+        }
+        // Delete editors
+        if ($this->userRepository->delete($id)) {
             return redirect('/admin/editors/')->with('thong_bao', 'Editor account deleted.');
         }
         // Response error system

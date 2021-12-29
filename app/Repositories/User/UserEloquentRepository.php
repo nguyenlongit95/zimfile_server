@@ -2,6 +2,7 @@
 
 namespace App\Repositories\User;
 
+use App\Models\Director;
 use App\Models\User;
 use App\Models\UserDiscount;
 use App\Repositories\Eloquent\EloquentRepository;
@@ -339,5 +340,35 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
     {
         return DB::table('users')->where('role', config('const.sub_admin'))
             ->orderBy('id', 'DESC')->get();
+    }
+
+    /**
+     * Function check directors already for customer
+     *
+     * @param int $id of customer
+     * @return mixed
+     */
+    public function checkDeleteUser($id)
+    {
+        $directors = Director::where('user_id', $id)->count();
+        if ($directors > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Function check directors already for editor
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function checkDeleteEditor($id)
+    {
+        $directors = Director::where('editor_id', $id)->count();
+        if ($directors > 0) {
+            return false;
+        }
+        return true;
     }
 }

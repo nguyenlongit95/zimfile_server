@@ -118,4 +118,16 @@ interface UserRepositoryInterface
      * @return mixed
      */
     public function listSubAdmin();
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function checkDeleteUser($id);
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function checkDeleteEditor($id);
 }
