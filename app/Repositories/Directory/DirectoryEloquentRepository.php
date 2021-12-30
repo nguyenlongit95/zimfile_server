@@ -164,17 +164,21 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
     public function getAllJobsDashBoard($param = null)
     {
         // Sql get the jobs data
-        $jobs = Director::on();
-        $jobs = $jobs->join('users', 'directors.user_id', 'users.id')
-            ->where('directors.level', 2)
+        $jobs = Director::join('users', 'directors.user_id', 'users.id')
+            ->select(
+                'users.email', 'users.name as user_name', 'directors.id', 'directors.user_id',
+                'directors.nas_dir', 'directors.status', 'directors.type',
+                'directors.editor_id', 'directors.note', 'directors.customer_note', 'directors.created_at'
+            )->where('directors.level', 2)
             ->where('directors.parent_id', '<>', 0)
             ->where(function ($query) use ($param) {
                 // Pass param condition param search
                 if (isset($param['name_editor']) && !is_null($param['name_editor'])) {
-                    $query->where('users.name', 'like', '%' . $param['name_editor'] . '%');
+                    $users = User::where('name', 'LIKE', $param['name_editor'])->pluck('id');
+                    $query->whereIn('directors.editor_id', $users);
                 }
                 if (isset($param['name_user']) && !is_null($param['name_user'])) {
-                    $query->where('users.name', 'like', '%' . $param['name_user'] . '%');
+                    $query->where('users.name', 'LIKE', '%' . $param['name_user'] . '%');
                 }
                 if (isset($param['type']) && !is_null($param['type'])) {
                     $query->where('directors.type', $param['type']);
@@ -182,15 +186,14 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
                 if (isset($param['status']) && !is_null($param['status'])) {
                     $query->where('directors.status', $param['status']);
                 }
+                if (isset($param['date']) && !is_null($param['date'])) {
+                    $query->whereDate('directors.created_at', $param['date']);
+                }
                 // Response sql search
                 return $query;
-            })
-            ->orderBy('directors.id', 'DESC')
-            ->select(
-                'users.email', 'users.name as user_name', 'directors.id', 'directors.user_id',
-                'directors.nas_dir', 'directors.status', 'directors.type',
-                'directors.editor_id', 'directors.note'
-            )->paginate(config('const.paginate'));
+            });
+        $jobs = $jobs->orderBy('directors.id', 'DESC')->paginate(config('const.paginate'));
+
         // Check empty jobs and return null data
         if (empty($jobs)) {
             return null;

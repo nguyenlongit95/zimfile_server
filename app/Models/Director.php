@@ -24,6 +24,7 @@ class Director extends Model
         'note',
         'qc_id',
         'qty',
+        'customer_note',
     ];
 
     /**

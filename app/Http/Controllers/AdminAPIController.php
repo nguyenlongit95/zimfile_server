@@ -340,8 +340,20 @@ class AdminAPIController extends Controller
     public function exportCSV(Request $request)
     {
         $param = $request->all();
-        // Export excel file by month
-        return \Maatwebsite\Excel\Facades\Excel::download(new JobsExport($param['month']), 'jobs_'.Carbon::now()->subMonths($param['month'])->format('Y-m-d').'.xlsx');
+        if (isset($param['month'])) {
+            // Export excel file by month
+            return \Maatwebsite\Excel\Facades\Excel::download(new JobsExport($param), 'jobs_'.Carbon::now()->subMonths($param['month'])->format('Y-m-d').'.xlsx');
+        }
+        if (isset($param['date'])) {
+            if (!is_null($param['date_from']) && !is_null($param['date_to'])) {
+                $dateFrom = Carbon::create($param['date_from']);
+                $dateTo = Carbon::create($param['date_to']);
+                // Export excel file by month
+                return \Maatwebsite\Excel\Facades\Excel::download(new JobsExport($param), 'jobs_'.$dateFrom->format('d_m_Y') . '_to_' . $dateTo->format('d_m_Y') .'.xlsx');
+            } else {
+                return redirect('/admin/dashboard')->with('thong_bao', 'Please chose a day!');
+            }
+        }
     }
 
     /**

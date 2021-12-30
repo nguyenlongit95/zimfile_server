@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateColumnGroupName extends Migration
+class AddCustomerNote extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,14 @@ class UpdateColumnGroupName extends Migration
      */
     public function up()
     {
-        Schema::table('groups', function (Blueprint $table) {
-            $table->dropColumn('group_name');
-        });
-
-        Schema::table('groups', function (Blueprint $table) {
-            $table->string('group_name', 255);
+        Schema::table('directors', function (Blueprint $table) {
+            $table->string('customer_note', 255)->nullable();
         });
     }
 
     /**
      * Reverse the migrations.
-     *]\'
+     *
      * @return void
      */
     public function down()

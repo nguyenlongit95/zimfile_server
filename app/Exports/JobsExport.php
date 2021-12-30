@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
+use Ramsey\Uuid\Type\Integer;
 
 class JobsExport implements FromCollection, WithHeadings, WithMapping, WithEvents
 {
@@ -20,20 +21,30 @@ class JobsExport implements FromCollection, WithHeadings, WithMapping, WithEvent
 
     /**
      * JobsExport constructor.
-     * @param $month
+     * @param $param
      */
-    public function __construct($month)
+    public function __construct($param)
     {
         $directors = Director::join('users', 'directors.user_id', 'users.id')
-            ->whereMonth('directors.created_at', Carbon::now()->subMonths($month)->format('m'))->where('directors.level', 2)
+            ->where(function ($query) use ($param) {
+                if (isset($param['month'])) {
+                    $query->whereMonth('directors.created_at', Carbon::now()->subMonths($param['month'])->format('m'))->where('directors.level', 2);
+                }
+                if (isset($param['date'])) {
+                    $query->whereDate('directors.created_at', '>=', $param['date_from']);
+                    $query->whereDate('directors.created_at', '<=', $param['date_to']);
+                }
+                return $query;
+            })
             ->where('directors.parent_id', '<>', 0)
             ->select(
                 'users.id', 'users.name as client',
                 'directors.id', 'directors.nas_dir', 'directors.type', 'directors.status', 'directors.created_at',
                 'directors.editor_id', 'directors.note', 'directors.qty as quantity'
             )->get();
+
         // compare and merge text for const number
-        if ($directors) {
+        if (!empty($directors)) {
             foreach ($directors as $director) {
                 $director = Director::convertStatus($director);
                 $director = Director::convertType($director);
@@ -45,6 +56,8 @@ class JobsExport implements FromCollection, WithHeadings, WithMapping, WithEvent
                     $director->editor = $editor->name;
                 }
             }
+        } else {
+            return null;
         }
         // add data param
         $this->directors = $directors;
