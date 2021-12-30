@@ -38,7 +38,7 @@ class NASController extends Controller
      */
     public function readFile(Request $request)
     {
-        $file = Storage::disk('ftp')->download('/disk1/DATA/longnct_test/longnguyen.jpg');
+        $file = Storage::disk('ftp')->makeDirectory('disk1/DATA/clients/test');
 //        $saveStorage = Storage::put('/sources/longnct_test/longnguyen.jpg', $file);
         return $file;
     }
