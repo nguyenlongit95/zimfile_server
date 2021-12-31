@@ -153,7 +153,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
             ->select(
                 'directors.id', 'directors.user_id', 'directors.nas_dir', 'directors.level', 'directors.parent_id',
                 'directors.path', 'directors.type', 'directors.status', 'directors.editor_id', 'directors.note',
-                'directors.user_id as customer_id',
+                'directors.user_id as customer_id', 'directors.customer_note',
                 'users.name as editor_name', 'directors.qc_id'
             )->get();
         if (!empty($jobs)) {
