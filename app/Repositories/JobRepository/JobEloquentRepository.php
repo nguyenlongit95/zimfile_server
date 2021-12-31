@@ -144,6 +144,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
      * @param array $param
      * @return mixed
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Exception
      */
     public function getJobsForQC($param)
     {
@@ -154,11 +155,13 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
                 'directors.id', 'directors.user_id', 'directors.nas_dir', 'directors.level', 'directors.parent_id',
                 'directors.path', 'directors.type', 'directors.status', 'directors.editor_id', 'directors.note',
                 'directors.user_id as customer_id', 'directors.customer_note',
-                'users.name as editor_name', 'directors.qc_id'
+                'users.name as editor_name', 'directors.qc_id', 'directors.created_at'
             )->get();
         if (!empty($jobs)) {
             foreach ($jobs as $job) {
                 $job = $this->mergeCustomerInfo($job);
+                $tmpCarbon = new Carbon($job->created_at);
+                $job->created_date = $tmpCarbon->format('m-d-Y');
             }
             // Response jobs data
             return $jobs;
