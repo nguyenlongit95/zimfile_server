@@ -48,7 +48,12 @@ class JobsExport implements FromCollection, WithHeadings, WithMapping, WithEvent
             foreach ($directors as $director) {
                 $director = Director::convertStatus($director);
                 $director = Director::convertType($director);
-                $director->date_create = Carbon::now()->format('m-Y');
+                if (isset($param['date_from']) || isset($param['date_to'])) {
+                    $carbonTMP = new Carbon($director->created_at);
+                    $director->date_create = $carbonTMP->format('d-m-Y');
+                } else {
+                    $director->date_create = Carbon::now()->format('m-Y');
+                }
                 $editor = User::where('id', $director->editor_id)->select('name')->first();
                 if (empty($editor)) {
                     $director->editor = '-';
