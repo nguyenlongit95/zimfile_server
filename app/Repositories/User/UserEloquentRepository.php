@@ -45,7 +45,7 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
         return $this->_model->where('role', config('const.user'))->orderBy('id', $sort)
             ->select(
                 'id', 'name', 'email', 'address', 'phone', 'total_file'
-            )->paginate(config('const.paginate'));
+            )->get();
     }
 
     /**
