@@ -121,12 +121,14 @@ class GroupEloquentRepository extends EloquentRepository implements GroupReposit
      */
     public function checkGroupDependent($groupId)
     {
-        $editorGroups = DB::table('editor_groups')->where('group_id', $groupId)->count();
-        if ($editorGroups > 0) {
+        $editorGroups = DB::table('editor_groups')->where('group_id', $groupId)->delete();
+        if (!$editorGroups) {
             return false;
         }
-        $userGroups = DB::table('users')->where('group_id', $groupId)->count();
-        if ($userGroups > 0) {
+        $userGroups = DB::table('users')->where('group_id', $groupId)->update([
+            'group_id' => null
+        ]);
+        if (!$userGroups) {
             return false;
         }
         return true;
