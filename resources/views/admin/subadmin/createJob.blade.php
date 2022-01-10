@@ -15,14 +15,15 @@
                                 <h3 class="box-title">Step 1: select user</h3>
                             </div>
                             <!-- /.box-header -->
-                            <div class="box-body height-box-body">
-                                <select name="users" id="users" class="form-control" size="10">
+                            <div class="box-body height-box-body" id="box-select-customer">
+                                <div id="content-select-customer">
                                     @if(!empty($listUsers))
                                         @foreach($listUsers as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                                        <input type="radio" id="user_{{ $user->id }}" name="users" class="users" value="{{ $user->id }}">
+                                            <label class="font-size-13" for="user_{{ $user->id }}">{{ $user->name }} - </label>({{ $user->email }})<br/>
                                         @endforeach
                                     @endif
-                                </select>
+                                </div>
                             </div>
                             <!-- /.box-body -->
                             <div class="box-footer">
@@ -117,6 +118,16 @@
             height: 32px;
             width: 32px;
         }
+        #box-select-customer{
+            height: 300px;
+            overflow: scroll;
+        }
+        #content-select-customer {
+            height: auto;
+        }
+        .font-size-13 {
+            font-size: 13px;
+        }
     </style>
 @endsection
 
@@ -134,7 +145,11 @@
          * Call to API get main folder end change style
          */
         function nextStep2() {
-            let user = $('#users').val();
+            let user = "";
+            let selected = $("input[type='radio'][name='users']:checked");
+            if (selected.length > 0) {
+                user = selected.val();
+            }
             if (user === null) {
                 alert('Please select 1 user');
             }
