@@ -42,4 +42,10 @@ interface GroupRepositoryInterface
      * @return mixed
      */
     public function removeGroupForEditor($editorGroupId);
+
+    /**
+     * @param $groupId
+     * @return mixed
+     */
+    public function checkGroupDependent($groupId);
 }

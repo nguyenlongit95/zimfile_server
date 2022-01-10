@@ -1011,6 +1011,23 @@ class AdminAPIController extends Controller
         return redirect()->back()->with('thong_bao', 'Remove group failed, please check system again.');
     }
 
+    public function deleteGroup(Request $request, $id)
+    {
+        $group = $this->groupRepository->find($id);
+        if (empty($group)) {
+            return redirect('/admin/groups/')->with('thong_bao', 'Groups not found.');
+        }
+        $checkDataDependent = $this->groupRepository->checkGroupDependent($group->id);
+        if ($checkDataDependent == false) {
+            return redirect('/admin/groups/')->with('thong_bao', 'This record cannot be deleted because it has dependent data.');
+        }
+        $delete = $this->groupRepository->delete($group->id);
+        if ($delete) {
+            return redirect('/admin/groups/')->with('thong_bao', 'Group deleted.');
+        }
+        return redirect('/admin/groups/')->with('thong_bao', 'Group delete failed.');
+    }
+
     /**
      * Controller function list sub admin
      *

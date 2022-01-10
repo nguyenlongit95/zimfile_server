@@ -112,4 +112,23 @@ class GroupEloquentRepository extends EloquentRepository implements GroupReposit
             return null;
         }
     }
+
+    /**
+     * Function check data dependent of groups
+     *
+     * @param int $groupId
+     * @return mixed
+     */
+    public function checkGroupDependent($groupId)
+    {
+        $editorGroups = DB::table('editor_groups')->where('group_id', $groupId)->count();
+        if ($editorGroups > 0) {
+            return false;
+        }
+        $userGroups = DB::table('users')->where('group_id', $groupId)->count();
+        if ($userGroups > 0) {
+            return false;
+        }
+        return true;
+    }
 }
