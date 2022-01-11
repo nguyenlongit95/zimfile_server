@@ -45,8 +45,8 @@ return [
         'ftp' => [
             'driver'   => 'ftp',
             'host'     => '123.24.142.132',
-            'username' => 'editor',
-            'password' => '123456',
+            'username' => 'admin',
+            'password' => 'password',
             // more attribute config
              'port'     => 21,
             // 'passive'  => true,

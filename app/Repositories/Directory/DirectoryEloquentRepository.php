@@ -235,4 +235,22 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
     {
 
     }
+
+    /**
+     * Function update dir and cancel jobs
+     *
+     * @param int $dirId
+     * @return mixed
+     */
+    public function cancelJob($dirId)
+    {
+        try {
+            return DB::table('directors')->where('id', $dirId)->update([
+                'editor_id' => null
+            ]);
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return null;
+        }
+    }
 }

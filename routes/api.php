@@ -71,6 +71,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('get-job', [\App\Http\Controllers\EditorAPIController::class, 'getJob']);
         Route::post('confirm-job', [\App\Http\Controllers\EditorAPIController::class, 'confirmJob']);
         Route::get('get-notifications', [\App\Http\Controllers\EditorAPIController::class, 'getNotifications']);
+        Route::get('cancel-job', [\App\Http\Controllers\EditorAPIController::class, 'cancelJob']);
     });
     /**
      * Group route for QC

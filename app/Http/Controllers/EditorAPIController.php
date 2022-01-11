@@ -195,4 +195,25 @@ class EditorAPIController extends Controller
         // Response data
         return app()->make(ResponseHelper::class)->success($notifications);
     }
+
+    /**
+     * Controller function cancel job
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function cancelJob(Request $request)
+    {
+        $param = $request->all();
+        $dir = $this->directoryRepository->find($param['dir_id']);
+        if (empty($dir)) {
+            return app()->make(ResponseHelper::class)->notFound("Director not found");
+        }
+        $cancel = $this->directoryRepository->cancelJob($dir->id);
+        if (!$cancel) {
+            return app()->make(ResponseHelper::class)->error();
+        }
+        return app()->make(ResponseHelper::class)->success($this->directoryRepository->find($param['dir_id']));
+    }
 }

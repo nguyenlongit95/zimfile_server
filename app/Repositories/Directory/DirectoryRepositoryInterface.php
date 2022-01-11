@@ -61,4 +61,10 @@ interface DirectoryRepositoryInterface
      * @return mixed
      */
     public function createMainFolder($userId);
+
+    /**
+     * @param $jobId
+     * @return mixed
+     */
+    public function cancelJob($jobId);
 }
