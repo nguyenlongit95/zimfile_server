@@ -62,6 +62,7 @@
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">Alls jobs</h3>
+                    <a href="{{ url('/admin/sub-admin/create-jobs') }}" class="pull-right btn btn-primary">Create job</a>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
