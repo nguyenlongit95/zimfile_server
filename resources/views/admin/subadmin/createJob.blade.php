@@ -237,7 +237,14 @@
          * Function create main folder and change status element html
          */
         function createMainFolder() {
-            let user = $('#users').val();
+            let user = "";
+            let selected = $("input[type='radio'][name='users']:checked");
+            if (selected.length > 0) {
+                user = selected.val();
+            }
+            if (user === null) {
+                alert('Please select 1 user');
+            }
             $('#loading-btn-crate-folder').removeClass('hidden');
             $.ajax({
                 url: '{{ url('/admin/sub-admin/create-main-folders') }}',
