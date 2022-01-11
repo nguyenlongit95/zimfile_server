@@ -246,7 +246,8 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
     {
         try {
             return DB::table('directors')->where('id', $dirId)->update([
-                'editor_id' => null
+                'editor_id' => null,
+                'status' => 1
             ]);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
