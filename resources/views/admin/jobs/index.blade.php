@@ -65,7 +65,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <table id="example2" class="table">
+                    <table id="example2" class="table table-bordered">
                         <thead>
                         <tr>
                             <th style="width: 2%;">#</th>
@@ -75,8 +75,8 @@
                             <th style="width: 8%;">Type</th>
                             <th style="width: 5%;">Editors</th>
                             <th style="width: 10%;" class="text-center">Status</th>
-                            <th style="width: 15%;">Qc note</th>
-                            <th style="width: 30%;">Client note</th>
+                            <th style="width: 20%;">Qc note</th>
+                            <th style="width: 25%;">Client note</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -111,9 +111,9 @@
                         @endforeach
                         </tbody>
                     </table>
-                    {!! $jobs->render() !!}
                 </div>
                 <!-- /.box-body -->
+                {!! $jobs->render() !!}
             </div>
             <!-- /.box -->
         </div>

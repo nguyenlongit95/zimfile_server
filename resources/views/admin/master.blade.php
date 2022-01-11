@@ -63,7 +63,11 @@
 <!-- ./wrapper -->
 
 @include('admin.adminJS.footerJS')
-
+<style>
+    .table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+        border: 1px solid #00000024 !important;
+    }
+</style>
 @yield('custom-js')
 </body>
 </html>
