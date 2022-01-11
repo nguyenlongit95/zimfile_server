@@ -65,32 +65,30 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <table id="example2" class="table table-bordered table-hover">
+                    <table id="example2" class="table">
                         <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Editor name</th>
-                            <th>User name</th>
-                            <th>Jobs dir name</th>
-                            <th>Time create</th>
-                            <th>Type</th>
-                            <th>QC note</th>
-                            <th>Customer note</th>
-                            <th class="text-center">Status</th>
+                            <th style="width: 2%;">#</th>
+                            <th style="width: 10%;">Date</th>
+                            <th style="width: 15%;">Order name</th>
+                            <th style="width: 5%;">Clients</th>
+                            <th style="width: 8%;">Type</th>
+                            <th style="width: 5%;">Editors</th>
+                            <th style="width: 10%;" class="text-center">Status</th>
+                            <th style="width: 15%;">Qc note</th>
+                            <th style="width: 30%;">Client note</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($jobs as $job)
+                            <?php $carbon = new \Carbon\Carbon($job->created_at) ?>
                             <tr>
                                 <td>{{ $job->id }}</td>
-                                <td>{{ $job->editor_name }}</td>
-                                <td>{{ $job->user_name }}</td>
-                                <td>{{ $job->nas_dir }}</td>
-                                <?php $carbon = new \Carbon\Carbon($job->created_at) ?>
                                 <td>{{ $carbon->format('d-m-Y') }}</td>
+                                <td>{{ $job->nas_dir }}</td>
+                                <td>{{ $job->user_name }}</td>
                                 <td>{{ $job->type_txt }}</td>
-                                <td>{{ $job->note }}</td>
-                                <td>{{ $job->customer_note }}</td>
+                                <td>{{ $job->editor_name }}</td>
                                 <td class="text-center">
                                     <!-- // 0: reject, 1 chưa assign, 2 đã asign, 3 confirm, 4 done -->
                                     @if($job->status == 0)
@@ -107,6 +105,8 @@
                                         {{ $job->status_txt }}
                                     </span>
                                 </td>
+                                <td>{{ $job->note }}</td>
+                                <td>{{ $job->customer_note }}</td>
                             </tr>
                         @endforeach
                         </tbody>
