@@ -68,7 +68,7 @@
                                     <input type="text" id="name_job" value="" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label for="">Name of folder <span class="text-danger">*</span></label>
+                                    <label for="">Type of folder <span class="text-danger">*</span></label>
                                     <!--
                                      -- 1: Photo editing 2: Day to dusk	3: Virtual Staging	4: Additional Retouching
                                      -->
