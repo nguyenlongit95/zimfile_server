@@ -1299,6 +1299,7 @@ class AdminAPIController extends Controller
                 'id' => $parentDir->id,
                 'name' => $parentDir->nas_dir,
             ]);
+            $param['note'] = $param['noteJob'];
             $createDir = $this->directoryRepository->create($param);
             $createDir->directory_id = $createDir->id;
             if ($createDir) {

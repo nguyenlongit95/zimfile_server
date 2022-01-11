@@ -79,6 +79,10 @@
                                         <option value="4">Additional Retouching</option>
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                    <label for="note">Instruction <span class="text-danger">*</span></label>
+                                    <textarea name="note" class="form-control" id="note_create" cols="30" rows="3"></textarea>
+                                </div>
                             </div>
                             <!-- /.box-body -->
                             <div class="box-footer">
@@ -203,10 +207,18 @@
          *  Step 4, create job end show box confirm
          */
         function nextStep4() {
-            let user = $('#users').val();
+            let user = "";
+            let selected = $("input[type='radio'][name='users']:checked");
+            if (selected.length > 0) {
+                user = selected.val();
+            }
+            if (user === null) {
+                alert('Please select 1 user');
+            }
             let idMainFolder = $('#id_main_folder').val();
             let director = $('#name_job').val();
             let typeJob = $('#type_job').val();
+            let noteJob = $('#note_create').val();
             $('#loading-btn-crate-job').removeClass('hidden');
             if (director === null || director === '') {
                 alert('Please enter job name.');
@@ -219,6 +231,7 @@
                        idMainFolder: idMainFolder,
                        director: director,
                        typeJob: typeJob,
+                       noteJob: noteJob,
                    },
                     success: function (response) {
                        if (response.code === 200) {
