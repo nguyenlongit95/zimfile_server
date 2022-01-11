@@ -231,7 +231,7 @@
                        idMainFolder: idMainFolder,
                        director: director,
                        typeJob: typeJob,
-                       noteJobClient: noteJob,
+                       noteJob: noteJob,
                    },
                     success: function (response) {
                        if (response.code === 200) {
