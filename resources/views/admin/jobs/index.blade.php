@@ -69,14 +69,14 @@
                         <thead>
                         <tr>
                             <th style="width: 2%;">#</th>
-                            <th style="width: 10%;">Date</th>
-                            <th style="width: 15%;">Order name</th>
+                            <th class="text-center" style="width: 7%;">Date</th>
+                            <th style="width: 18%;">Order name</th>
                             <th style="width: 5%;">Clients</th>
                             <th style="width: 8%;">Type</th>
                             <th style="width: 5%;">Editors</th>
                             <th style="width: 10%;" class="text-center">Status</th>
-                            <th style="width: 20%;">Qc note</th>
-                            <th style="width: 25%;">Client note</th>
+                            <th style="width: 22%;">Qc note</th>
+                            <th style="width: 23%;">Client note</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -84,7 +84,7 @@
                             <?php $carbon = new \Carbon\Carbon($job->created_at) ?>
                             <tr>
                                 <td>{{ $job->id }}</td>
-                                <td>{{ $carbon->format('d-m-Y') }}</td>
+                                <td class="text-center">{{ $carbon->format('d-m-Y') }}</td>
                                 <td>{{ $job->nas_dir }}</td>
                                 <td>{{ $job->user_name }}</td>
                                 <td>{{ $job->type_txt }}</td>
