@@ -254,4 +254,26 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
             return null;
         }
     }
+
+    /**
+     * Sql function list all my jobs for editor
+     *
+     * 0: reject, 1 chưa assign, 2 đã assign, 3 confirm, 4 done
+     * @return mixed
+     */
+    public function listMyJobs()
+    {
+        $jobs = Director::where('editor_id', Auth::id())->whereIn('status', [3, 0, 4])
+            ->orderByRaw('status', [
+                3, 0, 4
+            ])->paginate(config('const.paginate'));
+        if (!empty($jobs)) {
+            foreach ($jobs as $job) {
+                $clients = User::find($job->user_id);
+                $job->customer_name = $clients->name;
+            }
+            return $jobs;
+        }
+        return null;
+    }
 }

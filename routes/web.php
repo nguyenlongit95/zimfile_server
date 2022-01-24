@@ -84,6 +84,7 @@ Route::group(['prefix'=>'admin'],function() {
         Route::get('/get-main-folder', [\App\Http\Controllers\AdminAPIController::class, 'subAdminGetMainFolder']);
         Route::get('/create-main-folders', [\App\Http\Controllers\AdminAPIController::class, 'subAdminCreateMainFolder']);
         Route::get('/create-job', [\App\Http\Controllers\AdminAPIController::class, 'subAdminCreateJob']);
+        Route::get('/create-multi-job', [\App\Http\Controllers\AdminAPIController::class, 'subAdminCreateMultiJob']);
     });
 
     Route::group(['prefix' => 'notifications'], function () {

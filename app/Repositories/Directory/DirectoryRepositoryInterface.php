@@ -67,4 +67,9 @@ interface DirectoryRepositoryInterface
      * @return mixed
      */
     public function cancelJob($jobId);
+
+    /**
+     * @return mixed
+     */
+    public function listMyJobs();
 }

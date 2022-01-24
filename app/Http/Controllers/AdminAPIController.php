@@ -1276,6 +1276,13 @@ class AdminAPIController extends Controller
         }
     }
 
+    /**
+     * Controller function create job by SubAdmin
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
     public function subAdminCreateJob(Request $request)
     {
         $param = $request->all();
@@ -1310,6 +1317,52 @@ class AdminAPIController extends Controller
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             return app()->make(ResponseHelper::class)->error();
+        }
+    }
+
+    public function subAdminCreateMultiJob(Request $request)
+    {
+        $param = $request->all();
+        $user = $this->userRepository->find($param['user']);
+        $dir = self::BASE_PATH . '/clients/' . $user->name . '/';
+        // Sub folder
+        $parentDir = $this->directoryRepository->find($param['idMainFolder']);
+        $dir = $dir . $parentDir->nas_dir . '/';
+        $arrErr = 0;
+        if ($param['numberJobToBeCreated'] > 0) {
+            for ($i = 1; $i<= $param['numberJobToBeCreated']; $i++) {
+                $param['type'] = $param['typeJob'];
+                $param['status'] = 1;
+                $param['parent_id'] = $param['idMainFolder'];
+                $param['level'] = 2;
+                try {
+                    // Create dir on NAS storage
+                    Storage::disk('ftp')->makeDirectory($dir . $param['director'][$i]);
+                    // Create database directory
+                    $param['user_id'] = $user->id;
+                    $param['nas_dir'] = $param['director'][$i];
+                    $param['vps_dir'] = '-';
+                    $param['path'] = json_encode([
+                        'id' => $parentDir->id,
+                        'name' => $parentDir->nas_dir,
+                    ]);
+                    $param['customer_note'] = $param['noteJob'];
+                    $createDir = $this->directoryRepository->create($param);
+                    $createDir->directory_id = $createDir->id;
+                    if (!$createDir) {
+                        $arrErr++;
+                    }
+                } catch (\Exception $exception) {
+                    Log::error($exception->getMessage());
+                    return app()->make(ResponseHelper::class)->error();
+                }
+            }
+        }
+        // Response to client error or success
+        if ($arrErr > 0) {
+            return app()->make(ResponseHelper::class)->error();
+        } else {
+            return app()->make(ResponseHelper::class)->success();
         }
     }
 

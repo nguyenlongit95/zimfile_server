@@ -216,4 +216,17 @@ class EditorAPIController extends Controller
         }
         return app()->make(ResponseHelper::class)->success($this->directoryRepository->find($param['dir_id']));
     }
+
+    /**
+     * Controller function list old jobs for editors
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function listMyJobs(Request $request)
+    {
+        $jobs = $this->directoryRepository->listMyJobs();
+        return app()->make(ResponseHelper::class)->success($jobs);
+    }
 }
