@@ -263,9 +263,9 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
      */
     public function listMyJobs()
     {
-        $jobs = Director::where('editor_id', Auth::id())->whereIn('status', [3, 0, 4])
+        $jobs = Director::where('editor_id', Auth::id())->whereIn('status', [3, 0])
             ->orderByRaw('status', [
-                3, 0, 4
+                3, 0
             ])->paginate(config('const.paginate'));
         if (!empty($jobs)) {
             foreach ($jobs as $job) {
