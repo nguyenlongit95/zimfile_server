@@ -773,7 +773,9 @@ class AdminAPIController extends Controller
     public function listJobsDashBoard(Request $request)
     {
         $jobs = $this->directoryRepository->getAllJobsDashBoard(null);
-        return view('admin.jobs.index', compact('jobs'));
+        $customers = $this->userRepository->listUsers('ASC');
+        $editors = $this->userRepository->editors('ASC');
+        return view('admin.jobs.index', compact('jobs', 'customers', 'editors'));
     }
 
     /**
@@ -786,7 +788,9 @@ class AdminAPIController extends Controller
     {
         $param = $request->all();
         $jobs = $this->directoryRepository->getAllJobsDashBoard($param);
-        return view('admin.jobs.index', compact('jobs'));
+        $customers = $this->userRepository->listUsers('ASC');
+        $editors = $this->userRepository->editors('ASC');
+        return view('admin.jobs.index', compact('jobs', 'customers', 'editors'));
     }
 
     /**
@@ -933,6 +937,7 @@ class AdminAPIController extends Controller
     public function assignCustomerToGroup(Request $request, $groupId, $customerId)
     {
         $param['group_id'] = $groupId;
+        $param['time_assign'] = Carbon::now();
         if ($this->userRepository->update($param, $customerId)) {
             return redirect('/admin/groups/' . $groupId . '/assign-customers')->with('thong_bao', 'Assign customer to group success.');
         }
@@ -1409,5 +1414,111 @@ class AdminAPIController extends Controller
             return redirect()->back()->with('thong_bao', 'Assign job success.');
         }
         return redirect()->back()->with('thong_bao', 'Assign job failed.');
+    }
+
+    /**
+     * Cotroller function admin edit job
+     *
+     * @param Request $request
+     * @param $id
+     * @return Factory|View|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function adminEditJob(Request $request, $id)
+    {
+        $job = $this->directoryRepository->find($id);
+        if (empty($job)) {
+            return redirect('/admin/jobs')->with('thong_bao', 'Cannot find jobs');
+        }
+        $job->customer_txt = $this->userRepository->find($job->user_id)->name;
+        $editor = $this->userRepository->find($job->editor_id);
+        if (empty($editor)) {
+            $job->editor_txt = '-';
+        } else {
+            $job->editor_txt = $editor->name;
+        }
+        // Response view data
+        return view('admin.jobs.edit', compact('job'));
+    }
+
+    /**
+     * Controller function admin update jobs
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function adminUpdateJob(Request $request, $id)
+    {
+        $param = $request->all();
+        $update = $this->directoryRepository->update($param, $id);
+        if ($update) {
+            return redirect('/admin/jobs/edit/' . $id)->with('thong_bao', 'Update success.');
+        } else {
+            return redirect('/admin/jobs/edit/' . $id)->with('thong_bao', 'Error, please check again.');
+        }
+    }
+
+    /**
+     * Controller function admin delete a jobs none assign
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function adminDeleteJob(Request $request, $id)
+    {
+        $job = $this->directoryRepository->find($id);
+        if (empty($job)) {
+            return redirect('/admin/jobs/')->with('thong_bao', 'Cannot find job.');
+        }
+        // status 0: reject, 1 chưa assign, 2 đã assign, 3 confirm, 4 done
+        if ($job->status != 1 || !is_null($job->editor_id)) {
+            return redirect('/admin/jobs/')->with('thong_bao', 'The job cannot be deleted because it is related to processing.');
+        }
+        $dirJob = $this->directoryRepository->dirJob($job->id);
+        try {
+            Storage::disk('ftp')->deleteDirectory($dirJob);
+            $this->directoryRepository->delete($id);
+            return redirect('/admin/jobs/')->with('thong_bao', 'Delete job success.');
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return redirect('/admin/jobs/')->with('thong_bao', 'System errors please check log system.');
+        }
+    }
+
+    /**
+     * Controller function render partial view
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function adminAssignJobMN(Request $request)
+    {
+        $param = $request->all();
+        $job = $this->directoryRepository->find($param['jobId']);
+        $editors = $this->userRepository->editors('ASC');
+        return view('admin.jobs.partials.selectEditors', compact('job', 'editors'))->render();
+    }
+
+    /**
+     * Controller function assign jobs for editors.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function adminAssignJobP(Request $request)
+    {
+        $param = $request->all();
+        if (!$param['editor_id'] || is_null($param['editor_id'])) {
+            return redirect('/admin/jobs/')->with('thong_bao', 'Please select an editors');
+        }
+        $param['status'] = 2;
+        // Began assign jobs
+        $assign = $this->directoryRepository->update($param, $param['job_id']);
+        if ($assign) {
+            return redirect('/admin/jobs/')->with('thong_bao', 'Assign success.');
+        } else {
+            return redirect('/admin/jobs/')->with('thong_bao', 'System errors please check log system.');
+        }
     }
 }

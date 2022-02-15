@@ -24,7 +24,7 @@
                             </div>
                             <div class="box-body">
                                 <table class="table table-bordered table-hover text-center">
-                                    <thead>
+                                    <thead class="thead-style">
                                     <td>#</td>
                                     <td>Customer name</td>
                                     <td>Customer email</td>
@@ -60,7 +60,7 @@
                             </div>
                             <div class="box-body">
                                 <table class="table table-bordered table-hover text-center">
-                                    <thead>
+                                    <thead class="thead-style">
                                     <td>#</td>
                                     <td>Customer name</td>
                                     <td>Customer email</td>

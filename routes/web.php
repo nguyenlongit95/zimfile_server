@@ -62,6 +62,11 @@ Route::group(['prefix'=>'admin'],function() {
     Route::group(['prefix' => 'jobs'], function () {
         Route::get('/', [\App\Http\Controllers\AdminAPIController::class, 'listJobsDashBoard']);
         Route::get('/search', [\App\Http\Controllers\AdminAPIController::class, 'searchJobsDashBoard']);
+        Route::get('/edit/{id}', [\App\Http\Controllers\AdminAPIController::class, 'adminEditJob']);
+        Route::post('/update/{id}', [\App\Http\Controllers\AdminAPIController::class, 'adminUpdateJob']);
+        Route::get('/delete/{id}', [\App\Http\Controllers\AdminAPIController::class, 'adminDeleteJob']);
+        Route::get('/assign-job-mn', [\App\Http\Controllers\AdminAPIController::class, 'adminAssignJobMN']);
+        Route::post('/assign-job-p', [\App\Http\Controllers\AdminAPIController::class, 'adminAssignJobP']);
     });
 
     Route::group(['prefix' => 'groups'], function () {

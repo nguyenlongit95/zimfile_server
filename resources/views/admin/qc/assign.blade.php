@@ -16,7 +16,7 @@
                             <div class="col-md-6 border-right">
                                 <h4>List user's belongs QC: <span class="text-danger font-weight-bold">{{ $qc->name }}</span></h4>
                                 <table id="example2" class="table table-bordered table-hover">
-                                    <thead>
+                                    <thead class="thead-style">
                                     <tr>
                                         <th>Name</th>
                                         <th>Email</th>
@@ -46,7 +46,7 @@
                                 <input type="submit" name="assign" value="Assign" class="btn btn-primary pull-right">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                 <table id="example2" class="table table-bordered table-hover">
-                                    <thead>
+                                    <thead class="thead-style">
                                     <tr>
                                         <th>Name</th>
                                         <th>Email</th>

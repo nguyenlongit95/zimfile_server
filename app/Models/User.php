@@ -28,6 +28,7 @@ class User extends Authenticatable
         'base_path',
         'role',     // 0 adminstator, 1 user, 2 editor, 3 qc, 4 sub admin
         'group_id',
+        'time_assign',
     ];
 
     /**

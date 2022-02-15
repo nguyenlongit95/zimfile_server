@@ -1,6 +1,6 @@
 <?php
 return [
-    'paginate' => 10,
+    'paginate' => 50,
     'admin' => 0,
     'user' => 1,
     'editor' => 2,

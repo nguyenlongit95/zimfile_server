@@ -41,6 +41,12 @@ interface UserRepositoryInterface
     public function listEditors($param);
 
     /**
+     * @param $sort
+     * @return mixed
+     */
+    public function editors($sort);
+
+    /**
      * @param $param
      * @return mixed
      */

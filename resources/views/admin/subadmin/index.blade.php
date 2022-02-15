@@ -52,7 +52,7 @@
                     <!-- /.box-header -->
                     <div class="box-body">
                         <table id="example2" class="table table-bordered table-hover">
-                            <thead>
+                            <thead class="thead-style">
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>

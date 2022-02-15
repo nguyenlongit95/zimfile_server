@@ -48,7 +48,7 @@
                         @endforeach
                         </tfoot>
                     </table>
-                    {!! $Users->render() !!}
+                    {!! $Users->appends($_GET)->links() !!}
                 </div>
                 <!-- /.box-body -->
             </div>

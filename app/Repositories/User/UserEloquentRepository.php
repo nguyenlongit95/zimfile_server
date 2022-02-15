@@ -371,4 +371,18 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
         }
         return true;
     }
+
+    /**
+     * Sql function list all editors for filter
+     *
+     * @param $sort
+     * @return mixed
+     */
+    public function editors($sort)
+    {
+        return $this->_model->where('role', config('const.editor'))->orderBy('id', $sort)
+            ->select(
+                'id', 'name', 'email', 'address', 'phone', 'total_file'
+            )->get();
+    }
 }

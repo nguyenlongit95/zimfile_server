@@ -117,8 +117,10 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         // Get the list of groups in the correct order of name preference
         foreach ($groupIds as $groupId) {
             // Role 1 for customers and get all customer assign for groups
-            $customers = DB::table('users')->where('role', 1)
-                ->where('group_id', $groupId)->get();
+            $customers = DB::table('users')->where('role', config('const.user'))
+                ->where('group_id', $groupId)
+                ->orderBy('time_assign', 'ASC')
+                ->get();
             if (empty($customers)) {
                 continue;
             }

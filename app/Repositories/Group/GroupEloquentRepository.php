@@ -37,7 +37,8 @@ class GroupEloquentRepository extends EloquentRepository implements GroupReposit
      */
     public function listUserInGroup($groupId)
     {
-        return User::where('role', config('const.user'))->where('group_id', $groupId)->get();
+        return User::where('role', config('const.user'))->where('group_id', $groupId)
+            ->orderBy('time_assign', 'ASC')->get();
     }
 
     /**

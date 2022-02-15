@@ -173,12 +173,11 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
             ->where('directors.parent_id', '<>', 0)
             ->where(function ($query) use ($param) {
                 // Pass param condition param search
-                if (isset($param['name_editor']) && !is_null($param['name_editor'])) {
-                    $users = User::where('name', 'LIKE', $param['name_editor'])->pluck('id');
-                    $query->whereIn('directors.editor_id', $users);
+                if (isset($param['editor']) && !is_null($param['editor'])) {
+                    $query->where('directors.editor_id', $param['editor']);
                 }
-                if (isset($param['name_user']) && !is_null($param['name_user'])) {
-                    $query->where('users.name', 'LIKE', '%' . $param['name_user'] . '%');
+                if (isset($param['customer']) && !is_null($param['customer'])) {
+                    $query->where('directors.user_id', $param['customer']);
                 }
                 if (isset($param['type']) && !is_null($param['type'])) {
                     $query->where('directors.type', $param['type']);

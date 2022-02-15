@@ -137,7 +137,7 @@
                             <!-- /.box-body -->
                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right" onclick="createMultiJobs()">Create multiple job <i class="fa fa-plus-square"></i> </button>
-                                <img src="{{ asset('loading.gif') }}" id="loading-btn-crate-job" class="img-loading pull-right hidden" alt="">
+                                <img src="{{ asset('loading.gif') }}" id="loading-btn-crate--multi-job" class="img-loading pull-right hidden" alt="">
                             </div>
                         </div>
                     </div>
@@ -364,7 +364,7 @@
             let idMainFolder = $('#id_main_folder').val();
             let typeJob = $('#type_job_multi').val();
             let noteJob = $('#note_create_multi').val();
-            $('#loading-btn-crate-job').removeClass('hidden');
+            $('#loading-btn-crate--multi-job').removeClass('hidden');
             let numberJobToBeCreated = Number($('#number-job-to-be-created').text());
             // Validate name of jobs
             let checkDirName = 0;
@@ -385,7 +385,7 @@
                 }
                 console.log(JSON.stringify(arrNameJobs));
                 // Call to API
-                $('#loading-btn-crate-job').removeClass('hidden');
+                $('#loading-btn-crate--multi-job').removeClass('hidden');
                 $.ajax({
                     url: '{{ url('/admin/sub-admin/create-multi-job') }}',
                     method: 'GET',
@@ -401,7 +401,7 @@
                         if (response.code === 200) {
                             // show box step
                             $('#step-4').removeClass('hidden');
-                            $('#loading-btn-crate-job').addClass('hidden');
+                            $('#loading-btn-crate--multi-job').addClass('hidden');
                         } else {
                             alert('System error.');
                         }
