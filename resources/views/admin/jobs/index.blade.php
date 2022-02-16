@@ -205,16 +205,16 @@
             background: #00000015;
         }
         .bg-green {
-            background: green;
+            background: #00a65aad !important;
         }
         .bg-success {
-            background: #1747f9;
+            background: #3c763d9c;
         }
         .bg-danger {
-            background: red;
+            background: #a94442ab;
         }
         .bg-warning {
-            background: #f39c12eb;
+            background: #a94442bf;
         }
         .font-weight-bold-list-job {
             font-weight: bold !important;
