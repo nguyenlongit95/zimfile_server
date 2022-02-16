@@ -211,7 +211,7 @@
             background: #b84236;
         }
         .bg-confirm {
-            background: #eeb565;
+            background: #ba60c7;
         }
         .bg-done {
             background: #54b04d;
