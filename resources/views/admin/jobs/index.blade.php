@@ -205,13 +205,13 @@
             background: #00000015;
         }
         .bg-green {
-            background: #00a65a;
+            background: green;
         }
         .bg-success {
-            background: #3c763d;
+            background: #1747f9;
         }
         .bg-danger {
-            background: #a94442;
+            background: red;
         }
         .bg-warning {
             background: #f39c12eb;
