@@ -83,7 +83,7 @@
                     <table id="example2" class="table table-bordered bg-table-list-job">
                         <thead class="thead-style">
                         <tr>
-                            <th style="width: 2%;">#</th>
+                            <th style="width: 2%;" class="text-center">#</th>
                             <th class="text-center" style="width: 7%;">Date</th>
                             <th style="width: 18%;">Order name</th>
                             <th style="width: 5%;">Clients</th>
