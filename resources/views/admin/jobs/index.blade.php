@@ -80,7 +80,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <table id="example2" class="table table-bordered">
+                    <table id="example2" class="table table-bordered bg-table-list-job">
                         <thead class="thead-style">
                         <tr>
                             <th style="width: 2%;">#</th>
@@ -177,6 +177,9 @@
         .hover-nas:hover {
             cursor: pointer;
             color: #0b93d5;
+        }
+        .bg-table-list-job {
+            background: #00000015;
         }
     </style>
 @endsection
