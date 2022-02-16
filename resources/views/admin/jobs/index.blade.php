@@ -127,23 +127,6 @@
                                         <span class="color-white">{{ $job->status_txt }}</span>
                                     </td>
                                 @endif
-
-{{--                                <td class="text-center font-weight-bold bg-danger">--}}
-{{--                                    <!-- // 0: reject, 1 chưa assign, 2 đã assign, 3 confirm, 4 done -->--}}
-{{--                                    @if($job->status == 0)--}}
-{{--                                        <span class="text-danger">--}}
-{{--                                    @elseif($job->status == 1)--}}
-{{--                                        <span>--}}
-{{--                                    @elseif($job->status == 2)--}}
-{{--                                        <span class="text-green">--}}
-{{--                                    @elseif($job->status == 3)--}}
-{{--                                        <span class="text-warning">--}}
-{{--                                    @else--}}
-{{--                                        <span class="text-success text-bold">--}}
-{{--                                    @endif--}}
-{{--                                        {{ $job->status_txt }}--}}
-{{--                                    </span>--}}
-{{--                                </td>--}}
                                 <td>{{ $job->note }}</td>
                                 <td>{{ $job->customer_note }}</td>
                                 <td class="text-center">
