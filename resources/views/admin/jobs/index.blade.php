@@ -107,7 +107,7 @@
                                 <td class="font-weight-bold-list-job">{{ $job->editor_name }}</td>
                                 <!-- // 0: reject, 1 chưa assign, 2 đã assign, 3 confirm, 4 done -->
                                 @if($job->status == 0)
-                                    <td class="text-center font-weight-bold bg-danger">
+                                    <td class="text-center font-weight-bold bg-reject">
                                         <span class="color-white">{{ $job->status_txt }}</span>
                                     </td>
                                 @elseif($job->status == 1)
@@ -115,15 +115,15 @@
                                         {{ $job->status_txt }}
                                     </td>
                                 @elseif($job->status == 2)
-                                    <td class="text-center font-weight-bold bg-green">
+                                    <td class="text-center font-weight-bold bg-assigned">
                                         <span class="color-white">{{ $job->status_txt }}</span>
                                     </td>
                                 @elseif($job->status == 3)
-                                    <td class="text-center font-weight-bold bg-warning">
+                                    <td class="text-center font-weight-bold bg-confirm">
                                         <span class="color-white">{{ $job->status_txt }}</span>
                                     </td>
                                 @else
-                                    <td class="text-center font-weight-bold bg-success">
+                                    <td class="text-center font-weight-bold bg-done">
                                         <span class="color-white">{{ $job->status_txt }}</span>
                                     </td>
                                 @endif
@@ -204,17 +204,17 @@
         .bg-table-list-job {
             background: #00000015;
         }
-        .bg-green {
-            background: #00a65aad !important;
+        .bg-assigned {
+            background: #4da5e6 !important;
         }
-        .bg-success {
-            background: #3c763d9c;
+        .bg-reject {
+            background: #b84236;
         }
-        .bg-danger {
-            background: #a94442ab;
+        .bg-confirm {
+            background: #eeb565;
         }
-        .bg-warning {
-            background: #a94442bf;
+        .bg-done {
+            background: #54b04d;
         }
         .font-weight-bold-list-job {
             font-weight: bold !important;
