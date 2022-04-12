@@ -1250,10 +1250,17 @@ class AdminAPIController extends Controller
         return app()->make(ResponseHelper::class)->success($dir);
     }
 
+    /**
+     * Controller function create a main folder
+     *
+     * @param Request $request
+     * @return mixed
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
     public function subAdminCreateMainFolder(Request $request)
     {
         $param = $request->all();
-        $param['director'] = 'dir_' . Carbon::now()->format('mdY');
+        $param['director'] = 'dir_' . Carbon::now('Asia/Ho_Chi_Minh')->format('mdY');
         $user = $this->userRepository->find($param['user']);
         if (empty($user)) {
             return app()->make(ResponseHelper::class)->error();
