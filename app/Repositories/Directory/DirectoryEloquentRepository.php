@@ -221,9 +221,10 @@ class DirectoryEloquentRepository extends EloquentRepository implements Director
     public function checkDirOnDay($userId)
     {
         // Get director in the day
-        $dir = Director::whereDate('created_at', Carbon::now())->where('level', 1)->where('user_id', $userId)
-            ->orderBy('id', 'DESC')->first();
-        return $dir;
+        return Director::whereDate('created_at', Carbon::now('Asia/Ho_Chi_Minh'))->where('level', 1)
+            ->where('user_id', $userId)
+            ->orderBy('id', 'DESC')
+            ->first();
     }
 
     /**
