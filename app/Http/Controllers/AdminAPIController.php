@@ -495,12 +495,20 @@ class AdminAPIController extends Controller
         if (empty($customer)) {
             return redirect('/admin/customers/')->with('thong_bao', 'User account not found.');
         }
-        if($this->userRepository->checkDeleteUser($customer->id) == false) {
-            return redirect('/admin/customers/')->with('thong_bao', 'This user cannot be deleted because it has dependent data.');
-        }
-        // Soft delete customers
-        if ($this->userRepository->delete($id)) {
-            return redirect('/admin/customers/')->with('thong_bao', 'User account delete success.');
+        try {
+            // Change deleted_at
+            DB::table('users')->where('id', $id)->update([
+                'deleted_at' => Carbon::now()
+            ]);
+            // Update directors of customers
+            DB::table('directors')->where('user_id', $customer->id)
+                ->where('status', 2)->update([
+                    'status' => 1,
+                    'editor_id' => 0
+                ]);
+            return redirect('/admin/customers/')->with('thong_bao', 'Delete customer success.');
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
         }
         // Response error message
         return redirect('/admin/customers/')->with('thong_bao', 'User account delete errors, please check again.');
@@ -618,12 +626,19 @@ class AdminAPIController extends Controller
         if (empty($editor)) {
             return redirect('/admin/editors/')->with('thong_bao', 'Editor account not found.');
         }
-        if($this->userRepository->checkDeleteEditor($editor->id) == false) {
-            return redirect('/admin/customers/')->with('thong_bao', 'This user cannot be deleted because it has dependent data.');
-        }
-        // Delete editors
-        if ($this->userRepository->delete($id)) {
-            return redirect('/admin/editors/')->with('thong_bao', 'Editor account deleted.');
+        try {
+            // Soft delete editor
+            DB::table('users')->where('id', $editor->id)->update([
+                 'deleted_at' => Carbon::now()
+            ]);
+            // Remove task of the editor
+            DB::table('directors')->where('editor_id', $editor->id)->where('status', 2)->update([
+                'editor_id' => null,
+                'status' => 1
+            ]);
+            return redirect('/admin/editors/')->with('thong_bao', 'Editor has been deleted.');
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
         }
         // Response error system
         return redirect('/admin/editors/')->with('thong_bao', 'Editor account errors.');
@@ -641,6 +656,9 @@ class AdminAPIController extends Controller
         // Check Editors has exits
         $editor = $this->userRepository->find($id);
         if (empty($editor)) {
+            return redirect('/admin/editors/')->with('thong_bao', 'Editor account not found.');
+        }
+        if (!is_null($editor->deleted_at)) {
             return redirect('/admin/editors/')->with('thong_bao', 'Editor account not found.');
         }
         // Assign jobs for editor

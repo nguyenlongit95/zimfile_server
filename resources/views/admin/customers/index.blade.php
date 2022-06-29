@@ -78,7 +78,6 @@
                             <td class="text-center"><a href="/admin/customers/delete/{{$customer->id}}" class="btn btn-danger padding510510">Delete</a></td>
                         </tr>
                         @endforeach
-                        </tfoot>
                     </table>
                     {!! $customers->appends($_GET)->links() !!}
                 </div>

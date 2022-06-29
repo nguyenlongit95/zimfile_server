@@ -42,6 +42,9 @@ class AuthController extends Controller
                     return app()->make(ResponseHelper::class)->unAuthenticated();
                 }
                 $user = $this->userRepository->find(Auth::user()->id);
+                if (!is_null($user->deleted_at)) {
+                    return app()->make(ResponseHelper::class)->unAuthenticated();
+                }
                 $token = $user->createToken(Auth::user()->email . '_' . Auth::id());
                 $token->profiles = Auth::user();
                 return app()->make(ResponseHelper::class)->success($token);

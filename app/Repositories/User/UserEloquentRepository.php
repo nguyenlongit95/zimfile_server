@@ -42,7 +42,7 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
      */
     public function listUsers($sort = 'DESC')
     {
-        return $this->_model->where('role', config('const.user'))->orderBy('id', $sort)
+        return $this->_model->where('role', config('const.user'))->whereNull('deleted_at')->orderBy('id', $sort)
             ->select(
                 'id', 'name', 'email', 'address', 'phone', 'total_file'
             )->get();
@@ -82,7 +82,9 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
             $user->where('address', 'like', '%' . $param['address'] . '%');
         }
         // Response data
-        return $user->where('role', 1)->where('status', 1)->orderBy('id', 'DESC')->paginate(config('const.paginate'));
+        return $user->where('role', 1)->where('status', 1)
+            ->whereNull('deleted_at')
+            ->orderBy('id', 'DESC')->paginate(config('const.paginate'));
     }
 
     /**
@@ -121,7 +123,8 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
             $user->where('address', 'like', '%' . $param['address'] . '%');
         }
         // Addon data jobs assign
-        $user = $user->where('role', 2)->where('status', 1)->orderBy('id', 'DESC')
+        $user = $user->where('role', 2)->where('status', 1)->whereNull('deleted_at')
+            ->orderBy('id', 'DESC')
             ->paginate(config('const.paginate'));
         if (!empty($user)) {
             foreach ($user as $value) {
@@ -380,7 +383,7 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
      */
     public function editors($sort)
     {
-        return $this->_model->where('role', config('const.editor'))->orderBy('id', $sort)
+        return $this->_model->where('role', config('const.editor'))->whereNull('deleted_at')->orderBy('id', $sort)
             ->select(
                 'id', 'name', 'email', 'address', 'phone', 'total_file'
             )->get();

@@ -118,7 +118,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         foreach ($groupIds as $groupId) {
             // Role 1 for customers and get all customer assign for groups
             $customers = DB::table('users')->where('role', config('const.user'))
-                ->where('group_id', $groupId)
+                ->where('group_id', $groupId)->whereNull('deleted_at')
                 ->orderBy('time_assign', 'ASC')
                 ->get();
             if (empty($customers)) {
@@ -417,7 +417,7 @@ class JobEloquentRepository extends EloquentRepository implements JobRepositoryI
         foreach ($groups as $groupId) {
             // Role 1 for customers and get all customer assign for groups
             $customers = DB::table('users')->where('role', 1)
-                ->where('group_id', $groupId)->get();
+                ->where('group_id', $groupId)->whereNull('deleted_at')->get();
             if (empty($customers)) {
                 continue;
             }
