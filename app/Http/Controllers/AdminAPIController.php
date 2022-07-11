@@ -1279,6 +1279,7 @@ class AdminAPIController extends Controller
     {
         $param = $request->all();
         $param['director'] = 'dir_' . Carbon::now('Asia/Ho_Chi_Minh')->format('mdY');
+        $param['created_at'] = Carbon::now('Asia/Ho_Chi_Minh');
         $user = $this->userRepository->find($param['user']);
         if (empty($user)) {
             return app()->make(ResponseHelper::class)->error();
