@@ -1302,7 +1302,7 @@ class AdminAPIController extends Controller
             // response data has directory
             return app()->make(ResponseHelper::class)->error();
         } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
+            Log::error($exception);
             return app()->make(ResponseHelper::class)->error();
         }
     }

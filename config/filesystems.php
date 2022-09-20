@@ -46,7 +46,7 @@ return [
             'driver'   => 'ftp',
             'host'     => '123.24.142.132',
             'username' => 'admin',
-            'password' => 'password',
+            'password' => 'nevergiveup@123',
             // more attribute config
              'port'     => 21,
             // 'passive'  => true,
